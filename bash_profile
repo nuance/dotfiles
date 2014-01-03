@@ -1,4 +1,8 @@
-export PS1="\h \[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$\[\033[00m\] "
+export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$\[\033[00m\] "
+if [ $(hostname) != "Macintosh.local" ]; then
+    export PS1="\h $PS1"
+fi
+
 export PATH=/usr/local/bin:$PATH:$HOME/bin:/usr/local/go/bin:bin
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 export CC=gcc-4.2
