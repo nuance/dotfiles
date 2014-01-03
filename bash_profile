@@ -1,10 +1,19 @@
-export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$\[\033[00m\] "
+export PS1="\h \[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$\[\033[00m\] "
 export PATH=/usr/local/bin:$PATH:$HOME/bin:/usr/local/go/bin:bin
-export EDITOR="subl -w"
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 export CC=gcc-4.2
 
 alias ls="ls -G"
+
+if [[ $(which subl) ]]; then
+    export EDITOR="subl -w"
+elif [[ $(which emacs) ]]; then
+    echo "Setting EDITOR to emacs"
+    export EDITOR="emacs"
+elif [[ $(which vim) ]]; then
+    echo "Setting EDITOR to vim"
+    export EDITOR="vim"
+fi
 
 if [[ -x /usr/libexec/java_home ]]; then
     export JAVA_HOME="$(/usr/libexec/java_home)"
