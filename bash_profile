@@ -33,6 +33,8 @@ alias gg="git grep"
 alias docker.vagrant='docker -H localhost:4243'
 alias docker.married='docker -H localhost:4244'
 
+alias e="$EDITOR"
+
 shopt -s histappend
 export HISTFILESIZE=100000
 
