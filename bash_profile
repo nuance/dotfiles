@@ -1,6 +1,6 @@
 export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$\[\033[00m\] "
 if [ $(hostname) != "Macintosh.local" ]; then
-    export PS1="\h $PS1"
+    export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
 export PATH=/usr/local/bin:$PATH:$HOME/bin:/usr/local/go/bin:bin
