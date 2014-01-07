@@ -19,7 +19,7 @@ for dir in `ls`; do
         continue
     fi
 
-    if [ "$dir" == "ssh" ] && [ $1 != "ssh" ]; then
+    if [ "$dir" == "ssh" ] && [ "$1" != "ssh" ]; then
         echo "skipping ssh key setup"
         continue
     fi
