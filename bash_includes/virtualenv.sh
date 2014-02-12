@@ -3,4 +3,5 @@ function v() {
     shift
 
     . ~/$name.virt/bin/activate
+    pushd ~/code/$name
 }
