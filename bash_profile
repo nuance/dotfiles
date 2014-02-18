@@ -3,7 +3,7 @@ if [ $(hostname) != "Macintosh.local" ]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
-export PATH=/usr/local/bin:$PATH:$HOME/bin:/usr/local/go/bin:bin
+export PATH=$HOME/bin:/usr/local/bin:$PATH:/usr/local/go/bin:bin
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 export CC=gcc-4.2
 
@@ -24,7 +24,9 @@ if [[ -x /usr/libexec/java_home ]]; then
     export HADOOP_HOME="/usr/local/Cellar/hadoop/1.2.1/libexec/"
 fi
 
-if [[ $(which hub) ]]; then
+if [[ $(which gh) ]]; then
+    eval "$(gh alias -s)"
+elif [[ $(which hub) ]]; then
     eval "$(hub alias -s)"
 fi
 
