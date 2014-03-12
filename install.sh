@@ -19,6 +19,10 @@ for dir in `ls`; do
         continue
     fi
 
+    if [ "$dir" == "src" ] || [ "$dir" == "pkg" ] || [ "$dir" == "bin" ]; then
+        continue
+    fi
+
     if [ "$dir" == "ssh" ] && [ "$1" != "ssh" ]; then
         echo "skipping ssh key setup"
         continue
