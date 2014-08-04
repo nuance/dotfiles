@@ -20,8 +20,7 @@
     up = ! git fetch -n upstream && git rebase upstream/master
     ms = merge --squash
     pr = pull-request -b Pinterest:master
-    bpr = pull-request -b blackops:master
-    mpr = pull-request -b m10n:master
+    rc = rebase --continue
     push = push -u
     pushed = "! f() { git tag --contains $1 | grep deploy_ | sort | rev | uniq -s17 | rev; }; f "
     changed = ! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD upstream/master`
