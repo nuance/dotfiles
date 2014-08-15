@@ -9,8 +9,12 @@ _go()
         prev="${COMP_WORDS[COMP_CWORD-2]}"
     fi
 
-    if [[ "get install build test" =~ ${prev} ]] && [[ -d src ]]; then
-        COMPREPLY=( $(compgen -W "$(find src/* -type d | sed 's/src\///')" -- ${cur}))
+    if [[ ${prev} == "go" ]]; then
+        COMPREPLY=( $(compgen -W "build clean env fix fmt get install list run test tool version vet" -- ${cur}))
+    fi
+
+    if [[ "get install build test" =~ ${prev} ]] && [[ -d $GOPATH/src ]]; then
+        COMPREPLY=( $(compgen -W "$(find ${GOPATH}/src/* -type d | sed 's/^.*\/src\///')" -- ${cur}))
         return 0
     fi
 }
