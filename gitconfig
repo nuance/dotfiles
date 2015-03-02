@@ -19,7 +19,10 @@
     ds = diff --staged
     up = ! git fetch -n upstream && git rebase upstream/master
     ms = merge --squash
-    pr = pull-request -b Pinterest:master
+    pr = "! f() { url=$(arc diff --only | grep URI | cut -f2,3 -d':'); echo $url; open $url; }; f "
+    land = ! arc land
+
+    # pull-request -b Pinterest:master
     rc = rebase --continue
     push = push -u
     pushed = "! f() { git tag --contains $1 | grep deploy_ | sort | rev | uniq -s17 | rev; }; f "
@@ -28,6 +31,14 @@
     pychanged = ! git changed | grep -v thrift | grep -v schemas | grep -v ttypes | egrep '.py$'
     check = "! f() { echo '** pep8 **'; pep8 --show-source --max-line-length=120 $*; echo '** pyflakes **'; pyflakes $*; }; f $(git pychanged)"
     squash = "! git reset --soft `git merge-base HEAD upstream/master`"
+
+    gochanged = "! f() { for name in $(git changed | grep src/ | egrep '.go$'); do dir=$(dirname $name); echo ${dir:4} ; done | sort | uniq; }; f "
+    install = "! go install -v $(git gochanged)"
+    test = "! go test -timeout 5s $(git gochanged)"
+    cov = "! f() { for name in $(git gochanged); do go test -cover $name ; done; }; f "
+    lint = "! f() { for name in $(git changed | egrep '.go$' ); do go vet $name; golint $name; done; }; f "
+    fmt =  "! f() { for name in $(git changed | egrep '.go$' ); do gofmt -s -w $name; done; }; f "
+    err = "! errcheck -blank $(git gochanged)"
 
     gl = "! git log --graph --pretty=format:\"%C(yellow)%h %C(reset)%s - %C(bold blue)%an %C(red)(%ar)\""
     glm = "! git log --merges --pretty=format:\"    %C(yellow)%h %C(reset)%s - %C(bold blue)%an %C(red)(%ar)%C(reset)\" | grep -v \"Merge branch 'master' into\" | grep -v \"Merge master into\" | less -R"

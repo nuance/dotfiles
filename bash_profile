@@ -5,7 +5,6 @@ fi
 
 export PATH=$HOME/bin:/usr/local/bin:$PATH:/usr/local/go/bin:bin
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
-export CC=gcc-4.2
 
 alias ls="ls -G"
 
