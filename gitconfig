@@ -17,7 +17,7 @@
     df = diff
     lg = log -p
     ds = diff --staged
-    up = ! git fetch -n upstream && git rebase upstream/master
+    up = ! git fetch -n origin && git rebase origin/master
     ms = merge --squash
     pr = "! f() { url=$(arc diff --only | grep URI | cut -f2,3 -d':'); echo $url; open $url; }; f "
     land = ! arc land
@@ -26,13 +26,13 @@
     rc = rebase --continue
     push = push -u
     pushed = "! f() { git tag --contains $1 | grep deploy_ | sort | rev | uniq -s17 | rev; }; f "
-    changed = ! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD upstream/master`
-    changed-diff = ! git diff --diff-filter=ACMRTUX `git merge-base HEAD upstream/master`
+    changed = ! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD origin/master`
+    changed-diff = ! git diff --diff-filter=ACMRTUX `git merge-base HEAD origin/master`
     pychanged = ! git changed | grep -v thrift | grep -v schemas | grep -v ttypes | egrep '.py$'
     check = "! f() { echo '** pep8 **'; pep8 --show-source --max-line-length=120 $*; echo '** pyflakes **'; pyflakes $*; }; f $(git pychanged)"
-    squash = "! git reset --soft `git merge-base HEAD upstream/master`"
+    squash = "! git reset --soft `git merge-base HEAD origin/master`"
 
-    gochanged = "! f() { for name in $(git changed | grep src/ | egrep '.go$'); do dir=$(dirname $name); echo ${dir:4} ; done | sort | uniq; }; f "
+    gochanged = "! f() { for file in $(git changed | grep src/ | egrep \".go$\"); do dir=$(dirname $file); echo $dir | perl -pne "s?src/??"; done | sort | uniq; } ; f "
     install = "! go install -v $(git gochanged)"
     test = "! go test -timeout 5s $(git gochanged)"
     cov = "! f() { for name in $(git gochanged); do go test -cover $name ; done; }; f "
