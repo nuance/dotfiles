@@ -1,26 +1,26 @@
-export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$\[\033[00m\] "
-if [[ "$(hostname)" != *.local ]]; then
+export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$(exit_code="\$?"; ((\$exit_code)) && echo \$exit_code || echo \$)\[\033[00m\] "
+if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* ]]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH:/usr/local/go/bin:bin
+export PATH=$HOME/bin:/usr/local/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
 alias ls="ls -G"
 
+
 if [[ $(which subl) ]]; then
     export EDITOR="subl -w"
+elif [[ $(which atom-beta) ]]; then
+    export EDITOR="atom-beta -w"
+elif [[ $(which atom) ]]; then
+    export EDITOR="atom -w"
 elif [[ $(which emacs) ]]; then
     echo "Setting EDITOR to emacs"
     export EDITOR="emacs"
 elif [[ $(which vim) ]]; then
     echo "Setting EDITOR to vim"
     export EDITOR="vim"
-fi
-
-if [[ -x /usr/libexec/java_home ]]; then
-    export JAVA_HOME="$(/usr/libexec/java_home)"
-    export HADOOP_HOME="/usr/local/Cellar/hadoop/1.2.1/libexec/"
 fi
 
 if [[ $(which gh) ]]; then
@@ -34,17 +34,20 @@ alias gg="git grep"
 alias docker.vagrant='docker -H localhost:4243'
 alias docker.married='docker -H localhost:4244'
 
+alias onepage='head -n $(echo "$(tput lines) - 2" | bc)'
+
+alias notes="git --git-dir=/Users/matt/Dropbox/Notes.git/.git --work-tree=/Users/matt/Dropbox/Notes"
+
 alias e="$EDITOR"
 
 shopt -s histappend
 export HISTFILESIZE=100000
 
-function check() {
-    echo "** pep8 **"
-    pep8 --show-source --max-line-length=120 $*
-    echo "** pyflakes **"
-    pyflakes $*
+# Write history after each command
+_bash_history_append() {
+    builtin history -a
 }
+PROMPT_COMMAND="_bash_history_append; $PROMPT_COMMAND"
 
 if [[ $(which src-hilite-lesspipe.sh) ]]; then
     LESSPIPE=`which src-hilite-lesspipe.sh`
