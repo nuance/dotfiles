@@ -15,33 +15,51 @@
     br = branch -vv
     co = checkout
     df = diff
+    dff = diff --summary --stat
     lg = log -p
     ds = diff --staged
+    dss = diff --staged --summary --stat
     up = ! git fetch -n origin && git rebase origin/master
     ms = merge --squash
-    pr = "! f() { url=$(arc diff --only | grep URI | cut -f2,3 -d':'); echo $url; open $url; }; f "
+    # pr = "! f() { url=$(arc diff --only | grep URI | cut -f2,3 -d':'); echo $url; open $url; }; f "
+    arcdiff = ! arc diff
     land = ! arc land
 
     # pull-request -b Pinterest:master
     rc = rebase --continue
     push = push -u
     pushed = "! f() { git tag --contains $1 | grep deploy_ | sort | rev | uniq -s17 | rev; }; f "
-    changed = ! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD origin/master`
+    changed = ! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD origin/master` | more
     changed-diff = ! git diff --diff-filter=ACMRTUX `git merge-base HEAD origin/master`
     pychanged = ! git changed | grep -v thrift | grep -v schemas | grep -v ttypes | egrep '.py$'
     check = "! f() { echo '** pep8 **'; pep8 --show-source --max-line-length=120 $*; echo '** pyflakes **'; pyflakes $*; }; f $(git pychanged)"
     squash = "! git reset --soft `git merge-base HEAD origin/master`"
 
-    gochanged = "! f() { for file in $(git changed | grep src/ | egrep \".go$\"); do dir=$(dirname $file); echo $dir | perl -pne "s?src/??"; done | sort | uniq; } ; f "
-    install = "! go install -v $(git gochanged)"
-    test = "! go test -timeout 5s $(git gochanged)"
-    cov = "! f() { for name in $(git gochanged); do go test -cover $name ; done; }; f "
-    lint = "! f() { for name in $(git changed | egrep '.go$' ); do go vet $name; golint $name; done; }; f "
+    gochanged = "! f() { for name in $(git changed | grep src/ | egrep '.go$'); do dir=$(dirname $name); echo $dir | perl -pne "s?src/??" ; done | sort | uniq; }; f "
+    install = "! go install -v $(git gochanged) $*"
+    installrace = "! go install -v -race $(git gochanged) $*"
+    test = "! go test -timeout 5s $(git gochanged) $*"
+    race = "! go test -race -timeout 5s $(git gochanged) $*"
+    bench = "! go test -run=xxx -bench=. $(git gochanged) $*"
+    benchcpu = "! go test -run=xxx -bench=. -cpuprofile=cpu.pprof $(git gochanged) $* && rlwrap go tool pprof *.test cpu.pprof"
+    benchobj = "! go test -run=xxx -bench=. -memprofile=mem.pprof $(git gochanged) $* && rlwrap go tool pprof --alloc_objects *.test mem.pprof"
+    benchspace = "! go test -run=xxx -bench=. -memprofile=mem.pprof $(git gochanged) $* && rlwrap go tool pprof --alloc_space *.test mem.pprof"
+    bcpu = "! f() { bench=$1; shift; go test -run=xxx -bench=$bench -cpuprofile=cpu.pprof $(git gochanged) $* && rlwrap go tool pprof *.test cpu.pprof; }; f"
+    bobj = "! f() { bench=$1; shift; go test -run=xxx -bench=$bench -memprofile=mem.pprof $(git gochanged) $* && rlwrap go tool pprof --alloc_objects *.test mem.pprof; }; f"
+    bspace = "! f() { bench=$1; shift; go test -run=xxx -bench=$bench -memprofile=mem.pprof $(git gochanged) $* && rlwrap go tool pprof --alloc_space *.test mem.pprof; }; f"
+    cov = "! f() { for name in $(git gochanged) $*; do go test -cover $name ; done; }; f "
+    coverage = "! go test -coverprofile .cover $1 && go tool cover -html .cover && rm .cover"
+    lint = "! git changed | grep .go | xargs -n 1 golint"
     fmt =  "! f() { for name in $(git changed | egrep '.go$' ); do gofmt -s -w $name; done; }; f "
-    err = "! errcheck -blank $(git gochanged)"
+    err = "! errcheck -blank $(git gochanged) $*"
+
+    testwatch = "! git changed | entr bash -c \"date && git test\""
+    covwatch = "! git changed | entr bash -c \"date && git cov\""
 
     gl = "! git log --graph --pretty=format:\"%C(yellow)%h %C(reset)%s - %C(bold blue)%an %C(red)(%ar)\""
     glm = "! git log --merges --pretty=format:\"    %C(yellow)%h %C(reset)%s - %C(bold blue)%an %C(red)(%ar)%C(reset)\" | grep -v \"Merge branch 'master' into\" | grep -v \"Merge master into\" | less -R"
 
 [push]
     default = current
+[http]
+	cookiefile = /Users/matt/.gitcookies
