@@ -1,4 +1,4 @@
-export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$(exit_code="\$?"; ((\$exit_code)) && echo \$exit_code || echo \$)\[\033[00m\] "
+export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$(exit_code="\$?"; ((\$exit_code)) && echo \"[\$exit_code] \" )\$\[\033[00m\] "
 if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* ]]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
