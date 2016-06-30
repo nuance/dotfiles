@@ -38,7 +38,7 @@
     gochanged = "! f() { for name in $(git changed | grep src/ | egrep '.go$'); do dir=$(dirname $name); echo $dir | perl -pne "s?src/??" ; done | sort | uniq; }; f "
     install = "! go install -v $(git gochanged) $*"
     installrace = "! go install -v -race $(git gochanged) $*"
-    test = "! go test -timeout 5s $(git gochanged) $*"
+    test = "! git install && go test -timeout 5s $(git gochanged) $*"
     race = "! go test -race -timeout 5s $(git gochanged) $*"
     bench = "! go test -run=xxx -bench=. $(git gochanged) $*"
     benchcpu = "! go test -run=xxx -bench=. -cpuprofile=cpu.pprof $(git gochanged) $* && rlwrap go tool pprof *.test cpu.pprof"
@@ -54,6 +54,7 @@
     err = "! errcheck -blank $(git gochanged) $*"
 
     testwatch = "! git changed | entr bash -c \"date && git test\""
+    ctestwatch = "! git changed | entr bash -c \"clear && date && git test\""
     covwatch = "! git changed | entr bash -c \"date && git cov\""
 
     gl = "! git log --graph --pretty=format:\"%C(yellow)%h %C(reset)%s - %C(bold blue)%an %C(red)(%ar)\""
