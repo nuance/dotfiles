@@ -2,7 +2,7 @@
 
 mkdir ~/.backup.d
 for file in `ls`; do
-    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ -d "$file" ]; then
+    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ -d "$file" ]; then
         continue
     fi
 
