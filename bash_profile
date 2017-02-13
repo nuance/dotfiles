@@ -1,9 +1,10 @@
+# PS1 is "(remote host name)? (directory) ([non-zero exit code])? $"
 export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$(exit_code="\$?"; ((\$exit_code)) && echo \"[\$exit_code] \" )\$\[\033[00m\] "
 if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* ]]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin
+export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
 alias ls="ls -G"
@@ -31,8 +32,6 @@ fi
 
 alias g=git
 alias gg="git grep"
-alias docker.vagrant='docker -H localhost:4243'
-alias docker.married='docker -H localhost:4244'
 
 alias onepage='head -n $(echo "$(tput lines) - 2" | bc)'
 
