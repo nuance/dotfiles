@@ -1,0 +1,41 @@
+{
+	"caret_style": "phase",
+	"color_scheme": "Packages/User/gruvbox (Dark) (Soft) (Flake8Lint).tmTheme",
+	"env":
+	{
+		"PATH": "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/X11/bin:/usr/local/go/bin:/Users/matt/bin:/usr/local/go/bin:/Users/matthj/bin"
+	},
+	"font_face": "SF Mono Regular",
+	"font_size": 11,
+	"gruvbox_panel_xxs": true,
+	"gruvbox_scrollbar_width_xs": true,
+	"gruvbox_sidebar_compact": true,
+	"gruvbox_statusbar_font_size_10": true,
+	"gruvbox_statusbar_xxs": true,
+	"highlight_line": true,
+	"ignored_packages":
+	[
+		"BeautifyRust",
+		"Boxy Theme",
+		"Dockerfile Syntax Highlighting",
+		"GitSavvy",
+		"JavaScript",
+		"SublimeCodeIntel",
+		"Vintage"
+	],
+	"indent_to_bracket": false,
+	"index_exclude_patterns":
+	[
+		"*.gitchanged"
+	],
+	"rulers":
+	[
+		120
+	],
+	"show_definitions": false,
+	"show_full_path": true,
+	"theme": "gruvbox (Dark) (Soft).sublime-theme",
+	"translate_tabs_to_spaces": true,
+	"word_separators": "./\\()\"'-,.;<>~!@#$%^&*|+=[]{}`~?",
+	"word_wrap": true
+}
