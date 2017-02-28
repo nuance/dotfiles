@@ -1,6 +1,6 @@
 # PS1 is "(remote host name)? (directory) ([non-zero exit code])? $"
 export PS1="\[\033[0;32m\]\W\[\033[00m\] \[\033[0;31m\]\$(exit_code="\$?"; ((\$exit_code)) && echo \"[\$exit_code] \" )\$\[\033[00m\] "
-if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* ]]; then
+if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* && "$(hostname)" != *mjones ]]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
