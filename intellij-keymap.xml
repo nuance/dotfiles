@@ -1,0 +1,71 @@
+<keymap version="1" name="Sublimeish" parent="Mac OS X 10.5+">
+  <action id="CompareTwoFiles" />
+  <action id="Debug" />
+  <action id="Diff.ShowDiff" />
+  <action id="Diff.ShowSettingsPopup" />
+  <action id="EditorDelete">
+    <keyboard-shortcut first-keystroke="delete" />
+    <keyboard-shortcut first-keystroke="ctrl d" />
+  </action>
+  <action id="EditorDeleteToWordEnd">
+    <keyboard-shortcut first-keystroke="alt delete" />
+    <keyboard-shortcut first-keystroke="alt d" />
+  </action>
+  <action id="EditorDuplicate" />
+  <action id="EditorLineEndWithSelection">
+    <keyboard-shortcut first-keystroke="shift end" />
+    <keyboard-shortcut first-keystroke="shift meta right" />
+    <keyboard-shortcut first-keystroke="shift ctrl e" />
+  </action>
+  <action id="EditorLineStartWithSelection">
+    <keyboard-shortcut first-keystroke="shift home" />
+    <keyboard-shortcut first-keystroke="shift meta left" />
+    <keyboard-shortcut first-keystroke="shift ctrl a" />
+  </action>
+  <action id="EditorNextWord">
+    <keyboard-shortcut first-keystroke="alt right" />
+    <keyboard-shortcut first-keystroke="alt f" />
+  </action>
+  <action id="EditorPreviousWord">
+    <keyboard-shortcut first-keystroke="alt left" />
+    <keyboard-shortcut first-keystroke="alt b" />
+  </action>
+  <action id="EditorScrollToCenter">
+    <keyboard-shortcut first-keystroke="ctrl l" />
+  </action>
+  <action id="EditorSelectWord">
+    <keyboard-shortcut first-keystroke="alt up" />
+    <keyboard-shortcut first-keystroke="meta d" />
+  </action>
+  <action id="FileChooser.GotoDesktop" />
+  <action id="FindUsages">
+    <keyboard-shortcut first-keystroke="alt f7" />
+    <keyboard-shortcut first-keystroke="shift ctrl h" />
+  </action>
+  <action id="GotoDeclaration">
+    <keyboard-shortcut first-keystroke="meta b" />
+    <mouse-shortcut keystroke="meta button1" />
+    <mouse-shortcut keystroke="button2" />
+    <keyboard-shortcut first-keystroke="ctrl h" />
+  </action>
+  <action id="GotoFile">
+    <keyboard-shortcut first-keystroke="shift meta o" />
+    <keyboard-shortcut first-keystroke="meta t" />
+  </action>
+  <action id="GotoSymbol">
+    <keyboard-shortcut first-keystroke="meta alt o" />
+    <keyboard-shortcut first-keystroke="shift meta t" />
+  </action>
+  <action id="GotoTest" />
+  <action id="Images.ShowThumbnails" />
+  <action id="SelectNextOccurrence">
+    <keyboard-shortcut first-keystroke="ctrl g" />
+    <keyboard-shortcut first-keystroke="shift meta d" />
+  </action>
+  <action id="SendEOF" />
+  <action id="ShelvedChanges.Diff" />
+  <action id="TypeHierarchy" />
+  <action id="TypeHierarchyBase.BaseOnThisType" />
+  <action id="Vcs.UpdateProject" />
+  <action id="XDebugger.CopyWatch" />
+</keymap>
