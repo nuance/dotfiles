@@ -2,7 +2,7 @@
 
 mkdir ~/.backup.d
 for file in `ls`; do
-    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ -d "$file" ]; then
+    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ "$file" == "intellij-keymap.xml" ] || [ -d "$file" ]; then
         continue
     fi
 
@@ -13,6 +13,9 @@ for file in `ls`; do
 
     ln -s `pwd`/$file ~/.$file
 done
+
+mkdir -p ~/Library/Preferences/IdeaIC2016.3/keymaps
+ln -s `pwd`/intellij-keymap.xml ~/Library/Preferences/IdeaIC2016.3/keymaps/
 
 for dir in `ls`; do
     if [ ! -d "$dir" ]; then
