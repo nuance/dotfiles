@@ -20,7 +20,11 @@
     lg = log -p
     ds = diff --staged
     dss = diff --staged --summary --stat
-    up = ! git fetch -n origin && git rebase origin/master
+
+    u = fetch -n origin
+    p = rebase origin/master
+    up = ! git u && git p
+
     ms = merge --squash
     touch = commit --allow-empty
 
