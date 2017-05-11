@@ -54,7 +54,7 @@ elif [[ -x /usr/share/source-highlight/src-hilite-lesspipe.sh ]]; then
     LESSPIPE="/usr/share/source-highlight/src-hilite-lesspipe.sh"
 fi
 
-if [[ LESSPIPE != "" ]]; then
+if [[ $LESSPIPE != "" ]]; then
     export LESSOPEN="| ${LESSPIPE} %s"
     export LESS='-R'
 fi
