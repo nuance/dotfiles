@@ -1,4 +1,6 @@
 * DONE cmd-d to select current word / add cursor
 * DONE cmd-shift-l to put cursors on each line
+* DONE python flake8
+* DONE python yapf
 * TODO learn global search-replace
 
