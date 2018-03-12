@@ -3,6 +3,6 @@ thumb_mode=MAC
 key_click_tone=OFF
 toggle_tone=OFF
 macro_disable=OFF
-macro_speed=3
+macro_speed=9
 power_user=true
 
