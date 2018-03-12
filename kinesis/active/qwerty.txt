@@ -20,3 +20,7 @@
 {lshift}{left}>{`}
 {right}>{-lshift}{`}{+lshift}
 {lshift}{right}>{`}
+{hyphen}>{-lshift}{hyphen}{+lshift}
+{lshift}{hyphen}>{hyphen}
+{pup}>{-lalt}{x}{+lalt}
+{home}>{-rctrl}{g}{+rctrl}
