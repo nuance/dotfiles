@@ -44,7 +44,7 @@
  '(custom-safe-themes
    (quote
     ("ed2b5df51c3e1f99207074f8a80beeb61757ab18970e43d57dec34fe21af2433" "4eb982b248bf818a72877ecb126a2f95d71eea24680022789b14c3dec7629c1b" default)))
- '(package-selected-packages (quote (org gruvbox-theme))))
+ '(package-selected-packages (quote (magit company org))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
