@@ -16,7 +16,11 @@
 ** TODO shared python virtualenv for company-jedi / flake8 / yapf
 ** TODO Company jedi completions include argument names? maybe as a yasnippet?
 ** TODO learn global search-replace
+** TODO s-T -> global jump to symbol
+** TODO s-t -> global jump to file
+** DONE s-<mouse 1> add cursor
 * TODO Configuration cleanup
 ** TODO remove extra / unused packages
 ** TODO remove unnecessary requires
 ** TODO organize configuration
+look into use-package: http://pragmaticemacs.com/emacs/add-multiple-cursors-with-mouse-clicks/
