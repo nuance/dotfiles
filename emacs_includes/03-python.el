@@ -20,3 +20,10 @@
 
 (require 'py-yapf)
 (add-hook 'python-mode-hook 'py-yapf-enable-on-save)
+
+(global-set-key (kbd "s-B") 'compile)
+(global-set-key (kbd "s-b") 'recompile)
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq company-backends '(company-jedi))))
