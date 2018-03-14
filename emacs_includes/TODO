@@ -1,6 +1,22 @@
-* DONE cmd-d to select current word / add cursor
-* DONE cmd-shift-l to put cursors on each line
-* DONE python flake8
-* DONE python yapf
-* TODO learn global search-replace
-
+* TODO Initial configuration
+** DONE cmd-d to select current word / add cursor
+** DONE cmd-shift-l to put cursors on each line
+** DONE python flake8
+** DONE python yapf
+** DONE remove helm
+** DONE JSON pretty-printer
+** DONE cmd-d should select current symbol if no region
+** TODO cmd-d bug with selecting previous word if on first character
+** TODO cmd-d should select symbol not word
+** DONE typeahead tab-completion
+** DONE C-\ is comment-region
+** TODO C-[] indent / dedent region
+** DONE Hide backup files
+** DONE python autocomplete
+** TODO shared python virtualenv for company-jedi / flake8 / yapf
+** TODO Company jedi completions include argument names? maybe as a yasnippet?
+** TODO learn global search-replace
+* TODO Configuration cleanup
+** TODO remove extra / unused packages
+** TODO remove unnecessary requires
+** TODO organize configuration
