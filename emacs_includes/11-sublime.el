@@ -22,8 +22,3 @@
 
 (electric-pair-mode 1)
 (show-paren-mode)
-
-(defun beautify-json (start end)
-  "Formats JSON at point."
-  (interactive "r")
-  (shell-command-on-region start end "python -mjson.tool" nil t))
