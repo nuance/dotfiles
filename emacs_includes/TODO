@@ -13,7 +13,7 @@
 ** DONE C-\ is comment-region
 ** DONE Hide backup files
 ** DONE python autocomplete
-** TODO s-/ is comment-region
+** DONE C-\ and s-/ are comment-line-or-region
 ** TODO s-[] indent / dedent region
 ** TODO shared python virtualenv for company-jedi / flake8 / yapf
 ** TODO s-R -> global jump to symbol
