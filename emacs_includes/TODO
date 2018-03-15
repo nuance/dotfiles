@@ -6,21 +6,24 @@
 ** DONE remove helm
 ** DONE JSON pretty-printer
 ** DONE cmd-d should select current symbol if no region
-** TODO cmd-d bug with selecting previous word if on first character
-** TODO cmd-d should select symbol not word
+** DONE cmd-d bug with selecting previous word if on first character
+** DONE cmd-d should select symbol not word
+** DONE s-<mouse 1> add cursor
 ** DONE typeahead tab-completion
 ** DONE C-\ is comment-region
-** TODO C-[] indent / dedent region
 ** DONE Hide backup files
 ** DONE python autocomplete
+** TODO s-/ is comment-region
+** TODO s-[] indent / dedent region
 ** TODO shared python virtualenv for company-jedi / flake8 / yapf
-** TODO Company jedi completions include argument names? maybe as a yasnippet?
-** TODO learn global search-replace
-** TODO s-T -> global jump to symbol
+** TODO s-R -> global jump to symbol
+** TODO s-r -> jump to symbol in file
 ** TODO s-t -> global jump to file
-** DONE s-<mouse 1> add cursor
+** TODO Company jedi completions include argument names? maybe as a yasnippet?
 * TODO Configuration cleanup
 ** TODO remove extra / unused packages
 ** TODO remove unnecessary requires
 ** TODO organize configuration
 look into use-package: http://pragmaticemacs.com/emacs/add-multiple-cursors-with-mouse-clicks/
+* TODO General learning
+** TODO learn global search-replace
