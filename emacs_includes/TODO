@@ -24,7 +24,9 @@
 ** TODO s-r -> jump to symbol in file
 ** DONE s-t -> global jump to file
 ** TODO Company jedi completions include argument names? maybe as a yasnippet?
-** TODO Add column number to mode line
+** DONE Add column number to mode line
+** TODO Add vertical rules
+** TODO Kill trailing whitespace
 * TODO Configuration cleanup
 ** TODO remove extra / unused packages
 ** TODO remove unnecessary requires
