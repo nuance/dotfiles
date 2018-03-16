@@ -10,23 +10,39 @@
   "Formats the current project.")
 (put 'mode-line-project 'risky-local-variable t)
 
-;; (message mode-line-format)
+(defun simple-mode-line-render (left right)
+  "Return a string of `window-width' length containing LEFT aligned respectively."
+  (let* ((available-width (- (window-width) (length left) (length right) 2)))
+    (format (format "%%%ds " available-width) " ")))
+
+(defvar mode-line-center-space
+  '(:propertize
+    (:eval (simple-mode-line-render (format-mode-line mode-line-left) (format-mode-line mode-line-right)))
+    face mode-line-project)
+  "Builds center spacing.")
+(put 'mode-line-center-space 'risky-local-variable t)
+
+(setq mode-line-left
+      '("%e"
+	mode-line-front-space
+	mode-line-client
+	mode-line-modified
+	" "
+	mode-line-position
+	" "
+	mode-line-buffer-identification))
+
+(setq mode-line-right
+      '(
+	(flycheck-mode flycheck-mode-line)
+	" "
+	(vc-mode vc-mode)
+	" "
+	mode-line-project
+	" "
+	mode-name
+	mode-line-misc-info
+	mode-line-end-spaces))
+
 (setq-default mode-line-format
-	      '("%e"
-		mode-line-front-space
-		mode-line-client
-		mode-line-modified
-		" "
-		mode-line-position
-		" "
-		mode-line-buffer-identification
-		" "
-		(flycheck-mode flycheck-mode-line)
-		" "
-		(vc-mode vc-mode)
-		" "
-		mode-line-project
-		" "
-		mode-name
-		mode-line-misc-info
-		mode-line-end-spaces))
+	      (append mode-line-left '(mode-line-center-space) mode-line-right))
