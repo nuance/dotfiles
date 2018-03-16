@@ -29,6 +29,8 @@
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "s-P") 'smex)
 
+(global-set-key (kbd "s-t") 'projectile-find-file)
+
 (electric-pair-mode 1)
 (show-paren-mode)
 (global-diff-hl-mode)

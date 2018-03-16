@@ -5,7 +5,7 @@ if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* && "$(hostname)"
 fi
 
 export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin
-export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
+# export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
 alias ls="ls -G"
 
