@@ -14,6 +14,8 @@
 ** DONE Hide backup files
 ** DONE python autocomplete
 ** DONE C-\ and s-/ are comment-line-or-region
+** DONE git gutter
+** DONE show line numbers
 ** TODO s-[] indent / dedent region
 ** TODO shared python virtualenv for company-jedi / flake8 / yapf
 ** TODO s-R -> global jump to symbol
