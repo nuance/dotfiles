@@ -13,7 +13,7 @@
     ci = commit
     cim = commit -am
     ca = commit --amend -a --no-edit
-    br = branch -vv
+    br = branch -vv --sort="-committerdate"
     co = checkout
     df = diff
     dff = diff --summary --stat

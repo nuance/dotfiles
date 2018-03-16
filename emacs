@@ -1,5 +1,7 @@
 ;; -*- mode: emacs-lisp -*-
 
+(setq gc-cons-threshold 20000000)
+
 (require 'package)
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
@@ -8,7 +10,10 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 
 (ido-mode t)
+(ido-everywhere t)
+(flx-ido-mode t)
 (setq ido-enable-flex-matching t)
+(setq ido-use-faces nil)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;; This is your old M-x.
@@ -66,7 +71,7 @@
     ("ed2b5df51c3e1f99207074f8a80beeb61757ab18970e43d57dec34fe21af2433" "4eb982b248bf818a72877ecb126a2f95d71eea24680022789b14c3dec7629c1b" default)))
  '(package-selected-packages
    (quote
-    (diff-hl company-quickhelp company-jedi smex py-yapf pyvenv flycheck multiple-cursors magit company))))
+    (flx-ido projectile all-the-icons diff-hl company-quickhelp company-jedi smex py-yapf pyvenv flycheck multiple-cursors magit company))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -1,3 +1,4 @@
+# -*- mode: org -*-
 * TODO Initial configuration
 ** DONE cmd-d to select current word / add cursor
 ** DONE cmd-shift-l to put cursors on each line
@@ -18,9 +19,10 @@
 ** DONE show line numbers
 ** TODO s-[] indent / dedent region
 ** TODO shared python virtualenv for company-jedi / flake8 / yapf
+** TODO automatically enable virtualenv in project root if found / not currently active
 ** TODO s-R -> global jump to symbol
 ** TODO s-r -> jump to symbol in file
-** TODO s-t -> global jump to file
+** DONE s-t -> global jump to file
 ** TODO Company jedi completions include argument names? maybe as a yasnippet?
 ** TODO Add column number to mode line
 * TODO Configuration cleanup
