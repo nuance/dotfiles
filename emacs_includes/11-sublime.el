@@ -31,3 +31,6 @@
 
 (electric-pair-mode 1)
 (show-paren-mode)
+(global-diff-hl-mode)
+(diff-hl-margin-mode)
+(global-linum-mode)
