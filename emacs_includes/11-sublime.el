@@ -36,3 +36,5 @@
 (global-diff-hl-mode)
 (diff-hl-margin-mode)
 (global-linum-mode)
+(global-hl-line-mode +1)
+
