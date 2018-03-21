@@ -2,10 +2,18 @@
 
 (setq gc-cons-threshold most-positive-fixnum)
 
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize)
+(let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
+      (bootstrap-version 3))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
 
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
@@ -19,4 +27,5 @@
       backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
 (setq custom-file "~/.emacs.d/emacs-custom.el")
+(unless (file-exists-p custom-file) (write-region "" "" custom-file))
 (load custom-file)
