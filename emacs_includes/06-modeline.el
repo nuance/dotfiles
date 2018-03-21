@@ -6,7 +6,7 @@
 (defvar mode-line-project
   '(:propertize
     (:eval (if (projectile-project-name) (concat "[" (projectile-project-name) "]") ""))
-    face mode-line-project)
+    face mode-line)
   "Formats the current project.")
 (put 'mode-line-project 'risky-local-variable t)
 
@@ -18,7 +18,7 @@
 (defvar mode-line-center-space
   '(:propertize
     (:eval (simple-mode-line-render (format-mode-line mode-line-left) (format-mode-line mode-line-right)))
-    face mode-line-project)
+    face mode-line)
   "Builds center spacing.")
 (put 'mode-line-center-space 'risky-local-variable t)
 
