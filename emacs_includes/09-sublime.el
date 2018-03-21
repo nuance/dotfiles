@@ -33,7 +33,11 @@
 
 (global-set-key (kbd "s-t") 'projectile-find-file)
 
-(use-package dtrt-indent)
+(use-package dtrt-indent
+  :ensure t
+  :config
+  (dtrt-indent-mode 1)
+  )
 
 (electric-pair-mode 1)
 (show-paren-mode)
