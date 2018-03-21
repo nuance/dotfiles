@@ -29,8 +29,6 @@
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
 
-(mapc 'load (directory-files "~/.emacs_includes" t "^[0-9]+.*\.el$"))
-
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq apropos-do-all t
       load-prefer-newer t
@@ -40,3 +38,10 @@
 (setq custom-file "~/.emacs.d/emacs-custom.el")
 (unless (file-exists-p custom-file) (write-region "" "" custom-file))
 (load custom-file)
+
+;; === CONCAT ===
+;; Content below the previous comment will be replaced with inlined elisp files for the copy of this on https://mhjones.org/emacs.
+;; Concatenation is performed via the concat_emacs_config.py script
+;; This lets me set up a machine by running 'curl -o .emacs https://mhjones.org/emacs'
+(mapc 'load (directory-files "~/.emacs_includes" t "^[0-9]+.*\.el$"))
+
