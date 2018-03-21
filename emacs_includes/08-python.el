@@ -30,4 +30,5 @@
 
 (use-package company-jedi
   :straight t
-  :hook (python-mode-hook . (lambda () (setq company-backends '(company-jedi)))))
+  :config (add-to-list 'company-backends 'company-jedi))
+  ;; :hook (python-mode-hook . (lambda () (setq company-backends '(company-jedi)))))
