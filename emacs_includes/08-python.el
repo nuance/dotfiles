@@ -30,5 +30,9 @@
 
 (use-package company-jedi
   :straight t
-  :config (add-to-list 'company-backends 'company-jedi))
-  ;; :hook (python-mode-hook . (lambda () (setq company-backends '(company-jedi)))))
+  :config
+  (progn
+    ;; install jedi-server on first run
+    (unless (file-directory-p "~/.emacs.d/.python-environments/default")
+      (jedi:install-server-block))
+    (add-to-list 'company-backends 'company-jedi)))
