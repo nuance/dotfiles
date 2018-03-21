@@ -1,7 +1,7 @@
 (use-package company
   :straight t
   :init (setq company-idle-delay 0.1)
-  :hook (after-init-hook . global-company-mode))
+  :config (global-company-mode))
 
 (use-package company-quickhelp
   :straight t
