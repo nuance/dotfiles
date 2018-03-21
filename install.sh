@@ -2,7 +2,7 @@
 
 mkdir ~/.backup.d
 for file in `ls`; do
-    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ "$file" == "intellij-keymap.xml" ] || [ "$file" == "concat_emacs_config.py"] || "$file" == "emacs.concat.el" || [ -d "$file" ]; then
+    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ "$file" == "intellij-keymap.xml" ] || [ "$file" == "concat_emacs_config.py"] || "$file" == "emacs.concat.el" || "$file" == "emacs-pkg-versions.el" || [ -d "$file" ]; then
         continue
     fi
 
@@ -16,6 +16,9 @@ done
 
 mkdir -p ~/Library/Preferences/IdeaIC2016.3/keymaps
 ln -s `pwd`/intellij-keymap.xml ~/Library/Preferences/IdeaIC2016.3/keymaps/
+
+mkdir -p ~/.emacs.d/straight/versions
+ln -s `pwd`/emacs-pkg-versions.el ~/.emacs.d/straight/versions/default.el
 
 for dir in `ls`; do
     if [ ! -d "$dir" ]; then
