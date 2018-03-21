@@ -1,5 +1,7 @@
 ;; Functionality I miss from sublime text (primarily multiple cursor support)
 
+(setq require-final-newline t)
+
 (require 'multiple-cursors)
 (global-set-key (kbd "s-L") 'mc/edit-lines)
 
@@ -31,10 +33,12 @@
 
 (global-set-key (kbd "s-t") 'projectile-find-file)
 
+(use-package dtrt-indent)
+
 (electric-pair-mode 1)
 (show-paren-mode)
 (global-diff-hl-mode)
 (diff-hl-margin-mode)
 (global-linum-mode)
 (global-hl-line-mode +1)
-
+(global-auto-revert-mode t)
