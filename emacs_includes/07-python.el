@@ -1,29 +1,33 @@
 ;; flycheck linting
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(require 'pyvenv)
+(use-package flycheck
+  :straight t
+  :hook ('prog-mode . #'global-flycheck-mode))
 
-;; We can safely declare this function, since we'll only call it in Python Mode,
-;; that is, when python.el was already loaded.
-(declare-function python-shell-calculate-exec-path "python")
+(use-package pyvenv
+  :straight t
+  :config
+  (progn
+    ;; We can safely declare this function, since we'll only call it in Python Mode,
+    ;; that is, when python.el was already loaded.
+    (declare-function python-shell-calculate-exec-path "python")
 
-(defun flycheck-virtualenv-executable-find (executable)
-  "Find an EXECUTABLE in the current virtualenv if any."
-  (if (bound-and-true-p python-shell-virtualenv-root)
-      (let ((exec-path (python-shell-calculate-exec-path)))
-        (executable-find executable))
-    (executable-find executable)))
+    (defun flycheck-virtualenv-executable-find (executable)
+      "Find an EXECUTABLE in the current virtualenv if any."
+      (if (bound-and-true-p python-shell-virtualenv-root)
+	  (let ((exec-path (python-shell-calculate-exec-path)))
+	    (executable-find executable))
+	(executable-find executable)))
 
-(defun flycheck-virtualenv-setup ()
-  "Setup Flycheck for the current virtualenv."
-  (setq-local flycheck-executable-find #'flycheck-virtualenv-executable-find))
+    (defun flycheck-virtualenv-setup ()
+      "Setup Flycheck for the current virtualenv."
+      (setq-local flycheck-executable-find #'flycheck-virtualenv-executable-find))
+    ))
 
-(require 'py-yapf)
-(add-hook 'python-mode-hook 'py-yapf-enable-on-save)
+(use-package py-yapf
+  :straight t
+  :hook (python-mode-hook . py-yapf-enable-on-save))
 
-(global-set-key (kbd "s-B") 'compile)
-(global-set-key (kbd "s-b") 'recompile)
-
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq company-backends '(company-jedi))))
+(use-package company-jedi
+  :straight t
+  :hook (python-mode-hook . (lambda () (setq company-backends '(company-jedi)))))

@@ -2,9 +2,6 @@
 
 (setq require-final-newline t)
 
-(require 'multiple-cursors)
-(global-set-key (kbd "s-L") 'mc/edit-lines)
-
 (defun select-symbol ()
     "Sets the region to the symbol under the point"
     (interactive)
@@ -14,9 +11,12 @@
 	(goto-char (cdr bounds))
 	(setq mark-active t))))
 
-(global-set-key (kbd "s-d") 'select-symbol)
-(global-set-key (kbd "s-D") 'mc/mark-all-symbols-like-this)
-(global-set-key (kbd "s-<mouse-1>") 'mc/add-cursor-on-click)
+(use-package multiple-cursors
+  :straight t
+  :bind (("s-L" . 'mc/edit-lines)
+	 ("s-d" . 'select-symbol)
+	 ("s-D" . 'mc/mark-all-symbols-like-this)
+	 ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
 
 (defun comment-line-or-region (beg end)
   "Comment a region or the current line."
@@ -33,16 +33,25 @@
 
 (global-set-key (kbd "s-t") 'projectile-find-file)
 
+(global-set-key (kbd "s-B") 'compile)
+(global-set-key (kbd "s-b") 'recompile)
+
 (use-package dtrt-indent
-  :ensure t
+  :straight t
   :config
   (dtrt-indent-mode 1)
   )
 
 (electric-pair-mode 1)
 (show-paren-mode)
-(global-diff-hl-mode)
-(diff-hl-margin-mode)
+
+(use-package diff-hl
+  :straight t
+  :config
+  (progn
+    (global-diff-hl-mode)
+    (diff-hl-margin-mode)))
+
 (global-linum-mode)
 (global-hl-line-mode +1)
 (global-auto-revert-mode t)
