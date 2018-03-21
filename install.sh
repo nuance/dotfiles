@@ -2,7 +2,7 @@
 
 mkdir ~/.backup.d
 for file in `ls`; do
-    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ "$file" == "intellij-keymap.xml" ] || [ -d "$file" ]; then
+    if [ "$file" == "install.sh" ] || [ "$file" == "README.md" ] || [ "$file" == "brew_packages" ] || [ "$file" == "intellij-keymap.xml" ] || [ "$file" == "concat_emacs_config.py"] || "$file" == "emacs.concat.el" || [ -d "$file" ]; then
         continue
     fi
 
