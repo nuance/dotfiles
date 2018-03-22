@@ -5,6 +5,7 @@
 (setq inhibit-startup-message t)
 ;; Don't let Emacs hurt your ears
 (setq visible-bell t)
+(setq cursor-type 'hbar)
 
 (setq ring-bell-function
       (lambda ()
