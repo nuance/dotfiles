@@ -5,3 +5,6 @@
   :straight t
   :mode "\\.yml\\'")
 
+(use-package aggressive-indent
+  :straight t
+  :hook ('prog-mode . #'aggressive-indent-mode))
