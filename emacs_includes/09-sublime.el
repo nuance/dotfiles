@@ -31,8 +31,6 @@
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "s-P") 'smex)
 
-(global-set-key (kbd "s-t") 'projectile-find-file)
-
 (global-set-key (kbd "s-B") 'compile)
 (global-set-key (kbd "s-b") 'recompile)
 
@@ -55,3 +53,4 @@
 (global-linum-mode)
 (global-hl-line-mode +1)
 (global-auto-revert-mode t)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
