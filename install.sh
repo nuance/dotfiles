@@ -17,9 +17,6 @@ done
 mkdir -p ~/Library/Preferences/IdeaIC2016.3/keymaps
 ln -s `pwd`/intellij-keymap.xml ~/Library/Preferences/IdeaIC2016.3/keymaps/
 
-mkdir -p ~/.emacs.d/straight/versions
-ln -s `pwd`/emacs-pkg-versions.el ~/.emacs.d/straight/versions/default.el
-
 for dir in `ls`; do
     if [ ! -d "$dir" ]; then
         continue
@@ -44,3 +41,8 @@ for dir in `ls`; do
         ln -s `pwd`/$dir/$file ~/.$dir/$file
     done
 done
+
+# perform initial emacs package fetch
+mkdir -p ~/.emacs.d/straight/versions
+ln -s `pwd`/emacs-pkg-versions.el ~/.emacs.d/straight/versions/default.el
+emacs --batch --load ~/.emacs
