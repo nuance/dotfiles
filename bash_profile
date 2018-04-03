@@ -64,3 +64,5 @@ export PYTHONIOENCODING=UTF-8
 for src in `ls ~/.bash_includes`; do
     source ~/.bash_includes/$src
 done
+
+#CHEF.NO.SOURCE
