@@ -3,13 +3,13 @@
 (setq require-final-newline t)
 
 (defun select-symbol ()
-    "Sets the region to the symbol under the point"
-    (interactive)
-    (let ((bounds (find-tag-default-bounds)))
-      (progn
-	(set-mark (car bounds))
-	(goto-char (cdr bounds))
-	(setq mark-active t))))
+  "Sets the region to the symbol under the point."
+  (interactive)
+  (let ((bounds (find-tag-default-bounds)))
+    (progn
+      (set-mark (car bounds))
+      (goto-char (cdr bounds))
+      (setq mark-active t))))
 
 (use-package multiple-cursors
   :straight t
@@ -19,7 +19,7 @@
 	 ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
 
 (defun comment-line-or-region (beg end)
-  "Comment a region or the current line."
+  "Comment a region (between BEG and END) or the current line."
   (interactive "*r")
   (save-excursion
     (if (region-active-p)
