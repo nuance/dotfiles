@@ -1,5 +1,4 @@
 (use-package magit
-  :straight t
   :commands magit-status magit-blame
   :init
   (defadvice magit-status (around magit-fullscreen activate)
@@ -17,30 +16,30 @@
   :bind ("C-x g" . magit-status))
 
 (use-package git-timemachine
-  :straight t)
+  :ensure t)
 
 (use-package yaml-mode
-  :straight t
+  :ensure t
   :mode "\\.yml\\'")
 
 (use-package aggressive-indent
-  :straight t
+  :ensure t
   :hook ('prog-mode . #'aggressive-indent-mode))
 
 ;; functional helpers
 (use-package dash
-  :straight t)
+  :ensure t)
 
 ;; string manipulation
 (use-package s
-  :straight t)
+  :ensure t)
 
 ;; filepath manipulation
 (use-package f
-  :straight t)
+  :ensure t)
 
 (use-package smartscan
-  :straight t
+  :ensure t
   :bind (("M-n" . smartscan-symbol-go-forward)
 	 ("M-p" . smartscan-symbol-go-backward)))
 

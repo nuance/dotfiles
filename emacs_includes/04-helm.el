@@ -1,5 +1,5 @@
 (use-package helm
-  :straight t
+  :ensure t
   :demand t
   :bind (("M-x" . 'helm-M-x)
 	 ("C-x r b" . 'helm-filtered-bookmarks)

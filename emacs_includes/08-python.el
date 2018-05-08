@@ -1,11 +1,11 @@
 ;; flycheck linting
 
 (use-package flycheck
-  :straight t
+  :ensure t
   :hook ('prog-mode . #'global-flycheck-mode))
 
 (use-package pyvenv
-  :straight t
+  :ensure t
   :config
   (progn
     ;; We can safely declare this function, since we'll only call it in Python Mode,
@@ -25,11 +25,11 @@
     ))
 
 (use-package py-yapf
-  :straight t
+  :ensure t
   :hook (python-mode-hook . py-yapf-enable-on-save))
 
 (use-package company-jedi
-  :straight t
+  :ensure t
   :config
   (progn
     ;; install jedi-server on first run
@@ -38,6 +38,6 @@
     (add-to-list 'company-backends '(company-jedi company-yasnippet))))
 
 (use-package yasnippet
-  :straight t
+  :ensure t
   :init (setq yas-snippet-dirs '("~/.emacs_includes/snippets"))
   :config (yas-global-mode 1))

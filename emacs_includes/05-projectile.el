@@ -1,4 +1,4 @@
 (use-package projectile
-  :straight t
+  :ensure t
   :hook ('prog-mode-hook . 'projectile-mode)
   :bind (("s-t" . 'projectile-find-file)))
