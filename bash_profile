@@ -1,3 +1,5 @@
+# -*- mode: shell-script; -*-
+
 # PS1 is "(remote host name)? (directory) ([non-zero exit code])? $"
 export PS1="\[\033[0;32m\]\W\[\033[00m\] \$(exit_code="\$?"; ((\$exit_code)) && echo \"\[\033[0;31m\][\$exit_code] $\" || echo \"\[\033[0;32m\]$\" )\[\033[00m\] "
 if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* && "$(hostname)" != *mjones ]]; then
@@ -12,13 +14,16 @@ alias ls="ls -G"
 
 if [[ $(which subl) ]]; then
     export EDITOR="subl -w"
+elif [[ $(which emacsclient) ]]; then
+    echo "Setting EDITOR to emacsclient"
+    export EDITOR="emacsclient -ta ''"
+elif [[ $(which emacs) ]]; then
+    echo "Setting EDITOR to emacs"
+    export EDITOR="emacs"
 elif [[ $(which atom-beta) ]]; then
     export EDITOR="atom-beta -w"
 elif [[ $(which atom) ]]; then
     export EDITOR="atom -w"
-elif [[ $(which emacs) ]]; then
-    echo "Setting EDITOR to emacs"
-    export EDITOR="emacs"
 elif [[ $(which vim) ]]; then
     echo "Setting EDITOR to vim"
     export EDITOR="vim"
