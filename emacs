@@ -2,29 +2,26 @@
 
 (setq gc-cons-threshold most-positive-fixnum)
 
+;; disable the GNU ELPA
+(setq package-archives nil)
+;; initialize the package system
+(package-initialize)
+
 ;; pin to a specific git-sha
-(let ((straight-sha "eeadf0fdaf6a9e4d89e51ef5f167c5cd99c6d54a"))
-  (setq
-   ;; don't poll fs for package updates
-   straight-check-for-modifications 'live
-   ;; only use melpa (FIXME: i wish this was melpa-stable)
-   straight-recipe-repositories '(melpa)
-   ;; fix branch to the pinned sha
-   straight-repository-branch straight-sha)
+(let ((quelpa-sha "1e57420158c158275c5a098951aca25651a41bc7"))
+  (package-initialize)
+  (unless (require 'quelpa nil t)
+    (with-temp-buffer
+      (url-insert-file-contents (concat "https://raw.github.com/quelpa/quelpa/" quelpa-sha  "/bootstrap.el"))
+      (eval-buffer))))
 
-  (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
-	(bootstrap-version 3))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-	  (url-retrieve-synchronously
-	   ;; load bootstrap from the sha
-	   (concat "https://raw.githubusercontent.com/raxod502/straight.el/" straight-sha "/install.el")
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage)))
-
-(straight-use-package 'use-package)
+(quelpa
+ '(quelpa-use-package
+   :fetcher github
+   :repo "quelpa/quelpa-use-package"))
+(require 'quelpa-use-package)
+(setq use-package-ensure-function 'quelpa
+      quelpa-stable-p t)
 
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
@@ -35,7 +32,7 @@
       save-place-file (concat user-emacs-directory "places")
       backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
-(setq custom-file "~/.emacs.d/emacs-custom.el")
+(setq custom-file "~/.emacs-custom.el")
 (unless (file-exists-p custom-file) (write-region "" "" custom-file))
 (load custom-file)
 

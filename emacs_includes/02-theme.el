@@ -1,4 +1,4 @@
 (use-package gruvbox-theme
-  :straight t
+  :ensure t
   :config
   (load-theme 'gruvbox-dark-medium t))

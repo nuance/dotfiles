@@ -12,7 +12,7 @@
       (setq mark-active t))))
 
 (use-package multiple-cursors
-  :straight t
+  :ensure t
   :bind (("s-L" . 'mc/edit-lines)
 	 ("s-d" . 'select-symbol)
 	 ("s-D" . 'mc/mark-all-symbols-like-this)
@@ -35,7 +35,7 @@
 (global-set-key (kbd "s-b") 'recompile)
 
 (use-package dtrt-indent
-  :straight t
+  :ensure t
   :config
   (dtrt-indent-mode 1)
   )
@@ -44,7 +44,7 @@
 (show-paren-mode)
 
 (use-package diff-hl
-  :straight t
+  :ensure t
   :config
   (progn
     (global-diff-hl-mode)
