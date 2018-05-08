@@ -44,4 +44,3 @@
 ;; Concatenation is performed via the concat_emacs_config.py script
 ;; This lets me set up a machine by running 'curl -o .emacs https://mhjones.org/emacs'
 (mapc 'load (directory-files "~/.emacs_includes" t "^[0-9]+.*\.el$"))
-
