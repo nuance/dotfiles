@@ -1,5 +1,5 @@
 (use-package company
-  :straight t
+  :ensure t
   :init (setq
 	 company-idle-delay 0.1
 	 company-auto-complete t
@@ -11,6 +11,6 @@
 	    (setq company-transformers '(company-sort-prefer-same-case-prefix))))
 
 (use-package company-quickhelp
-  :straight t
+  :ensure t
   :init (setq company-quickhelp-delay 0.1)
   :config (company-quickhelp-mode))
