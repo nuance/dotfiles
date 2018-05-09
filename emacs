@@ -2,6 +2,8 @@
 
 (setq gc-cons-threshold most-positive-fixnum)
 
+(customize-set-variable 'nsm-settings-file "~/.emacs_includes/network-security.data")
+
 ;; disable the GNU ELPA
 (setq package-archives nil)
 ;; initialize the package system
@@ -32,7 +34,7 @@
       save-place-file (concat user-emacs-directory "places")
       backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
-(setq custom-file "~/.emacs-custom.el")
+(setq custom-file "~/.emacs_includes/custom")
 (unless (file-exists-p custom-file) (write-region "" "" custom-file))
 (load custom-file)
 
