@@ -5,4 +5,5 @@
 	org-refile-targets '((org-agenda-files :maxlevel . 3))
 	org-refile-use-outline-path 'file
 	org-outline-path-complete-in-steps nil
-	org-refile-allow-creating-parent-nodes 'confirm))
+	org-refile-allow-creating-parent-nodes 'confirm
+	org-startup-folded t))

@@ -46,3 +46,6 @@
 (use-package eldoc
   :diminish eldoc-mode
   :init (setq eldoc-idle-display 0.1))
+
+(use-package lua-mode
+  :ensure t)
