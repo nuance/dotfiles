@@ -1,4 +1,5 @@
 (use-package magit
+  :ensure t
   :commands magit-status magit-blame
   :init
   (defadvice magit-status (around magit-fullscreen activate)
@@ -7,6 +8,8 @@
     (delete-other-windows))
   :config
   (setq magit-branch-arguments nil
+        ;; use ido to look for branches
+        magit-completing-read-function 'magit-ido-completing-read
         ;; don't put "origin-" in front of new branch names by default
         magit-default-tracking-name-function 'magit-default-tracking-name-branch-only
         magit-push-always-verify nil
@@ -15,8 +18,15 @@
 
   :bind ("C-x g" . magit-status))
 
-(use-package git-timemachine
-  :ensure t)
+(use-package monky
+  :ensure t
+  :init
+  (defadvice monky-status (around monky-fullscreen activate)
+    (window-configuration-to-register :monky-fullscreen)
+    ad-do-it
+    (delete-other-windows))
+  :config (setq monky-process-type 'cmdserver)
+  :bind ("C-x G" . monky-status))
 
 (use-package yaml-mode
   :ensure t
@@ -42,10 +52,3 @@
   :ensure t
   :bind (("M-n" . smartscan-symbol-go-forward)
 	 ("M-p" . smartscan-symbol-go-backward)))
-
-(use-package eldoc
-  :diminish eldoc-mode
-  :init (setq eldoc-idle-display 0.1))
-
-(use-package lua-mode
-  :ensure t)
