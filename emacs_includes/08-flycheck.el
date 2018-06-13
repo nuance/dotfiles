@@ -1,3 +1,3 @@
-;; (use-package flycheck
-;;   :straight t
-;;   :hook ('lua-mode . #'global-flycheck-mode))
+(use-package flycheck
+  :ensure t
+  :hook ('prog-mode . #'global-flycheck-mode))

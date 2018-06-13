@@ -3,7 +3,7 @@
 (setq require-final-newline t)
 
 (use-package multiple-cursors
-  :straight t
+  :ensure t
   :config
   (defun select-symbol (arg)
     "Sets the region to the symbol under the point"
@@ -55,7 +55,7 @@
 (global-set-key (kbd "s-l") 'goto-line)
 
 (use-package dtrt-indent
-  :straight t
+  :ensure t
   :config
   (dtrt-indent-mode 1)
   )
@@ -64,9 +64,16 @@
 (show-paren-mode)
 
 (use-package nlinum
-  :straight t
+  :ensure t
   :config
   (global-nlinum-mode))
+
+(when (window-system)
+  (use-package diff-hl
+    :ensure t
+    :config
+    (global-diff-hl-mode)
+    (diff-hl-margin-mode)))
 
 (global-hl-line-mode +1)
 (global-auto-revert-mode t)
