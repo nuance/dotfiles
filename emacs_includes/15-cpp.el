@@ -1,5 +1,5 @@
 (use-package cquery
-  :straight t
+  :ensure t
   :if
   (file-exists-p "/bin/cquery")
   :bind
@@ -19,20 +19,20 @@
       (user-error nil)))
   :init
   (use-package lsp-mode
-    :straight t
+    :ensure t
     :config
     (setq
      lsp-ui-sideline-show-code-actions nil
      lsp-ui-sideline-show-hover nil
      ))
   (use-package company-lsp
-    :straight t
+    :ensure t
     :config (add-to-list 'company-backends 'company-lsp))
   (use-package lsp-ui
-    :straight t
+    :ensure t
     :init (add-hook 'lsp-mode-hook 'lsp-ui-mode))
   (use-package helm-xref
-    :straight t
+    :ensure t
     :config
     (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
   (add-hook 'c-mode-common-hook #'cquery//enable)
@@ -55,7 +55,7 @@
                                 xref-find-definitions-other-frame
                                 xref-find-references)))
 (use-package clang-format
-  :straight t
+  :ensure t
   :config
   (progn
     (defun clang-format-before-save ()
@@ -67,19 +67,19 @@
   :hook ('before-save . #'clang-format-before-save))
 
 (use-package antlr-mode
-  :straight t)
+  :ensure t)
 
 
 ;; (use-package rtags
-;;   :straight t
+;;   :ensure t
 ;;   :init
 ;;   (setq rtags-autostart-diagnostics t)
 ;;   (rtags-diagnostics)
 ;;   (setq rtags-completions-enabled t)
 ;;   (push 'company-rtags company-backends)
 ;;   (use-package flycheck-rtags
-;;     :straight t)
+;;     :ensure t)
 ;;   (use-package helm-rtags
-;;     :straight t
+;;     :ensure t
 ;;     :config
 ;;     (setq rtags-display-result-backend 'helm)))
