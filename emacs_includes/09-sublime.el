@@ -65,6 +65,7 @@
 
 (use-package nlinum
   :ensure t
+  :quelpa (nlinum-1.8.1 :fetcher file :path "~/.emacs_includes/external/nlinum-1.8.1.el")
   :config
   (global-nlinum-mode))
 
