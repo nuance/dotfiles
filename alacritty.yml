@@ -517,5 +517,38 @@ key_bindings:
   - { key: Semicolon, mods: Command|Shift, chars: "\x18@s:"                       } # Command + :
   - { key: Slash,     mods: Command,       chars: "\x18@s/"                       } # Command + /
   - { key: Slash,     mods: Command|Shift, chars: "\x18@s?"                       } # Command + ?
-  - { key: Space,     mods: Control,       chars: "\x00"}
-  - { key: Slash,     mods: Control,       chars: "\x1f"}
+  - { key: Space,     mods: Control,       chars: "\x00"                          }
+  - { key: Slash,     mods: Control,       chars: "\x1f"                          }
+  # - { key: chars: "\x00"  ^@                                                    }
+  - { key: A,         mods: Control,       chars: "\x01"                          }
+  - { key: B,         mods: Control,       chars: "\x02"                          }
+  - { key: C,         mods: Control,       chars: "\x03"                          }
+  - { key: D,         mods: Control,       chars: "\x04"                          }
+  - { key: E,         mods: Control,       chars: "\x05"                          }
+  - { key: F,         mods: Control,       chars: "\x06"                          }
+  - { key: G,         mods: Control,       chars: "\x07"                          }
+  - { key: H,         mods: Control,       chars: "\x08"                          }
+  - { key: I,         mods: Control,       chars: "\x09"                          }
+  - { key: J,         mods: Control,       chars: "\x0A"                          }
+  - { key: K,         mods: Control,       chars: "\x0B"                          }
+  - { key: L,         mods: Control,       chars: "\x0C"                          }
+  - { key: M,         mods: Control,       chars: "\x0D"                          }
+  - { key: N,         mods: Control,       chars: "\x0E"                          }
+  - { key: O,         mods: Control,       chars: "\x0F"                          }
+  - { key: P,         mods: Control,       chars: "\x10"                          }
+  - { key: Q,         mods: Control,       chars: "\x11"                          }
+  - { key: R,         mods: Control,       chars: "\x12"                          }
+  - { key: S,         mods: Control,       chars: "\x13"                          }
+  - { key: T,         mods: Control,       chars: "\x14"                          }
+  - { key: U,         mods: Control,       chars: "\x15"                          }
+  - { key: V,         mods: Control,       chars: "\x16"                          }
+  - { key: W,         mods: Control,       chars: "\x17"                          }
+  - { key: X,         mods: Control,       chars: "\x18"                          }
+  - { key: Y,         mods: Control,       chars: "\x19"                          }
+  - { key: Z,         mods: Control,       chars: "\x1A"                          }
+  # - { key: chars: "\x1B"  ^[                                                    }
+  # - { key: chars: "\x1C"  ^\                                                    }
+  # - { key: chars: "\x1D"  ^]                                                    }
+  # - { key: chars: "\x1E"  ^^                                                    }
+  # - { key: chars: "\x1F"  ^_                                                    }
+  # - { key:  chars: "\x7F" ^?                                                    }
