@@ -25,7 +25,8 @@
 
 (use-package aggressive-indent
   :ensure t
-  :hook ('prog-mode . #'aggressive-indent-mode))
+  :config
+  (global-aggressive-indent-mode 1))
 
 ;; functional helpers
 (use-package dash
