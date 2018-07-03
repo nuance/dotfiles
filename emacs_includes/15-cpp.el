@@ -6,14 +6,7 @@
     (file-exists-p "/bin/cquery")
     :bind
     (:map c-mode-base-map
-          ("M-." . xref-find-definitions)
-          ("C-t h c" . cquery-call-hierarchy)
-          ("C-t h i" . cquery-inheritance-hierarchy)
-          ("C-t i" . lsp-ui-sideline-toggle-symbols-info)
-          ("C-t I". helm-imenu)
-          ("C-t h m" . cquery-member-hierarchy)
-          ("C-t ." . lsp-ui-peek-find-definitions)
-          ("C-t ?" . lsp-ui-peek-find-references))
+          ("M-." . xref-find-definitions))
     :preface
     (defun cquery//enable ()
       (condition-case nil
