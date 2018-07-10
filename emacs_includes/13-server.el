@@ -1,3 +1,3 @@
 (server-start)
-(org-todo-list)
+(org-agenda nil "d")
 (delete-other-windows)
