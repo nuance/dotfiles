@@ -17,3 +17,6 @@
   :ensure t
   :init (setq yas-snippet-dirs '("~/.emacs_includes/snippets"))
   :config (yas-global-mode 1))
+
+(use-package cython-mode
+  :ensure t)
