@@ -15,4 +15,6 @@
 		       helm-locate-fuzzy-match               t
 		       helm-quick-update                     t
 		       helm-recentf-fuzzy-match              t
-		       helm-semantic-fuzzy-match             t)))
+		       helm-semantic-fuzzy-match             t
+                       helm-etags-fuzzy-match                t
+                       helm-etags-match-part-only            'all)))
