@@ -106,10 +106,4 @@
     (toggle-read-only))
   :hook ('compilation-filter . #'colorize-compilation-buffer))
 
-;; cmd-t replacement
-
-;; (defun switch-file-by-name ()
-;;   (interactive)
-;;   (directory-files-recursively))
-
-;; (global-set-key (kbd "s-t") 'switch-file-by-name)
+(global-set-key (kbd "s-t") 'helm-etags-select)
