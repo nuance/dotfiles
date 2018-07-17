@@ -106,4 +106,5 @@
     (toggle-read-only))
   :hook ('compilation-filter . #'colorize-compilation-buffer))
 
-(global-set-key (kbd "s-t") 'helm-etags-select)
+(global-set-key (kbd "s-p") 'helm-etags-select)
+(global-set-key (kbd "s-t") 'helm-buffers-list)
