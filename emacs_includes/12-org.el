@@ -17,6 +17,8 @@
            ((todo "IN-PROGRESS"
 		  ((org-agenda-overriding-header "Unfinished tasks:")))
             (agenda "" ((org-agenda-span 1)))
+	    (tags ":refile:"
+		  ((org-agenda-overriding-header "To refile:")))
             (todo "TODO"
 		  ((org-agenda-overriding-header "Open tasks:")))
             (todo "MEET"
