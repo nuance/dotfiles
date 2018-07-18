@@ -9,9 +9,9 @@
 	org-startup-folded t)
   ;; custom todo tags
   (setq org-todo-keywords
-	'((sequence "TODO(t)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@)")
+	'((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
 	  (sequence "MEET(m@)" "|" "DONE(d!)")
-	  (sequence "IDEA(a)" "|" "DONE(d!)")))
+	  (sequence "IDEA(a!)" "|" "DONE(d!)")))
   (setq org-agenda-custom-commands
 	'(("d" "Daily agenda and all TODOs"
            ((todo "IN-PROGRESS"
@@ -27,4 +27,13 @@
             (todo "IDEA"
 		  ((org-agenda-overriding-header "Ideas:")
 		   (org-agenda-max-entries 5))))
-           ((org-agenda-compact-blocks t))))))
+           ((org-agenda-compact-blocks t)))
+	  ("p" "3-week context plan"
+           ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
+	   ((org-agenda-compact-blocks t)))))
+  (setq helm-org-ignore-autosaves t
+	helm-org-headings-fontify t
+	helm-org-format-outline-path t
+	helm-org-show-filename t
+	helm-org-headings-max-depth 5)
+  :bind (("s-r" . helm-org-agenda-files-headings)))
