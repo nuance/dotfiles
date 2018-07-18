@@ -2,6 +2,7 @@
   :ensure t
   :demand t
   :bind (("M-x" . 'helm-M-x)
+	 ("C-x b" . 'helm-mini)
 	 ("C-x r b" . 'helm-filtered-bookmarks)
 	 ("C-x C-f" . 'helm-find-files))
   :config (progn (helm-mode 1)
