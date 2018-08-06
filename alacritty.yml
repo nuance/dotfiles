@@ -519,6 +519,7 @@ key_bindings:
   - { key: Slash,     mods: Command|Shift, chars: "\x18@s?"                       } # Command + ?
   - { key: LBracket,  mods: Command,       chars: "\x18@s["                       } # Command + [
   - { key: RBracket,  mods: Command,       chars: "\x18@s]"                       } # Command + ]
+  - { key: Apostrophe, mods: Command,      chars: "\x18@s'"                       }
   - { key: Space,     mods: Control,       chars: "\x00"                          }
   - { key: Slash,     mods: Control,       chars: "\x1f"                          }
   # - { key: chars: "\x00"  ^@                                                    }
