@@ -6,7 +6,8 @@
 	org-refile-use-outline-path 'file
 	org-outline-path-complete-in-steps nil
 	org-refile-allow-creating-parent-nodes 'confirm
-	org-startup-folded t)
+	org-startup-folded t
+	org-agenda-log-mode-items '(closed clock state))
   ;; custom todo tags
   (setq org-todo-keywords
 	'((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
@@ -30,7 +31,8 @@
            ((org-agenda-compact-blocks t)))
 	  ("p" "3-week context plan"
            ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
-	   ((org-agenda-compact-blocks t)))))
+	   ((org-agenda-compact-blocks t)
+	    (org-agenda-include-inactive-timestamps 't)))))
   (setq helm-org-ignore-autosaves t
 	helm-org-headings-fontify t
 	helm-org-format-outline-path t
