@@ -107,4 +107,11 @@
   :hook ('compilation-filter . #'colorize-compilation-buffer))
 
 (global-set-key (kbd "s-p") 'helm-etags-select)
-(global-set-key (kbd "s-t") 'helm-buffers-list)
+(global-set-key (kbd "s-T") 'helm-buffers-list)
+
+(global-set-key (kbd "M-j") 'previous-multiframe-window)
+(global-set-key (kbd "M-k") 'other-window)
+
+(use-package ace-window
+  :ensure t
+  :bind (("s-t" . ace-window)))
