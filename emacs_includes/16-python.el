@@ -2,7 +2,7 @@
   (setq quelpa-stable-p nil)
   (use-package blacken
     :ensure t
-    :hook ('python-mode-hook . #'blacken-mode))
+    :hook (python-mode . blacken-mode))
   (setq quelpa-stable-p t))
 
 (use-package company-jedi
