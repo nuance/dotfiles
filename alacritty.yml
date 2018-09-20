@@ -433,7 +433,7 @@ key_bindings:
   - { key: Slash,     mods: Alt|Shift, chars: "\x1b?"                       } # Alt + ?
   - { key: A,         mods: Command,       chars: "\x18@sa"                       }
   - { key: B,         mods: Command,       chars: "\x18@sb"                       }
-  - { key: C,         mods: Command,       chars: "\x18@sc"                       }
+#  - { key: C,         mods: Command,       chars: "\x18@sc"                       }
   - { key: D,         mods: Command,       chars: "\x18@sd"                       }
   - { key: E,         mods: Command,       chars: "\x18@se"                       }
   - { key: F,         mods: Command,       chars: "\x18@sf"                       }
@@ -452,7 +452,7 @@ key_bindings:
   - { key: S,         mods: Command,       chars: "\x18@ss"                       }
   - { key: T,         mods: Command,       chars: "\x18@st"                       }
   - { key: U,         mods: Command,       chars: "\x18@su"                       }
-  - { key: V,         mods: Command,       chars: "\x18@sv"                       }
+#  - { key: V,         mods: Command,       chars: "\x18@sv"                       }
   - { key: W,         mods: Command,       chars: "\x18@sw"                       }
   - { key: X,         mods: Command,       chars: "\x18@sx"                       }
   - { key: Y,         mods: Command,       chars: "\x18@sy"                       }
