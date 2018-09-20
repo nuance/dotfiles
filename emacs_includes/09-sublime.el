@@ -107,11 +107,26 @@
   :hook ('compilation-filter . #'colorize-compilation-buffer))
 
 (global-set-key (kbd "s-p") 'helm-etags-select)
-(global-set-key (kbd "s-T") 'helm-buffers-list)
+(global-set-key (kbd "s-t") 'helm-buffers-list)
 
 (global-set-key (kbd "M-j") 'previous-multiframe-window)
 (global-set-key (kbd "M-k") 'other-window)
 
 (use-package ace-window
   :ensure t
-  :bind (("s-t" . ace-window)))
+  :config
+  (defun switch-to-nth-window (window-num)
+    (let ((window (nth window-num (aw-window-list))))
+      (when window (select-window window))))
+  :bind (
+         ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
+         ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
+         ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
+         ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
+         ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
+         ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
+         ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
+         ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
+         ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
+         ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
+         ("s-T" . ace-window)))
