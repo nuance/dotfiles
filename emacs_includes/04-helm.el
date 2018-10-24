@@ -4,8 +4,11 @@
   :bind (("M-x" . 'helm-M-x)
 	 ("C-x b" . 'helm-mini)
 	 ("C-x r b" . 'helm-filtered-bookmarks)
-	 ("C-x C-f" . 'helm-find-files))
+	 ("C-x C-f" . 'helm-find-files)
+         ("s-r" . 'helm-occur)
+         ("M-y" . 'helm-show-kill-ring))
   :config (progn (helm-mode 1)
+                 (helm-autoresize-mode t)
 		 (setq helm-M-x-fuzzy-match                  t
 		       helm-bookmark-show-location           t
 		       helm-buffers-fuzzy-matching           t
@@ -18,4 +21,5 @@
 		       helm-recentf-fuzzy-match              t
 		       helm-semantic-fuzzy-match             t
                        helm-etags-fuzzy-match                t
-                       helm-etags-match-part-only            'all)))
+                       helm-etags-match-part-only            'all
+                       helm-split-window-inside-p t)))

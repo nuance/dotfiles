@@ -65,4 +65,10 @@
   (setq quelpa-stable-p t))
 
 (use-package antlr-mode
+  :mode ("\\.g4\\'" . antlr-mode)
   :ensure t)
+
+(use-package c++-mode
+  :mode ("\\.h|\\.cpp" . c++-mode)
+  :config (semantic-mode)
+  :bind (:map c-mode-base-map ("s-r" . helm-semantic)))
