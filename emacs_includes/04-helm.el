@@ -6,6 +6,8 @@
 	 ("C-x r b" . 'helm-filtered-bookmarks)
 	 ("C-x C-f" . 'helm-find-files)
          ("s-r" . 'helm-occur)
+         ("s-e" . 'helm-bookmarks)
+         ("s-R" . 'helm-semantic)
          ("M-y" . 'helm-show-kill-ring))
   :config (progn (helm-mode 1)
                  (helm-autoresize-mode t)
@@ -23,3 +25,7 @@
                        helm-etags-fuzzy-match                t
                        helm-etags-match-part-only            'all
                        helm-split-window-inside-p t)))
+
+(use-package helm-descbinds
+  :ensure t
+  :config (helm-descbinds-mode))

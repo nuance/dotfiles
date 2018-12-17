@@ -69,6 +69,4 @@
   :ensure t)
 
 (use-package c++-mode
-  :mode ("\\.h|\\.cpp" . c++-mode)
-  :config (semantic-mode)
-  :bind (:map c-mode-base-map ("s-r" . helm-semantic)))
+  :mode ("\\.h|\\.cpp" . c++-mode))
