@@ -31,6 +31,7 @@
 	(flycheck-mode flycheck-mode-line)
 	" "
 	mode-name
+        mode-line-process
 	mode-line-misc-info
 	mode-line-end-spaces))
 
