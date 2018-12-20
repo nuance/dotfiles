@@ -16,21 +16,21 @@
 ;; initialize the package system
 (package-initialize)
 
-;; pin to a specific git-sha
-(let ((quelpa-sha "1e57420158c158275c5a098951aca25651a41bc7"))
-  (package-initialize)
-  (unless (require 'quelpa nil t)
-    (with-temp-buffer
-      (url-insert-file-contents (concat "https://raw.github.com/quelpa/quelpa/" quelpa-sha  "/bootstrap.el"))
-      (eval-buffer))))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-(quelpa
- '(quelpa-use-package
-   :fetcher github
-   :repo "quelpa/quelpa-use-package"))
-(require 'quelpa-use-package)
-(setq use-package-ensure-function 'quelpa
-      quelpa-stable-p t)
+(straight-use-package 'use-package)
+
 
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)

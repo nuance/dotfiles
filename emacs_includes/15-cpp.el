@@ -1,7 +1,7 @@
 (progn
   (setq quelpa-stable-p nil)
   (use-package cquery
-    :ensure t
+    :straight t
     :if
     (file-exists-p "/bin/cquery")
     :bind
@@ -14,20 +14,20 @@
         (user-error nil)))
     :init
     (use-package lsp-mode
-      :ensure t
+      :straight t
       :config
       (setq
        lsp-ui-sideline-show-code-actions nil
        lsp-ui-sideline-show-hover nil
        ))
     (use-package company-lsp
-      :ensure t
+      :straight t
       :config (add-to-list 'company-backends 'company-lsp))
     (use-package lsp-ui
-      :ensure t
+      :straight t
       :init (add-hook 'lsp-mode-hook 'lsp-ui-mode))
     (use-package helm-xref
-      :ensure t
+      :straight t
       :config
       (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
     (add-hook 'c-mode-common-hook #'cquery//enable)
@@ -51,7 +51,7 @@
                                   xref-find-references)))
 
   (use-package clang-format
-    :ensure t
+    :straight t
     :config
     (progn
       (defun clang-format-before-save ()
@@ -66,7 +66,7 @@
 
 (use-package antlr-mode
   :mode ("\\.g4\\'" . antlr-mode)
-  :ensure t)
+  :straight t)
 
 (use-package c++-mode
   :mode ("\\.h|\\.cpp" . c++-mode))

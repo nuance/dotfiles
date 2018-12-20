@@ -1,5 +1,5 @@
 (use-package lua-mode
-  :ensure t
+  :straight t
   :config
   (flycheck-define-checker lua-luacheck-old
     "A Lua syntax checker using luacheck.
