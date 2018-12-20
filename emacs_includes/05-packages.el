@@ -1,6 +1,6 @@
 (when (window-system)
   (use-package magit
-    :ensure t
+    :straight t
     :commands magit-status magit-blame
     :init
     (defadvice magit-status (around magit-fullscreen activate)
@@ -20,27 +20,27 @@
     :bind ("C-x g" . magit-status)))
 
 (use-package yaml-mode
-  :ensure t
+  :straight t
   :mode "\\.yml\\'")
 
 (use-package aggressive-indent
-  :ensure t
+  :straight t
   :config
   (global-aggressive-indent-mode 1))
 
 ;; functional helpers
 (use-package dash
-  :ensure t)
+  :straight t)
 
 ;; string manipulation
 (use-package s
-  :ensure t)
+  :straight t)
 
 ;; filepath manipulation
 (use-package f
-  :ensure t)
+  :straight t)
 
 (use-package smartscan
-  :ensure t
+  :straight t
   :bind (("M-n" . smartscan-symbol-go-forward)
 	 ("M-p" . smartscan-symbol-go-backward)))

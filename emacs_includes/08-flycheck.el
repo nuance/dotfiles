@@ -1,3 +1,3 @@
 (use-package flycheck
-  :ensure t
+  :straight t
   :hook ('prog-mode . #'global-flycheck-mode))
