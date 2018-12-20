@@ -37,5 +37,5 @@
 	helm-org-headings-fontify t
 	helm-org-format-outline-path t
 	helm-org-show-filename t
-	helm-org-headings-max-depth 5)
+	helm-org-headings-max-depth 6)
   :bind (:map org-mode-map ("s-r" . helm-org-agenda-files-headings)))
