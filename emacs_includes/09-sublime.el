@@ -3,12 +3,12 @@
 (setq require-final-newline t)
 
 (use-package expand-region
-  :ensure t
+  :straight t
   :bind (("s-f" . 'er/expand-region)
          ("s-F" . 'er/contract-region)))
 
 (use-package multiple-cursors
-  :ensure t
+  :straight t
   :config
   (defun select-symbol (arg)
     "Sets the region to the symbol under the point"
@@ -69,7 +69,7 @@
 (global-set-key (kbd "s-]") 'indent)
 
 (use-package dtrt-indent
-  :ensure t
+  :straight t
   :config
   (dtrt-indent-mode 1)
   )
@@ -80,7 +80,7 @@
 (progn
   (setq quelpa-stable-p nil)
   (use-package nlinum
-    :ensure t
+    :straight t
     ;; :quelpa (nlinum-1.8.1 :fetcher file :path "~/.emacs_includes/external/nlinum-1.8.1.el")
     :config
     (global-nlinum-mode))
@@ -88,7 +88,7 @@
 
 (when (window-system)
   (use-package diff-hl
-    :ensure t
+    :straight t
     :config
     (global-diff-hl-mode)
     (diff-hl-margin-mode)))
@@ -113,7 +113,7 @@
 (global-set-key (kbd "M-k") 'other-window)
 
 (use-package ace-window
-  :ensure t
+  :straight t
   :config
   (defun switch-to-nth-window (window-num)
     (let ((window (nth window-num (aw-window-list))))

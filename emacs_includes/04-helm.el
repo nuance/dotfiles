@@ -1,5 +1,5 @@
 (use-package helm
-  :ensure t
+  :straight t
   :demand t
   :bind (("M-x" . 'helm-M-x)
 	 ("C-x b" . 'helm-mini)
@@ -27,5 +27,5 @@
                        helm-split-window-inside-p t)))
 
 (use-package helm-descbinds
-  :ensure t
+  :straight t
   :config (helm-descbinds-mode))
