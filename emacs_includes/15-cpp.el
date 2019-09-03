@@ -6,12 +6,19 @@
     (file-exists-p "/bin/cquery")
     :bind
     (:map c-mode-base-map
-          ("M-." . xref-find-definitions))
+	  ("M-." . xref-find-definitions)
+	  ("C-t h c" . cquery-call-hierarchy)
+	  ("C-t h i" . cquery-inheritance-hierarchy)
+	  ("C-t i" . lsp-ui-sideline-toggle-symbols-info)
+	  ("C-t I". helm-imenu)
+	  ("C-t h m" . cquery-member-hierarchy)
+	  ("C-t ." . lsp-ui-peek-find-definitions)
+	  ("C-t ?" . lsp-ui-peek-find-references))
     :preface
     (defun cquery//enable ()
       (condition-case nil
-          (lsp-cquery-enable)
-        (user-error nil)))
+	  (lsp)
+	(user-error nil)))
     :init
     (use-package lsp-mode
       :straight t
@@ -26,20 +33,21 @@
     (use-package lsp-ui
       :straight t
       :init (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+    (use-package lsp-ui-flycheck
+      :init (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
     (use-package helm-xref
       :straight t
       :config
       (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
     (add-hook 'c-mode-common-hook #'cquery//enable)
+    (defun cquery-cache-dir (dir)
+      (expand-file-name cquery-cache-dir "/home/mhj/.cquery_cache"))
+    (setq cquery-cache-dir-function #'cquery-cache-dir)h
     :config
     (setq
      cquery-executable "/bin/cquery"
-     cquery-extra-args '("--log-file=/data/users/mhj/cquery.log")
-     cquery-extra-init-params '(:completion (:detailedLabel t)
-                                            :index (:comments 2)
-                                            :cacheFormat "msgpack"
-                                            :cacheDirectory "/data/users/mhj/cquery.cache"
-                                            :compilationDatabaseDirectory "/home/mhj/")
+     cquery-extra-args '("--log-file=/tmp/cq.log")
+     cquery-extra-init-params '(:completion (:detailedLabel t))
      cquery-sem-highlight-method 'font-lock
      company-transformers nil
      company-lsp-async t

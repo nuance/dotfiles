@@ -1,14 +1,15 @@
 (use-package company
   :straight t
   :init (setq
-	 company-idle-delay 0.1
-         ;;         company-auto-complete t
+  	 company-idle-delay 0.1
+;;         company-auto-complete nil
          company-minimum-prefix-length 3)
-  :config (progn
-	    (global-company-mode)
-	    (add-to-list 'company-backends 'company-yasnippet)
-	    (add-to-list 'company-frontends 'company-tng-frontend)
-	    (setq company-transformers '(company-sort-by-backend-importance))))
+  :config
+  (global-company-mode)
+  (add-to-list 'company-backends 'company-dabbrev)
+  (add-to-list 'company-backends 'company-etags)
+  (add-to-list 'company-frontends 'company-tng-frontend)
+  (setq company-dabbrev-downcase nil))
 
 (use-package company-quickhelp
   :straight t

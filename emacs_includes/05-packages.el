@@ -44,3 +44,6 @@
   :straight t
   :bind (("M-n" . smartscan-symbol-go-forward)
 	 ("M-p" . smartscan-symbol-go-backward)))
+
+(use-package thrift-mode
+  :straight t)
