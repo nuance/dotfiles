@@ -6,7 +6,7 @@
 	 ("C-x r b" . 'helm-filtered-bookmarks)
 	 ("C-x C-f" . 'helm-find-files)
          ("s-r" . 'helm-occur)
-         ("s-e" . 'helm-bookmarks)
+         ("s-e" . 'helm-mark-ring)
          ("s-R" . 'helm-semantic)
          ("M-y" . 'helm-show-kill-ring))
   :config (progn (helm-mode 1)
