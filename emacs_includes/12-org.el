@@ -32,6 +32,10 @@
 	  ("p" "3-week context plan"
            ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
 	   ((org-agenda-compact-blocks t)
+	    (org-agenda-include-inactive-timestamps 't)))
+	  ("h" "last half dates"
+           ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
+	   ((org-agenda-compact-blocks t)
 	    (org-agenda-include-inactive-timestamps 't)))))
   (setq helm-org-ignore-autosaves t
 	helm-org-headings-fontify t
