@@ -1,4 +1,4 @@
-(when (window-system)
+(when (and (window-system) nil)
   (use-package magit
     :straight t
     :commands magit-status magit-blame

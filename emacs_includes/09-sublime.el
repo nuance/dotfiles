@@ -52,8 +52,8 @@
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(global-set-key (kbd "s-k s-u") 'upcase-region)
-(global-set-key (kbd "s-k s-l") 'downcase-region)
+;; (global-set-key (kbd "s-k s-u") 'upcase-region)
+;; (global-set-key (kbd "s-k s-l") 'downcase-region)
 
 (global-set-key (kbd "s-l") 'goto-line)
 
