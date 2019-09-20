@@ -1,6 +1,11 @@
 (when (window-system)
   (progn
-    (set-default-font "Fira Code Retina-11")
+    ;; (set-default-font "Fira Code Retina-11")
+    (set-face-attribute 'default nil
+                    :family "Fira Code Retina"
+                    :height 110
+                    :weight 'normal
+                    :width 'normal)
 
     (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
                    (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
