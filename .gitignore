@@ -4,3 +4,4 @@ pkg
 emacs.concat.el
 /kinesis/active/active
 /emacs_includes/snippets/snippets
+flycheck_*.elc
