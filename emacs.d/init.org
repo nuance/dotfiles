@@ -3,6 +3,10 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 
+* In-flight
+** DONE Combine mappings between C-c * & S-* (eg "C-c d" & "S-d" should do the same thing)
+** TODO Use smartrep or hydra for C-c / S- bindings (eg "C-c ddd" to select current symbol & next two instances)
+
 * About
 
    My emacs config, heavily inspired / forked from [[https://github.com/larstvei/dot-emacs]].
@@ -344,43 +348,47 @@
 * UI Interaction
 ** Helm
 #+BEGIN_SRC emacs-lisp
-  (use-package helm
-    :straight t
-    :demand t
-    :bind (([remap execute-extended-command] . 'helm-M-x) ;; M-x
-	   ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
-	   ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
-	   ([remap find-file] . 'helm-find-files) ;; C-x C-f
-	   ("s-r" . 'helm-occur)
-	   ("s-e" . 'helm-mark-ring)
-	   ("s-p" . 'helm-etags-select)
-	   ("s-t" . 'helm-buffers-list)
-	   ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
-    :config (progn (helm-mode 1)
-		   (helm-autoresize-mode t)
-		   (setq helm-M-x-fuzzy-match                  t
-			 helm-bookmark-show-location           t
-			 helm-buffers-fuzzy-matching           t
-			 helm-completion-in-region-fuzzy-match t
-			 helm-file-cache-fuzzy-match           t
-			 helm-imenu-fuzzy-match                t
-			 helm-mode-fuzzy-match                 t
-			 helm-locate-fuzzy-match               t
-			 helm-quick-update                     t
-			 helm-recentf-fuzzy-match              t
-			 helm-semantic-fuzzy-match             t
-			 helm-etags-fuzzy-match                t
-			 helm-etags-match-part-only            'all
-			 helm-split-window-inside-p t)))
+    (use-package helm
+      :straight t
+      :demand t
+      :bind (([remap execute-extended-command] . 'helm-M-x) ;; M-x
+	     ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
+	     ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
+	     ([remap find-file] . 'helm-find-files) ;; C-x C-f
+	     ("s-r" . 'helm-occur)
+	     ("C-c r" . 'helm-occur)
+	     ("s-e" . 'helm-mark-ring)
+	     ("C-c e" . 'helm-mark-ring)
+	     ("s-p" . 'helm-etags-select)
+	     ("C-c p" . 'helm-etags-select)
+	     ("s-t" . 'helm-buffers-list)
+	     ("C-c t" . 'helm-buffers-list)
+	     ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
+      :config (progn (helm-mode 1)
+		     (helm-autoresize-mode t)
+		     (setq helm-M-x-fuzzy-match                  t
+			   helm-bookmark-show-location           t
+			   helm-buffers-fuzzy-matching           t
+			   helm-completion-in-region-fuzzy-match t
+			   helm-file-cache-fuzzy-match           t
+			   helm-imenu-fuzzy-match                t
+			   helm-mode-fuzzy-match                 t
+			   helm-locate-fuzzy-match               t
+			   helm-quick-update                     t
+			   helm-recentf-fuzzy-match              t
+			   helm-semantic-fuzzy-match             t
+			   helm-etags-fuzzy-match                t
+			   helm-etags-match-part-only            'all
+			   helm-split-window-inside-p t)))
 
-  (use-package helm-xref
-	:straight t
-	:config
-	(setq xref-show-xrefs-function 'helm-xref-show-xrefs))
+    (use-package helm-xref
+	  :straight t
+	  :config
+	  (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
 
-  (use-package helm-descbinds
-    :straight t
-    :config (helm-descbinds-mode))
+    (use-package helm-descbinds
+      :straight t
+      :config (helm-descbinds-mode))
 #+END_SRC
 
 ** Aggressive Indent
@@ -427,37 +435,42 @@
 #+END_SRC
 *** Expand region
 #+BEGIN_SRC emacs-lisp
-  (use-package expand-region
-    :straight t
-    :bind (("s-f" . 'er/expand-region)
-	   ("s-F" . 'er/contract-region)))
+    (use-package expand-region
+      :straight t
+      :bind (("s-f" . 'er/expand-region)
+	     ("C-c f" . 'er/expand-region)
+	     ("s-F" . 'er/contract-region)
+	     ("C-c F" . 'er/contract-region)))
 #+END_SRC
 *** Multiple cursors
 #+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors
-    :straight t
-    :config
-    (defun select-symbol (arg)
-      "Sets the region to the symbol under the point"
-      (interactive "p")
-      (if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
-    (defun mark-all-like-symbol (arg)
-      (interactive "p")
-      (progn
-	(unless mark-active (er/mark-symbol))
-	(mc/mark-all-like-this)))
-    (add-to-list 'mc/unsupported-minor-modes 'company-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'helm-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-doc-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
-    :bind (("s-L" . 'mc/edit-lines)
-	   ("s-d" . 'select-symbol)
-	   ("s-D" . 'mark-all-like-symbol)
-	   ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
+    (use-package multiple-cursors
+      :straight t
+      :config
+      (defun select-symbol (arg)
+	"Sets the region to the symbol under the point"
+	(interactive "p")
+	(if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
+      (defun mark-all-like-symbol (arg)
+	(interactive "p")
+	(progn
+	  (unless mark-active (er/mark-symbol))
+	  (mc/mark-all-like-this)))
+      (add-to-list 'mc/unsupported-minor-modes 'company-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'helm-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-doc-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
+      (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
+      :bind (("s-L" . 'mc/edit-lines)
+	     ("C-c L" . 'mc/edit-lines)
+	     ("s-d" . 'select-symbol)
+	     ("C-c d" . 'select-symbol)
+	     ("s-D" . 'mark-all-like-symbol)
+	     ("C-c D" . 'mark-all-like-symbol)
+	     ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
 #+END_SRC
 *** Comment line / region
 #+BEGIN_SRC emacs-lisp
@@ -471,15 +484,19 @@
 
   (global-set-key (kbd "C-\\") 'comment-line-or-region)
   (global-set-key (kbd "s-/") 'comment-line-or-region)
+  (global-set-key (kbd "C-c /") 'comment-line-or-region)
 #+END_SRC
 *** Select whole buffer
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-a") 'mark-whole-buffer)
+  (global-set-key (kbd "C-c a") 'mark-whole-buffer)
 #+END_SRC
 *** Compilation mode tweaks
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-B") 'compile)
+  (global-set-key (kbd "C-c B") 'compile)
   (global-set-key (kbd "s-b") 'recompile)
+  (global-set-key (kbd "C-c b") 'recompile)
 
   (setq compilation-scroll-output 'first-error)
   (use-package ansi-color
@@ -502,7 +519,9 @@
     (indent-rigidly start end tab-width))
 
   (global-set-key (kbd "s-[") 'dedent)
+  (global-set-key (kbd "C-c [") 'dedent)
   (global-set-key (kbd "s-]") 'indent)
+  (global-set-key (kbd "C-c ]") 'indent)
 #+END_SRC
 *** Guess indentation settings
 #+BEGIN_SRC emacs-lisp
@@ -514,31 +533,43 @@
 #+END_SRC
 *** Window navigation
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-j") 'previous-multiframe-window)
-  (global-set-key (kbd "M-k") 'other-window)
+    (global-set-key (kbd "M-j") 'previous-multiframe-window)
+    (global-set-key (kbd "M-k") 'other-window)
 
-  (use-package ace-window
-    :straight t
-    :config
-    (defun switch-to-nth-window (window-num)
-      (let ((window (nth window-num (aw-window-list))))
-	(when window (select-window window))))
-    :bind (
-	   ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
-	   ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
-	   ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
-	   ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
-	   ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
-	   ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
-	   ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
-	   ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
-	   ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
-	   ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
-	   ("s-T" . ace-window)))
+    (use-package ace-window
+      :straight t
+      :config
+      (defun switch-to-nth-window (window-num)
+	(let ((window (nth window-num (aw-window-list))))
+	  (when window (select-window window))))
+      :bind (
+	     ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
+	     ("C-c 1" . (lambda () (interactive) (switch-to-nth-window 0)))
+	     ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
+	     ("C-c 2" . (lambda () (interactive) (switch-to-nth-window 1)))
+	     ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
+	     ("C-c 3" . (lambda () (interactive) (switch-to-nth-window 2)))
+	     ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
+	     ("C-c 4" . (lambda () (interactive) (switch-to-nth-window 3)))
+	     ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
+	     ("C-c 5" . (lambda () (interactive) (switch-to-nth-window 4)))
+	     ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
+	     ("C-c 6" . (lambda () (interactive) (switch-to-nth-window 5)))
+	     ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
+	     ("C-c 7" . (lambda () (interactive) (switch-to-nth-window 6)))
+	     ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
+	     ("C-c 8" . (lambda () (interactive) (switch-to-nth-window 7)))
+	     ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
+	     ("C-c 9" . (lambda () (interactive) (switch-to-nth-window 8)))
+	     ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
+	     ("C-c 0" . (lambda () (interactive) (switch-to-nth-window 9)))
+	     ("s-T" . ace-window)
+	     ("C-c T" . ace-window)))
 #+END_SRC
 *** Go to line
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-l") 'goto-line)
+  (global-set-key (kbd "C-c l") 'goto-line)
 #+END_SRC
 
 *** Upcase / downcase
@@ -546,7 +577,9 @@
   (put 'upcase-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
   ;; (global-set-key (kbd "s-k s-u") 'upcase-region)
+  ;; (global-set-key (kbd "C-c k u") 'upcase-region)
   ;; (global-set-key (kbd "s-k s-l") 'downcase-region)
+  ;; (global-set-key (kbd "C-c k l") 'downcase-region)
 #+END_SRC
 *** Electric pair
 #+BEGIN_SRC emacs-lisp
@@ -571,6 +604,7 @@ Auto-revert to new tags file
       (insert val)))
 
   (global-set-key (kbd "s-;") 'calc-eval-region)
+  (global-set-key (kbd "C-c ;") 'calc-eval-region)
 #+END_SRC
 
 * Packages
@@ -668,52 +702,54 @@ Auto-revert to new tags file
 
 ** Org
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :config
-    (setq org-log-done t
-	  ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
-	  org-refile-targets '((org-agenda-files :maxlevel . 3))
-	  org-refile-use-outline-path 'file
-	  org-outline-path-complete-in-steps nil
-	  org-refile-allow-creating-parent-nodes 'confirm
-	  org-startup-folded t
-	  org-agenda-log-mode-items '(closed clock state)
-	  org-src-tab-acts-natively t)
-    ;; custom todo tags
-    (setq org-todo-keywords
-	  '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
-	    (sequence "MEET(m@)" "|" "DONE(d!)")
-	    (sequence "IDEA(a!)" "|" "DONE(d!)")))
-    (setq org-agenda-custom-commands
-	  '(("d" "Daily agenda and all TODOs"
-	     ((todo "IN-PROGRESS"
-		    ((org-agenda-overriding-header "Unfinished tasks:")))
-	      (agenda "" ((org-agenda-span 1)))
-	      (tags ":refile:"
-		    ((org-agenda-overriding-header "To refile:")))
-	      (todo "TODO"
-		    ((org-agenda-overriding-header "Open tasks:")))
-	      (todo "MEET"
-		    ((org-agenda-overriding-header "People to meet:")
-		     (org-agenda-max-entries 5)))
-	      (todo "IDEA"
-		    ((org-agenda-overriding-header "Ideas:")
-		     (org-agenda-max-entries 5))))
-	     ((org-agenda-compact-blocks t)))
-	    ("p" "3-week context plan"
-	     ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
-	     ((org-agenda-compact-blocks t)
-	      (org-agenda-include-inactive-timestamps 't)))
-	    ("h" "last half dates"
-	     ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
-	     ((org-agenda-compact-blocks t)
-	      (org-agenda-include-inactive-timestamps 't)))))
-    (setq helm-org-ignore-autosaves t
-	  helm-org-headings-fontify t
-	  helm-org-format-outline-path t
-	  helm-org-show-filename t
-	  helm-org-headings-max-depth 6)
-    :bind (:map org-mode-map ("s-r" . helm-org-agenda-files-headings)))
+      (use-package org
+	:config
+	(setq org-log-done t
+	      ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
+	      org-refile-targets '((org-agenda-files :maxlevel . 3))
+	      org-refile-use-outline-path 'file
+	      org-outline-path-complete-in-steps nil
+	      org-refile-allow-creating-parent-nodes 'confirm
+	      org-startup-folded t
+	      org-agenda-log-mode-items '(closed clock state)
+	      org-src-tab-acts-natively t)
+	;; custom todo tags
+	(setq org-todo-keywords
+	      '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
+		(sequence "MEET(m@)" "|" "DONE(d!)")
+		(sequence "IDEA(a!)" "|" "DONE(d!)")))
+	(setq org-agenda-custom-commands
+	      '(("d" "Daily agenda and all TODOs"
+		 ((todo "IN-PROGRESS"
+			((org-agenda-overriding-header "Unfinished tasks:")))
+		  (agenda "" ((org-agenda-span 1)))
+		  (tags ":refile:"
+			((org-agenda-overriding-header "To refile:")))
+		  (todo "TODO"
+			((org-agenda-overriding-header "Open tasks:")))
+		  (todo "MEET"
+			((org-agenda-overriding-header "People to meet:")
+			 (org-agenda-max-entries 5)))
+		  (todo "IDEA"
+			((org-agenda-overriding-header "Ideas:")
+			 (org-agenda-max-entries 5))))
+		 ((org-agenda-compact-blocks t)))
+		("p" "3-week context plan"
+		 ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
+		 ((org-agenda-compact-blocks t)
+		  (org-agenda-include-inactive-timestamps 't)))
+		("h" "last half dates"
+		 ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
+		 ((org-agenda-compact-blocks t)
+		  (org-agenda-include-inactive-timestamps 't)))))
+	(setq helm-org-ignore-autosaves t
+	      helm-org-headings-fontify t
+	      helm-org-format-outline-path t
+	      helm-org-show-filename t
+	      helm-org-headings-max-depth 6)
+	:bind (:map org-mode-map
+		    ("s-r" . helm-org-agenda-files-headings)
+		    ("C-c r" . helm-org-agenda-files-headings)))
 #+END_SRC
 
 ** ANTLR
