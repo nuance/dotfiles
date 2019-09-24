@@ -93,6 +93,16 @@
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
 
+   I sometimes want to exclude packages on certain machines, so load that.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq package-overrides (make-hash-table))
+     (let ((overrides-file (concat user-emacs-directory "config_overrides.el")))
+	    (when (file-exists-p overrides-file)
+	      (load-file overrides-file)))
+   #+END_SRC
+
+
    I'd like to keep a few settings private, so we load a =private.el= if it
    exists after the init-file has loaded.
 
@@ -610,22 +620,23 @@ Auto-revert to new tags file
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :straight t
-    :commands magit-status magit-blame-addition
-    :init
-    (defadvice magit-status (around magit-fullscreen activate)
-      (window-configuration-to-register :magit-fullscreen)
-      ad-do-it
-      (delete-other-windows))
-    :config
-    (setq magit-branch-arguments nil
-	  ;; don't put "origin-" in front of new branch names by default
-	  magit-default-tracking-name-function 'magit-default-tracking-name-branch-only
-	  magit-push-always-verify nil
-	  ;; Get rid of the previous advice to go into fullscreen
-	  magit-restore-window-configuration t)
-    :bind ("C-x g" . magit-status))
+  (if (gethash :magit package-overrides t)
+      (use-package magit
+	:straight t
+	:commands magit-status magit-blame-addition
+	:init
+	(defadvice magit-status (around magit-fullscreen activate)
+	  (window-configuration-to-register :magit-fullscreen)
+	  ad-do-it
+	  (delete-other-windows))
+	:config
+	(setq magit-branch-arguments nil
+	      ;; don't put "origin-" in front of new branch names by default
+	      magit-default-tracking-name-function 'magit-default-tracking-name-branch-only
+	      magit-push-always-verify nil
+	      ;; Get rid of the previous advice to go into fullscreen
+	      magit-restore-window-configuration t)
+	:bind ("C-x g" . magit-status)))
 #+END_SRC
 
 ** Diff Highlight
