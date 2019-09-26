@@ -366,13 +366,9 @@
 	     ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
 	     ([remap find-file] . 'helm-find-files) ;; C-x C-f
 	     ("s-r" . 'helm-occur)
-	     ("C-c r" . 'helm-occur)
 	     ("s-e" . 'helm-mark-ring)
-	     ("C-c e" . 'helm-mark-ring)
 	     ("s-p" . 'helm-etags-select)
-	     ("C-c p" . 'helm-etags-select)
 	     ("s-t" . 'helm-buffers-list)
-	     ("C-c t" . 'helm-buffers-list)
 	     ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
       :config (progn (helm-mode 1)
 		     (helm-autoresize-mode t)
@@ -448,9 +444,7 @@
     (use-package expand-region
       :straight t
       :bind (("s-f" . 'er/expand-region)
-	     ("C-c f" . 'er/expand-region)
-	     ("s-F" . 'er/contract-region)
-	     ("C-c F" . 'er/contract-region)))
+	     ("s-F" . 'er/contract-region)))
 #+END_SRC
 *** Multiple cursors
 #+BEGIN_SRC emacs-lisp
@@ -475,11 +469,8 @@
       (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
       (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
       :bind (("s-L" . 'mc/edit-lines)
-	     ("C-c L" . 'mc/edit-lines)
 	     ("s-d" . 'select-symbol)
-	     ("C-c d" . 'select-symbol)
 	     ("s-D" . 'mark-all-like-symbol)
-	     ("C-c D" . 'mark-all-like-symbol)
 	     ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
 #+END_SRC
 *** Comment line / region
@@ -494,19 +485,15 @@
 
   (global-set-key (kbd "C-\\") 'comment-line-or-region)
   (global-set-key (kbd "s-/") 'comment-line-or-region)
-  (global-set-key (kbd "C-c /") 'comment-line-or-region)
 #+END_SRC
 *** Select whole buffer
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-a") 'mark-whole-buffer)
-  (global-set-key (kbd "C-c a") 'mark-whole-buffer)
 #+END_SRC
 *** Compilation mode tweaks
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-B") 'compile)
-  (global-set-key (kbd "C-c B") 'compile)
   (global-set-key (kbd "s-b") 'recompile)
-  (global-set-key (kbd "C-c b") 'recompile)
 
   (setq compilation-scroll-output 'first-error)
   (use-package ansi-color
@@ -529,9 +516,7 @@
     (indent-rigidly start end tab-width))
 
   (global-set-key (kbd "s-[") 'dedent)
-  (global-set-key (kbd "C-c [") 'dedent)
   (global-set-key (kbd "s-]") 'indent)
-  (global-set-key (kbd "C-c ]") 'indent)
 #+END_SRC
 *** Guess indentation settings
 #+BEGIN_SRC emacs-lisp
@@ -554,32 +539,20 @@
 	  (when window (select-window window))))
       :bind (
 	     ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
-	     ("C-c 1" . (lambda () (interactive) (switch-to-nth-window 0)))
 	     ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
-	     ("C-c 2" . (lambda () (interactive) (switch-to-nth-window 1)))
 	     ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
-	     ("C-c 3" . (lambda () (interactive) (switch-to-nth-window 2)))
 	     ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
-	     ("C-c 4" . (lambda () (interactive) (switch-to-nth-window 3)))
 	     ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
-	     ("C-c 5" . (lambda () (interactive) (switch-to-nth-window 4)))
 	     ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
-	     ("C-c 6" . (lambda () (interactive) (switch-to-nth-window 5)))
 	     ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
-	     ("C-c 7" . (lambda () (interactive) (switch-to-nth-window 6)))
 	     ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
-	     ("C-c 8" . (lambda () (interactive) (switch-to-nth-window 7)))
 	     ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
-	     ("C-c 9" . (lambda () (interactive) (switch-to-nth-window 8)))
 	     ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
-	     ("C-c 0" . (lambda () (interactive) (switch-to-nth-window 9)))
-	     ("s-T" . ace-window)
-	     ("C-c T" . ace-window)))
+	     ("s-T" . ace-window)))
 #+END_SRC
 *** Go to line
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-l") 'goto-line)
-  (global-set-key (kbd "C-c l") 'goto-line)
 #+END_SRC
 
 *** Upcase / downcase
@@ -587,9 +560,7 @@
   (put 'upcase-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
   ;; (global-set-key (kbd "s-k s-u") 'upcase-region)
-  ;; (global-set-key (kbd "C-c k u") 'upcase-region)
   ;; (global-set-key (kbd "s-k s-l") 'downcase-region)
-  ;; (global-set-key (kbd "C-c k l") 'downcase-region)
 #+END_SRC
 *** Electric pair
 #+BEGIN_SRC emacs-lisp
@@ -614,8 +585,50 @@ Auto-revert to new tags file
       (insert val)))
 
   (global-set-key (kbd "s-;") 'calc-eval-region)
-  (global-set-key (kbd "C-c ;") 'calc-eval-region)
 #+END_SRC
+
+** Map Super-* to C-c * + smartrep
+
+   #+BEGIN_SRC emacs-lisp
+     (defun is-super-binding-p (key)
+       (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
+	     (click (elt (event-modifiers (elt (kbd "<mouse-1>") 0)) 0)))
+	 (and (eq (length key) 1)
+	      (seq-contains-p (event-modifiers (elt key 0)) super)
+	      (not (seq-contains-p (event-modifiers (elt key 0)) click)))))
+
+     (defun binding-without-super (key)
+       (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
+	     (first-key (elt key 0)))
+	 (event-convert-list
+	  (append
+	   (seq-remove
+	    (lambda (el) (eq el super))
+	    (event-modifiers first-key))
+	   (list (event-basic-type first-key))))))
+
+     (defun inverse-kbd (key)
+       (key-description (list key)))
+
+     (defun gather-bindings (keymap)
+       (let ((bindings '()))
+	 (map-keymap
+	  (lambda (evt val)
+	    (if (is-super-binding-p (list evt))
+		(setq bindings (cons (cons (inverse-kbd (binding-without-super (list evt))) val) bindings))))
+	  keymap)
+	 bindings))
+
+     (use-package smartrep
+       :straight t)
+
+     (add-hook
+      'after-init-hook
+      (lambda ()
+	(smartrep-define-key
+	    global-map "C-c"
+	  (gather-bindings global-map))))
+   #+END_SRC
 
 * Packages
 ** Magit
@@ -759,8 +772,7 @@ Auto-revert to new tags file
 	      helm-org-show-filename t
 	      helm-org-headings-max-depth 6)
 	:bind (:map org-mode-map
-		    ("s-r" . helm-org-agenda-files-headings)
-		    ("C-c r" . helm-org-agenda-files-headings)))
+		    ("s-r" . helm-org-agenda-files-headings)))
 #+END_SRC
 
 ** ANTLR
