@@ -6,7 +6,7 @@ if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* && "$(hostname)"
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
-export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin
+export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin:$HOME/go/bin
 # export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
 alias ls="ls -G"
