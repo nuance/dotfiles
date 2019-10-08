@@ -3,10 +3,6 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 
-* In-flight
-** DONE Combine mappings between C-c * & S-* (eg "C-c d" & "S-d" should do the same thing)
-** TODO Use smartrep or hydra for C-c / S- bindings (eg "C-c ddd" to select current symbol & next two instances)
-
 * About
 
    My emacs config, heavily inspired / forked from [[https://github.com/larstvei/dot-emacs]].
@@ -584,8 +580,8 @@ Auto-revert to new tags file
        (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
 	     (click (elt (event-modifiers (elt (kbd "<mouse-1>") 0)) 0)))
 	 (and (eq (length key) 1)
-	      (seq-contains-p (event-modifiers (elt key 0)) super)
-	      (not (seq-contains-p (event-modifiers (elt key 0)) click)))))
+	      (seq-contains (event-modifiers (elt key 0)) super)
+	      (not (seq-contains (event-modifiers (elt key 0)) click)))))
 
      (defun binding-without-super (key)
        (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
