@@ -756,6 +756,10 @@ Interact with gmail via notmuch.
 
      (setq smtpmail-smtp-server "smtp.gmail.com"
 	   smtpmail-smtp-service 587)
+
+     (use-package message
+       :config
+       (setq message-cite-style message-cite-style-gmail))
    #+END_SRC
 * File-type support
 ** YAML
