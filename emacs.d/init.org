@@ -744,10 +744,10 @@ Auto-revert to new tags file
        :hook ((python-mode c++-mode c-mode go-mode rust-mode) . 'eglot-ensure))
    #+END_SRC
 
-** Notmuch
+** Notmuch :disabled:
 Interact with gmail via notmuch.
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :tangle no
      (use-package bbdb
        :straight t)
 
