@@ -761,6 +761,15 @@ Interact with gmail via notmuch.
        :config
        (setq message-cite-style message-cite-style-gmail))
    #+END_SRC
+** Bug hunter
+   Bugs crop up in this file, so pull in some code to help bisect them.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package bug-hunter :straight t)
+   #+END_SRC
+
+   Use this by invoking `M-x bug-hunter-init-file` and following instructions.
+
 * File-type support
 ** YAML
 #+BEGIN_SRC emacs-lisp
