@@ -745,10 +745,10 @@ Auto-revert to new tags file
        :hook ((python-mode c++-mode c-mode go-mode rust-mode) . 'eglot-ensure))
    #+END_SRC
 
-** Notmuch :disabled:
+** Notmuch
 Interact with gmail via notmuch.
 
-   #+BEGIN_SRC emacs-lisp :tangle no
+   #+BEGIN_SRC emacs-lisp
      (use-package bbdb
        :straight t)
 
@@ -831,7 +831,7 @@ Interact with gmail via notmuch.
 ** Org
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :straight t
+    :straight org-plus-contrib
     :init
     ;; From https://github.com/raxod502/radian/blob/ee92ea6cb0473bf7d20c6d381753011312ef4a52/radian-emacs/radian-org.el#L46-L112
 
@@ -944,7 +944,11 @@ Interact with gmail via notmuch.
 	     ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
 	     ((org-agenda-compact-blocks t)
 	      (org-agenda-include-inactive-timestamps 't)))))
-    :bind ("C-c c" . org-capture))
+    (require 'ol-notmuch)
+    :bind (
+      ("C-c c" . org-capture)
+      ("C-c l" . org-store-link)
+    ))
 
   (use-package helm-org
     :straight t
