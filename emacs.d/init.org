@@ -593,6 +593,7 @@
 
     (use-package ace-window
       :straight t
+      :demand t
       :config
       (defun switch-to-nth-window (window-num)
 	(let ((window (nth window-num (aw-window-list))))
