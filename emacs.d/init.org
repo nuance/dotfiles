@@ -743,6 +743,19 @@ Auto-revert to new tags file
        :hook ((python-mode c++-mode c-mode go-mode rust-mode) . 'eglot-ensure))
    #+END_SRC
 
+** Notmuch
+Interact with gmail via notmuch.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package bbdb
+       :straight t)
+
+     (use-package notmuch
+       :straight t)
+
+     (setq smtpmail-smtp-server "smtp.gmail.com"
+	   smtpmail-smtp-service 587)
+   #+END_SRC
 * File-type support
 ** YAML
 #+BEGIN_SRC emacs-lisp
