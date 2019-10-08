@@ -659,12 +659,16 @@ Auto-revert to new tags file
      (defun inverse-kbd (key)
        (key-description (list key)))
 
-     (defun gather-bindings (keymap)
+     (defun gather-bindings (keymap prefix)
        (let ((bindings '()))
 	 (map-keymap
 	  (lambda (evt val)
-	    (if (and val (is-super-binding-p (list evt)))
-		(setq bindings (cons (cons (inverse-kbd (binding-without-super (list evt))) val) bindings))))
+	    (if (and
+		 val                              ;; this binding has to have a target (eg it wasn't unset)
+		 (is-super-binding-p (list evt))) ;; it needs to include the super key
+		(let ((new-binding (binding-without-super (list evt))))
+		  (if (not (global-key-binding (kbd (concat prefix " " (inverse-kbd (list new-binding))))))
+		      (setq bindings (cons (cons (inverse-kbd new-binding) val) bindings))))))
 	  keymap)
 	 bindings))
 
@@ -676,7 +680,7 @@ Auto-revert to new tags file
       (lambda ()
 	(smartrep-define-key
 	    global-map "C-c"
-	  (gather-bindings global-map))))
+	  (gather-bindings global-map "C-c"))))
    #+END_SRC
 
 * Packages
