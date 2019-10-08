@@ -950,8 +950,10 @@ Interact with gmail via notmuch.
 	      (org-agenda-include-inactive-timestamps 't)))))
     (require 'ol-notmuch)
     :bind (
-      ("C-c c" . org-capture)
-      ("C-c l" . org-store-link)
+      ("C-c o c" . org-capture)
+      ("C-c o l" . org-store-link)
+      :map org-mode-map
+      ("C-c o g" . org-mac-safari-insert-frontmost-url)
     ))
 
   (use-package helm-org
