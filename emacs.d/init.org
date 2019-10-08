@@ -662,7 +662,7 @@ Auto-revert to new tags file
        (let ((bindings '()))
 	 (map-keymap
 	  (lambda (evt val)
-	    (if (is-super-binding-p (list evt))
+	    (if (and val (is-super-binding-p (list evt)))
 		(setq bindings (cons (cons (inverse-kbd (binding-without-super (list evt))) val) bindings))))
 	  keymap)
 	 bindings))
