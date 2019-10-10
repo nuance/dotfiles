@@ -1115,6 +1115,21 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
        :straight t)
    #+END_SRC
 
+** Bazel
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package bazel-mode
+       :straight
+       (emacs-bazel-mode
+	:host github
+	:repo "bazelbuild/emacs-bazel-mode")
+       :mode "BUILD"
+       :custom (
+		(bazel-mode-buildifier-before-save t)
+		(bazel-mode-buildifier-command "~/go/bin/buildifier"))
+       )
+   #+END_SRC
+
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
 
