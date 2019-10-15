@@ -1,5 +1,7 @@
 # -*- mode: shell-script; -*-
 
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
 # PS1 is "(remote host name)? (directory) ([non-zero exit code])? $"
 export PS1="\[\033[0;32m\]\W\[\033[00m\] \$(exit_code="\$?"; ((\$exit_code)) && echo \"\[\033[0;31m\][\$exit_code] $\" || echo \"\[\033[0;32m\]$\" )\[\033[00m\] "
 if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* && "$(hostname)" != *mjones ]]; then
@@ -71,3 +73,5 @@ for src in `ls ~/.bash_includes`; do
 done
 
 #CHEF.NO.SOURCE
+
+export PATH="$HOME/.cargo/bin:$PATH"
