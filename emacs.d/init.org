@@ -308,48 +308,6 @@
      (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
    #+END_SRC
 
-** Fira Code Retina font
-#+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'default nil
-		      :family "Fira Code Retina"
-		      :height 110
-		      :weight 'normal
-		      :width 'normal)
-
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (let ((alist '(
-		 (33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-		 (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-		 (36 . ".\\(?:>\\)")
-		 (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-		 (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-		 (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-		 (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-		 (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-		 (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-		 (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-		 (48 . ".\\(?:x[a-zA-Z]\\)")
-		 (58 . ".\\(?:::\\|[:=]\\)")
-		 (59 . ".\\(?:;;\\|;\\)")
-		 (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-		 ;; (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-		 (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-		 (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-		 (91 . ".\\(?:]\\)")
-		 (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-		 (94 . ".\\(?:=\\)")
-		 (119 . ".\\(?:ww\\)")
-		 (123 . ".\\(?:-\\)")
-		 (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-		 (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
-		 )
-	       ))
-    (dolist (char-regexp alist)
-      (set-char-table-range composition-function-table (car char-regexp)
-			    `([,(cdr char-regexp) 0 font-shape-gstring]))))))
-#+END_SRC
 ** Modeline
 #+BEGIN_SRC emacs-lisp
   (column-number-mode 1)
@@ -443,6 +401,14 @@
 	 ))
    #+END_SRC
 
+** Fixed-width font
+   #+BEGIN_SRC emacs-lisp
+     (set-face-attribute 'default nil
+			 :family "IBM Plex Mono"
+			 :height 110
+			 :weight 'normal
+			 :width 'normal)
+   #+END_SRC
 
 * UI Interaction
 ** Helm
