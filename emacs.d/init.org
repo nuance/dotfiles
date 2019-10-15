@@ -308,14 +308,6 @@
      (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
    #+END_SRC
 
-** Gotham theme
-#+BEGIN_SRC emacs-lisp
-  (use-package gotham-theme
-    :straight t
-    :config
-    (customize-set-variable 'gotham-tty-256-colors t)
-    (load-theme 'gotham t))
-#+END_SRC
 ** Fira Code Retina font
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
@@ -413,6 +405,44 @@
 #+BEGIN_SRC emacs-lisp
   (show-paren-mode)
 #+END_SRC
+** Light / Dark theme toggle
+   I'd like to toggle between light & dark themes.
+
+*** Dark: Gotham theme
+   #+BEGIN_SRC emacs-lisp
+     (use-package gotham-theme
+       :straight t
+       :config
+       (customize-set-variable 'gotham-tty-256-colors t)
+       (load-theme 'gotham t))
+
+     (defvar dark-theme 'gotham)
+   #+END_SRC
+
+*** Light:
+   #+BEGIN_SRC emacs-lisp
+     (use-package solarized-theme
+       :straight t)
+
+     (defvar light-theme 'solarized-light)
+   #+END_SRC
+
+*** Toggle
+    Default to dark theme, but make it easy to switch.
+
+   #+BEGIN_SRC emacs-lisp
+     (defvar dark-mode t)
+
+     (defun toggle-theme ()
+       (interactive)
+       (progn
+	 (disable-theme (if dark-mode dark-theme light-theme))
+	 (load-theme (if dark-mode light-theme dark-theme) t)
+	 (setq dark-mode (not dark-mode))
+	 (adapt-theme-org-colors)
+	 ))
+   #+END_SRC
+
 
 * UI Interaction
 ** Helm
@@ -971,56 +1001,59 @@ Interact with gmail via notmuch.
 *** Prettier org mode
 Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 
-#+BEGIN_SRC emacs-lisp
-  (when window-system
-    (progn
-      (setq org-hide-emphasis-markers t)
-      (font-lock-add-keywords 'org-mode
-			      '(("^ *\\([-]\\) "
-				 (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-      (use-package org-bullets
-	:straight t
-	:config
-	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+   #+BEGIN_SRC emacs-lisp
+     (defun adapt-theme-org-colors ()
+       (let* ((variable-tuple
+	       (cond ((x-list-fonts "IBM Plex Sans") '(:font "IBM Plex Sans"))
+		     ((x-list-fonts "SF Pro Text") '(:font "SF Pro Text"))
+		     ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+		     (nil (warn "Cannot find a Sans Serif Font."))))
+	      (base-font-color     (face-foreground 'default nil 'default))
+	      (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
 
-      (let* ((variable-tuple
-	      (cond ((x-list-fonts "SF Pro Text") '(:font "SF Pro Text"))
-		    ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-		    (nil (warn "Cannot find a Sans Serif Font."))))
-	     (base-font-color     (face-foreground 'default nil 'default))
-	     (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+	 (custom-theme-set-faces
+	  'user
+	  `(org-level-8 ((t (,@headline ,@variable-tuple))))
+	  `(org-level-7 ((t (,@headline ,@variable-tuple))))
+	  `(org-level-6 ((t (,@headline ,@variable-tuple))))
+	  `(org-level-5 ((t (,@headline ,@variable-tuple))))
+	  `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+	  `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.2))))
+	  `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.3))))
+	  `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.4))))
+	  `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
 
-	(custom-theme-set-faces
-	 'user
-	 `(org-level-8 ((t (,@headline ,@variable-tuple))))
-	 `(org-level-7 ((t (,@headline ,@variable-tuple))))
-	 `(org-level-6 ((t (,@headline ,@variable-tuple))))
-	 `(org-level-5 ((t (,@headline ,@variable-tuple))))
-	 `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-	 `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.2))))
-	 `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.3))))
-	 `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.4))))
-	 `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
-
-      (custom-theme-set-faces
-       'user
-       '(variable-pitch ((t (:family "SF Pro Text" :height 120 :weight light))))
-       '(fixed-pitch ((t ( :family "Fira Code Retina" :slant normal :weight normal :height 110 :width normal)))))
-      (add-hook 'org-mode-hook 'variable-pitch-mode)
-      (add-hook 'org-mode-hook 'visual-line-mode)
-      (custom-theme-set-faces
-       'user
-       '(org-block                 ((t (:inherit fixed-pitch))))
-       '(org-document-info         ((t (:foreground "dark orange"))))
-       '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-       '(org-link                  ((t (:foreground "royal blue" :underline t))))
-       '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-       '(org-property-value        ((t (:inherit fixed-pitch))) t)
-       '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-       '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-       '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
-       '(org-indent                ((t (:inherit (org-hide fixed-pitch))))))))
-#+END_SRC
+       (custom-theme-set-faces
+	'user
+	'(variable-pitch ((t (:family "SF Pro Text" :height 120 :weight light))))
+	'(fixed-pitch ((t ( :family "Fira Code Retina" :slant normal :weight normal :height 110 :width normal)))))
+       (add-hook 'org-mode-hook 'variable-pitch-mode)
+       (add-hook 'org-mode-hook 'visual-line-mode)
+       (custom-theme-set-faces
+	'user
+	'(org-block                 ((t (:inherit fixed-pitch))))
+	'(org-document-info         ((t (:foreground "dark orange"))))
+	'(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+	'(org-link                  ((t (:foreground "royal blue" :underline t))))
+	'(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+	'(org-property-value        ((t (:inherit fixed-pitch))) t)
+	'(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+	'(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+	'(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
+	'(org-indent                ((t (:inherit (org-hide fixed-pitch)))))))
+     (when window-system
+       (progn
+	 (setq org-hide-emphasis-markers t)
+	 (font-lock-add-keywords 'org-mode
+				 '(("^ *\\([-]\\) "
+				    (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+	 (use-package org-bullets
+	   :straight t
+	   :config
+	   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+	 (adapt-theme-org-colors)
+	 ))
+   #+END_SRC
 
 ** ANTLR
 #+BEGIN_SRC emacs-lisp
