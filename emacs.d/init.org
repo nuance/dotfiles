@@ -94,8 +94,8 @@
    #+BEGIN_SRC emacs-lisp
      (setq package-overrides (make-hash-table))
      (let ((overrides-file (concat user-emacs-directory "config_overrides.el")))
-	    (when (file-exists-p overrides-file)
-	      (load-file overrides-file)))
+       (when (file-exists-p overrides-file)
+	 (load-file overrides-file)))
    #+END_SRC
 
 
@@ -179,7 +179,7 @@
 			  [?\s-M]
 			  [?\s-S]
 			  [?\s-a]
-;;			  [?\s-c]
+			  ;;			  [?\s-c]
 			  [?\s-d]
 			  [?\s-e]
 			  [?\s-f]
@@ -198,7 +198,7 @@
 			  [?\s-s]
 			  [?\s-t]
 			  [?\s-u]
-;;			  [?\s-v]
+			  ;;			  [?\s-v]
 			  [?\s-w]
 			  [?\s-x]
 			  [?\s-y]
@@ -229,8 +229,8 @@
      (setq load-prefer-newer t
 	   save-place-file (concat user-emacs-directory "places")
 	   backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
-	   ; auto-revert-interval 1            ; Refresh buffers fast
-	   ; recentf-max-saved-items 100       ; Show more recent files
+					     ; auto-revert-interval 1            ; Refresh buffers fast
+					     ; recentf-max-saved-items 100       ; Show more recent files
 	   sentence-end-double-space nil       ; No double space
 	   vc-follow-symlinks nil)
    #+END_SRC
@@ -250,19 +250,19 @@
 	 (setq exec-path (split-string path-from-shell path-separator))))
    #+END_SRC
 ** Elisp helpers
-#+BEGIN_SRC emacs-lisp
-  ;; functional helpers
-  (use-package dash
-    :straight t)
+   #+BEGIN_SRC emacs-lisp
+     ;; functional helpers
+     (use-package dash
+       :straight t)
 
-  ;; string manipulation
-  (use-package s
-    :straight t)
+     ;; string manipulation
+     (use-package s
+       :straight t)
 
-  ;; filepath manipulation
-  (use-package f
-    :straight t)
-#+END_SRC
+     ;; filepath manipulation
+     (use-package f
+       :straight t)
+   #+END_SRC
 
 * UI Appearance
 ** UI Interaction
@@ -296,9 +296,9 @@
      (blink-cursor-mode 0)
    #+END_SRC
 ** Highlight line
-#+BEGIN_SRC emacs-lisp
-  (global-hl-line-mode +1)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (global-hl-line-mode +1)
+   #+END_SRC
 ** Minimal UI
 
    #+BEGIN_SRC emacs-lisp
@@ -308,61 +308,6 @@
      (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
    #+END_SRC
 
-** Modeline
-#+BEGIN_SRC emacs-lisp
-  (column-number-mode 1)
-
-  ;; Set positon to 'line:column'
-  (setq mode-line-position '((line-number-mode ("%l" (column-number-mode ":%c")))))
-
-
-  (defun simple-mode-line-render (left right)
-    "Return a string of `window-width' length containing LEFT aligned respectively."
-    (let* ((available-width (- (window-width) (length left) (length right) 2)))
-      (format (format "%%%ds " available-width) " ")))
-
-  (defvar mode-line-center-space
-    '(:propertize
-      (:eval (simple-mode-line-render (format-mode-line mode-line-left) (format-mode-line mode-line-right)))
-      face mode-line)
-    "Builds center spacing.")
-  (put 'mode-line-center-space 'risky-local-variable t)
-
-  (setq mode-line-left
-	'("%e"
-	  mode-line-front-space
-	  mode-line-client
-	  mode-line-modified
-	  " "
-	  mode-line-position
-	  " "
-	  mode-line-buffer-identification))
-
-  (setq mode-line-right
-	'(
-	  (flycheck-mode flycheck-mode-line)
-	  " "
-	  mode-name
-	  mode-line-process
-	  mode-line-misc-info
-	  mode-line-end-spaces))
-
-  (setq-default mode-line-format
-		(append mode-line-left '(mode-line-center-space) mode-line-right))
-#+END_SRC
-
-** Line numbering
-#+BEGIN_SRC emacs-lisp
-  (use-package nlinum
-  :straight t
-  :commands global-nlinum-mode
-  :config
-  (global-nlinum-mode))
-#+END_SRC
-** Matching parens highlight
-#+BEGIN_SRC emacs-lisp
-  (show-paren-mode)
-#+END_SRC
 ** Light / Dark theme toggle
    I'd like to toggle between light & dark themes.
 
@@ -412,226 +357,226 @@
 
 * UI Interaction
 ** Helm
-#+BEGIN_SRC emacs-lisp
-  (use-package helm
-    :straight t
-    :demand t
-    :bind (([remap execute-extended-command] . 'helm-M-x) ;; M-x
-	   ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
-	   ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
-	   ([remap find-file] . 'helm-find-files) ;; C-x C-f
-	   ("s-r" . 'helm-occur)
-	   ("s-e" . 'helm-all-mark-rings)
-	   ("s-p" . 'helm-etags-select)
-	   ("s-t" . 'helm-buffers-list)
-	   ("s-;" . 'helm-calcul-expression)
-	   ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
-    :config (progn (helm-mode 1)
-		   (helm-autoresize-mode t)
-		   (setq helm-M-x-fuzzy-match                  t
-			 helm-bookmark-show-location           t
-			 helm-buffers-fuzzy-matching           t
-			 helm-completion-in-region-fuzzy-match t
-			 helm-file-cache-fuzzy-match           t
-			 helm-imenu-fuzzy-match                t
-			 helm-mode-fuzzy-match                 t
-			 helm-locate-fuzzy-match               t
-			 helm-quick-update                     t
-			 helm-recentf-fuzzy-match              t
-			 helm-semantic-fuzzy-match             t
-			 helm-etags-fuzzy-match                t
-			 helm-etags-match-part-only            'all
-			 helm-split-window-inside-p t)))
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm
+       :straight t
+       :demand t
+       :bind (([remap execute-extended-command] . 'helm-M-x) ;; M-x
+	      ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
+	      ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
+	      ([remap find-file] . 'helm-find-files) ;; C-x C-f
+	      ("s-r" . 'helm-occur)
+	      ("s-e" . 'helm-all-mark-rings)
+	      ("s-p" . 'helm-etags-select)
+	      ("s-t" . 'helm-buffers-list)
+	      ("s-;" . 'helm-calcul-expression)
+	      ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
+       :config (progn (helm-mode 1)
+		      (helm-autoresize-mode t)
+		      (setq helm-M-x-fuzzy-match                  t
+			    helm-bookmark-show-location           t
+			    helm-buffers-fuzzy-matching           t
+			    helm-completion-in-region-fuzzy-match t
+			    helm-file-cache-fuzzy-match           t
+			    helm-imenu-fuzzy-match                t
+			    helm-mode-fuzzy-match                 t
+			    helm-locate-fuzzy-match               t
+			    helm-quick-update                     t
+			    helm-recentf-fuzzy-match              t
+			    helm-semantic-fuzzy-match             t
+			    helm-etags-fuzzy-match                t
+			    helm-etags-match-part-only            'all
+			    helm-split-window-inside-p t)))
 
-  (use-package helm-xref
-	:straight t
-	:config
-	(setq xref-show-xrefs-function 'helm-xref-show-xrefs))
+     (use-package helm-xref
+       :straight t
+       :config
+       (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
 
-  (use-package helm-descbinds
-    :straight t
-    :config (helm-descbinds-mode))
-#+END_SRC
+     (use-package helm-descbinds
+       :straight t
+       :config (helm-descbinds-mode))
+   #+END_SRC
 
 ** Aggressive Indent
 
-#+BEGIN_SRC emacs-lisp
-  (use-package aggressive-indent
-    :straight t
-    :config
-    (global-aggressive-indent-mode 1))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package aggressive-indent
+       :straight t
+       :config
+       (global-aggressive-indent-mode 1))
+   #+END_SRC
 
 ** Company
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :straight t
-    :init (setq
-	   company-idle-delay 0.1
-	   company-minimum-prefix-length 3)
-    :config
-    (global-company-mode)
-    (add-to-list 'company-backends 'company-dabbrev)
-    (add-to-list 'company-backends 'company-etags)
-    (add-to-list 'company-frontends 'company-tng-frontend)
-    (setq company-dabbrev-downcase nil))
+   #+BEGIN_SRC emacs-lisp
+     (use-package company
+       :straight t
+       :init (setq
+	      company-idle-delay 0.1
+	      company-minimum-prefix-length 3)
+       :config
+       (global-company-mode)
+       (add-to-list 'company-backends 'company-dabbrev)
+       (add-to-list 'company-backends 'company-etags)
+       (add-to-list 'company-frontends 'company-tng-frontend)
+       (setq company-dabbrev-downcase nil))
 
-  (use-package company-quickhelp
-    :straight t
-    :init (setq company-quickhelp-delay 0.1)
-    :config (company-quickhelp-mode))
-#+END_SRC
+     (use-package company-quickhelp
+       :straight t
+       :init (setq company-quickhelp-delay 0.1)
+       :config (company-quickhelp-mode))
+   #+END_SRC
 
 ** Default to regexp search
-#+BEGIN_SRC emacs-lisp
-  (global-set-key [remap isearch-forward] 'isearch-forward-regexp) ;; C-s
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key [remap isearch-forward] 'isearch-forward-regexp) ;; C-s
+   #+END_SRC
 ** Sublime-like
 *** Automatically add newlines at EOF
-#+BEGIN_SRC emacs-lisp
-  (setq require-final-newline t)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq require-final-newline t)
+   #+END_SRC
 *** Remove trailing whitespace
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'before-save-hook 'delete-trailing-whitespace)
+   #+END_SRC
 *** Expand region
-#+BEGIN_SRC emacs-lisp
-    (use-package expand-region
-      :straight t
-      :bind (("s-f" . 'er/expand-region)
-	     ("s-F" . 'er/contract-region)))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package expand-region
+       :straight t
+       :bind (("s-f" . 'er/expand-region)
+	      ("s-F" . 'er/contract-region)))
+   #+END_SRC
 *** Multiple cursors
-#+BEGIN_SRC emacs-lisp
-    (use-package multiple-cursors
-      :straight t
-      :config
-      (defun select-symbol (arg)
-	"Sets the region to the symbol under the point"
-	(interactive "p")
-	(if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
-      (defun mark-all-like-symbol (arg)
-	(interactive "p")
-	(progn
-	  (unless mark-active (er/mark-symbol))
-	  (mc/mark-all-like-this)))
-      (add-to-list 'mc/unsupported-minor-modes 'company-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'helm-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-doc-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
-      (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
-      :bind (("s-L" . 'mc/edit-lines)
-	     ("s-d" . 'select-symbol)
-	     ("s-D" . 'mark-all-like-symbol)
-	     ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package multiple-cursors
+       :straight t
+       :config
+       (defun select-symbol (arg)
+	 "Sets the region to the symbol under the point"
+	 (interactive "p")
+	 (if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
+       (defun mark-all-like-symbol (arg)
+	 (interactive "p")
+	 (progn
+	   (unless mark-active (er/mark-symbol))
+	   (mc/mark-all-like-this)))
+       (add-to-list 'mc/unsupported-minor-modes 'company-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'helm-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-doc-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
+       (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
+       :bind (("s-L" . 'mc/edit-lines)
+	      ("s-d" . 'select-symbol)
+	      ("s-D" . 'mark-all-like-symbol)
+	      ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
+   #+END_SRC
 *** Comment line / region
-#+BEGIN_SRC emacs-lisp
-  (defun comment-line-or-region (beg end)
-    "Comment a region or the current line."
-    (interactive "*r")
-    (save-excursion
-      (if (region-active-p)
-	  (comment-or-uncomment-region beg end)
-	(comment-line 1))))
+   #+BEGIN_SRC emacs-lisp
+     (defun comment-line-or-region (beg end)
+       "Comment a region or the current line."
+       (interactive "*r")
+       (save-excursion
+	 (if (region-active-p)
+	     (comment-or-uncomment-region beg end)
+	   (comment-line 1))))
 
-  (global-set-key (kbd "C-\\") 'comment-line-or-region)
-  (global-set-key (kbd "s-/") 'comment-line-or-region)
-#+END_SRC
+     (global-set-key (kbd "C-\\") 'comment-line-or-region)
+     (global-set-key (kbd "s-/") 'comment-line-or-region)
+   #+END_SRC
 *** Select whole buffer
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-a") 'mark-whole-buffer)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "s-a") 'mark-whole-buffer)
+   #+END_SRC
 *** Compilation mode tweaks
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-B") 'compile)
-  (global-set-key (kbd "s-b") 'recompile)
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "s-B") 'compile)
+     (global-set-key (kbd "s-b") 'recompile)
 
-  (setq compilation-scroll-output 'first-error)
-  (use-package ansi-color
-    :config
-    (defun colorize-compilation-buffer ()
-      (read-only-mode)
-      (ansi-color-apply-on-region compilation-filter-start (point))
-      (read-only-mode))
-    :hook ('compilation-filter . #'colorize-compilation-buffer))
-#+END_SRC
+     (setq compilation-scroll-output 'first-error)
+     (use-package ansi-color
+       :config
+       (defun colorize-compilation-buffer ()
+	 (read-only-mode)
+	 (ansi-color-apply-on-region compilation-filter-start (point))
+	 (read-only-mode))
+       :hook ('compilation-filter . #'colorize-compilation-buffer))
+   #+END_SRC
 
 *** Indent / Dedent
-#+BEGIN_SRC emacs-lisp
-  (defun dedent (start end)
-    (interactive "*r")
-    (indent-rigidly start end (- tab-width)))
+   #+BEGIN_SRC emacs-lisp
+     (defun dedent (start end)
+       (interactive "*r")
+       (indent-rigidly start end (- tab-width)))
 
-  (defun indent (start end)
-    (interactive "*r")
-    (indent-rigidly start end tab-width))
+     (defun indent (start end)
+       (interactive "*r")
+       (indent-rigidly start end tab-width))
 
-  (global-set-key (kbd "s-[") 'dedent)
-  (global-set-key (kbd "s-]") 'indent)
-#+END_SRC
+     (global-set-key (kbd "s-[") 'dedent)
+     (global-set-key (kbd "s-]") 'indent)
+   #+END_SRC
 *** Guess indentation settings
-#+BEGIN_SRC emacs-lisp
-  (use-package dtrt-indent
-    :straight t
-    :config
-    (dtrt-indent-mode 1)
-    )
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package dtrt-indent
+       :straight t
+       :config
+       (dtrt-indent-mode 1)
+       )
+   #+END_SRC
 *** Window navigation
-#+BEGIN_SRC emacs-lisp
-    (global-set-key (kbd "M-j") 'previous-multiframe-window)
-    (global-set-key (kbd "M-k") 'other-window)
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-j") 'previous-multiframe-window)
+     (global-set-key (kbd "M-k") 'other-window)
 
-    (use-package ace-window
-      :straight t
-      :demand t
-      :config
-      (defun switch-to-nth-window (window-num)
-	(let ((window (nth window-num (aw-window-list))))
-	  (when window (select-window window))))
-      :bind (
-	     ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
-	     ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
-	     ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
-	     ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
-	     ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
-	     ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
-	     ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
-	     ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
-	     ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
-	     ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
-	     ("s-T" . ace-window)))
-#+END_SRC
+     (use-package ace-window
+       :straight t
+       :demand t
+       :config
+       (defun switch-to-nth-window (window-num)
+	 (let ((window (nth window-num (aw-window-list))))
+	   (when window (select-window window))))
+       :bind (
+	      ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
+	      ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
+	      ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
+	      ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
+	      ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
+	      ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
+	      ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
+	      ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
+	      ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
+	      ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
+	      ("s-T" . ace-window)))
+   #+END_SRC
 *** Go to line
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-l") 'goto-line)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "s-l") 'goto-line)
+   #+END_SRC
 
 *** Upcase / downcase
-#+BEGIN_SRC emacs-lisp
-  (put 'upcase-region 'disabled nil)
-  (put 'downcase-region 'disabled nil)
-  ;; (global-set-key (kbd "s-k s-u") 'upcase-region)
-  ;; (global-set-key (kbd "s-k s-l") 'downcase-region)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (put 'upcase-region 'disabled nil)
+     (put 'downcase-region 'disabled nil)
+     ;; (global-set-key (kbd "s-k s-u") 'upcase-region)
+     ;; (global-set-key (kbd "s-k s-l") 'downcase-region)
+   #+END_SRC
 *** Electric pair
-#+BEGIN_SRC emacs-lisp
-  (electric-pair-mode 1)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (electric-pair-mode 1)
+   #+END_SRC
 *** Auto revert
-#+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (global-auto-revert-mode t)
+   #+END_SRC
 ** CTags
 Auto-revert to new tags file
-#+BEGIN_SRC emacs-lisp
-  (setq tags-revert-without-query 1)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq tags-revert-without-query 1)
+   #+END_SRC
 ** Map Super-* to C-c * + smartrep
 
    #+BEGIN_SRC emacs-lisp
@@ -732,41 +677,41 @@ Auto-revert to new tags file
 
 * Packages
 ** Magit
-#+BEGIN_SRC emacs-lisp
-  (if (gethash :magit package-overrides t)
-      (use-package magit
-	:straight t
-	:commands magit-status magit-blame-addition
-	:init
-	(defadvice magit-status (around magit-fullscreen activate)
-	  (window-configuration-to-register :magit-fullscreen)
-	  ad-do-it
-	  (delete-other-windows))
-	:config
-	(setq magit-branch-arguments nil
-	      ;; don't put "origin-" in front of new branch names by default
-	      magit-default-tracking-name-function 'magit-default-tracking-name-branch-only
-	      magit-push-always-verify nil
-	      ;; Get rid of the previous advice to go into fullscreen
-	      magit-restore-window-configuration t)
-	:bind ("C-x g" . magit-status)))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (if (gethash :magit package-overrides t)
+	 (use-package magit
+	   :straight t
+	   :commands magit-status magit-blame-addition
+	   :init
+	   (defadvice magit-status (around magit-fullscreen activate)
+	     (window-configuration-to-register :magit-fullscreen)
+	     ad-do-it
+	     (delete-other-windows))
+	   :config
+	   (setq magit-branch-arguments nil
+		 ;; don't put "origin-" in front of new branch names by default
+		 magit-default-tracking-name-function 'magit-default-tracking-name-branch-only
+		 magit-push-always-verify nil
+		 ;; Get rid of the previous advice to go into fullscreen
+		 magit-restore-window-configuration t)
+	   :bind ("C-x g" . magit-status)))
+   #+END_SRC
 
 ** Diff Highlight
-#+BEGIN_SRC emacs-lisp
-  (use-package diff-hl
-  :straight t
-  :config
-  (global-diff-hl-mode)
-  (diff-hl-margin-mode))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package diff-hl
+       :straight t
+       :config
+       (global-diff-hl-mode)
+       (diff-hl-margin-mode))
+   #+END_SRC
 
 ** Flycheck
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :straight t
-    :hook ('prog-mode . #'global-flycheck-mode))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package flycheck
+       :straight t
+       :hook ('prog-mode . #'global-flycheck-mode))
+   #+END_SRC
 ** LSP
    I'm trying out an alternate to lsp-mode, so this is currently disabled
 
@@ -824,196 +769,196 @@ Interact with gmail via notmuch.
 
 * File-type support
 ** YAML
-#+BEGIN_SRC emacs-lisp
-  (use-package yaml-mode
-    :straight t
-    :mode "\\.yml\\'")
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package yaml-mode
+       :straight t
+       :mode "\\.yml\\'")
+   #+END_SRC
 
 ** Thrift
-#+BEGIN_SRC emacs-lisp
-  (use-package thrift-mode
-    :straight t)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package thrift-mode
+       :straight t)
+   #+END_SRC
 
 ** Lua
-#+BEGIN_SRC emacs-lisp
-  (use-package lua-mode
-    :straight t
-    :config
-    (flycheck-define-checker lua-luacheck-old
-      "A Lua syntax checker using luacheck.
+   #+BEGIN_SRC emacs-lisp
+     (use-package lua-mode
+       :straight t
+       :config
+       (flycheck-define-checker lua-luacheck-old
+	 "A Lua syntax checker using luacheck.
 
-  See URL `https://github.com/mpeterv/luacheck'."
-      :command ("luacheck"
-		;; "--formatter" "plain"
-		;; "--codes"                   ; Show warning codes
-		"--no-color"
-		(option-list "--std" flycheck-luacheck-standards)
-		(config-file "--config" flycheck-luacheckrc)
-		;; "--filename" source-original
-		;; Read from standard input
-		source-original)
-      :standard-input t
-      :error-patterns
-      ((warning line-start
-		(optional (minimal-match (one-or-more not-newline)))
-		":" line ":" column
-		": (" (id "W" (one-or-more digit)) ") "
-		(message) line-end)
-       (error line-start
-	      (optional (minimal-match (one-or-more not-newline)))
-	      ":" line ":" column ":"
-	      ;; `luacheck' before 0.11.0 did not output codes for errors, hence
-	      ;; the ID is optional here
-	      (optional " (" (id "E" (one-or-more digit)) ") ")
-	      (message) line-end))
-      :modes lua-mode)
-    :hook
-    (lua-mode
-     .
-     (lambda()
-       (set (make-local-variable 'compile-command)
-	    (let ((file (file-name-nondirectory buffer-file-name)))
-	      (format "luacheck --no-color %s" file))))))
+     See URL `https://github.com/mpeterv/luacheck'."
+	 :command ("luacheck"
+		   ;; "--formatter" "plain"
+		   ;; "--codes"                   ; Show warning codes
+		   "--no-color"
+		   (option-list "--std" flycheck-luacheck-standards)
+		   (config-file "--config" flycheck-luacheckrc)
+		   ;; "--filename" source-original
+		   ;; Read from standard input
+		   source-original)
+	 :standard-input t
+	 :error-patterns
+	 ((warning line-start
+		   (optional (minimal-match (one-or-more not-newline)))
+		   ":" line ":" column
+		   ": (" (id "W" (one-or-more digit)) ") "
+		   (message) line-end)
+	  (error line-start
+		 (optional (minimal-match (one-or-more not-newline)))
+		 ":" line ":" column ":"
+		 ;; `luacheck' before 0.11.0 did not output codes for errors, hence
+		 ;; the ID is optional here
+		 (optional " (" (id "E" (one-or-more digit)) ") ")
+		 (message) line-end))
+	 :modes lua-mode)
+       :hook
+       (lua-mode
+	.
+	(lambda()
+	  (set (make-local-variable 'compile-command)
+	       (let ((file (file-name-nondirectory buffer-file-name)))
+		 (format "luacheck --no-color %s" file))))))
 
-#+END_SRC
+   #+END_SRC
 
 ** Org
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :straight org-plus-contrib
-    :init
-    ;; From https://github.com/raxod502/radian/blob/ee92ea6cb0473bf7d20c6d381753011312ef4a52/radian-emacs/radian-org.el#L46-L112
+   #+BEGIN_SRC emacs-lisp
+     (use-package org
+       :straight org-plus-contrib
+       :init
+       ;; From https://github.com/raxod502/radian/blob/ee92ea6cb0473bf7d20c6d381753011312ef4a52/radian-emacs/radian-org.el#L46-L112
 
-    ;; This section is devoted to fixing the asinine version-check
-    ;; handling in Org (it's not designed to handle the case where you
-    ;; run straight from the Git repo, apparently). This is one of the
-    ;; worse hacks I've ever had the misfortune to create in Emacs.
+       ;; This section is devoted to fixing the asinine version-check
+       ;; handling in Org (it's not designed to handle the case where you
+       ;; run straight from the Git repo, apparently). This is one of the
+       ;; worse hacks I've ever had the misfortune to create in Emacs.
 
-    ;; First we define a function to return a proper version string
-    ;; based on the Git repo. (This is somewhat similar to what happens
-    ;; in org-fixup.el.) We should really define a function that will
-    ;; return the latest tag, as well, but this remains a FIXME for now.
-    (defun radian--org-git-version ()
-      "Return the abbreviated SHA for the Org Git repo."
-      (let ((default-directory (concat user-emacs-directory
-				       "straight/repos/org/")))
-	(if (executable-find "git")
-	    (with-temp-buffer
-	      ;; Returns the shortest prefix of the SHA for HEAD that is
-	      ;; unique, down to a minimum of 4 characters (see
-	      ;; git-rev-parse(1)).
-	      (call-process "git" nil '(t nil) nil
-			    "rev-parse" "--short" "HEAD")
-	      (if (> (buffer-size) 0)
-		  (string-trim (buffer-string))
-		;; This shouldn't happen, unless somehow Org is not
-		;; actually a Git repo.
-		"revision unknown"))
-	  ;; This also shouldn't happen, because how would you have
-	  ;; gotten Org in the first place, then? But the real world
-	  ;; sucks and we have to account for stuff like this.
-	  "git not available")))
+       ;; First we define a function to return a proper version string
+       ;; based on the Git repo. (This is somewhat similar to what happens
+       ;; in org-fixup.el.) We should really define a function that will
+       ;; return the latest tag, as well, but this remains a FIXME for now.
+       (defun radian--org-git-version ()
+	 "Return the abbreviated SHA for the Org Git repo."
+	 (let ((default-directory (concat user-emacs-directory
+					  "straight/repos/org/")))
+	   (if (executable-find "git")
+	       (with-temp-buffer
+		 ;; Returns the shortest prefix of the SHA for HEAD that is
+		 ;; unique, down to a minimum of 4 characters (see
+		 ;; git-rev-parse(1)).
+		 (call-process "git" nil '(t nil) nil
+			       "rev-parse" "--short" "HEAD")
+		 (if (> (buffer-size) 0)
+		     (string-trim (buffer-string))
+		   ;; This shouldn't happen, unless somehow Org is not
+		   ;; actually a Git repo.
+		   "revision unknown"))
+	     ;; This also shouldn't happen, because how would you have
+	     ;; gotten Org in the first place, then? But the real world
+	     ;; sucks and we have to account for stuff like this.
+	     "git not available")))
 
-    ;; Here we're defining `org-git-version' and `org-release' eagerly.
-    ;; Pay close attention here, since we actually do this multiple
-    ;; times. The control flow is really weird. The reason we define the
-    ;; functions here is that Emacs includes its own copy of Org, and
-    ;; these functions are autoloaded by Emacs. Now, normally the
-    ;; built-in autoloads are overridden by the version of Org
-    ;; downloaded from EmacsMirror, but since we're running straight
-    ;; from the Git repo, `org-git-version' and `org-release' are not
-    ;; generated and autoloaded. So in order to avoid the original
-    ;; autoloads from being triggered under any circumstances, we have
-    ;; to overwrite them here.
-    (defalias #'org-git-version #'radian--org-git-version)
-    (defun org-release () "N/A") ; FIXME: replace with a real function
+       ;; Here we're defining `org-git-version' and `org-release' eagerly.
+       ;; Pay close attention here, since we actually do this multiple
+       ;; times. The control flow is really weird. The reason we define the
+       ;; functions here is that Emacs includes its own copy of Org, and
+       ;; these functions are autoloaded by Emacs. Now, normally the
+       ;; built-in autoloads are overridden by the version of Org
+       ;; downloaded from EmacsMirror, but since we're running straight
+       ;; from the Git repo, `org-git-version' and `org-release' are not
+       ;; generated and autoloaded. So in order to avoid the original
+       ;; autoloads from being triggered under any circumstances, we have
+       ;; to overwrite them here.
+       (defalias #'org-git-version #'radian--org-git-version)
+       (defun org-release () "N/A") ; FIXME: replace with a real function
 
-    ;; Now, the culprit function is `org-check-version', which is
-    ;; defined in org-compat.el and called from org.el. The problem with
-    ;; this function is that if the version of Org in use is not a
-    ;; release version (i.e. it's running straight from the repo, as we
-    ;; are doing), then it prints a warning. We don't want this. The
-    ;; natural thought is to override `org-check-version'.
-    ;; Unfortunately, this is completely impossible since
-    ;; `org-check-version' is a macro, and org.el (which is where the
-    ;; macro is used) is byte-compiled, so the code of
-    ;; `org-check-version' is hardcoded into org.elc. The easiest way
-    ;; around the problem, other than doing something even more
-    ;; horrifying like suppressing warnings while loading Org, seems to
-    ;; be to *pretend* that org-version.el is available, even though it
-    ;; doesn't exist. Then `org-check-version' happily defines
-    ;; `org-git-version' and `org-release' as autoloads pointing to
-    ;; org-version.el. Of course, then after Org is loaded, we have to
-    ;; override those autoloads to make the functions point back to what
-    ;; we want. Right now, the definition of `org-release' generated by
-    ;; `org-check-version' is the same as the one used above, so we
-    ;; don't bother to change it. That should change, FIXME.
-    (provide 'org-version)
-    (with-eval-after-load 'org
-      (defalias #'org-git-version #'radian--org-git-version))
-    :config
-    (setq
-     org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.notes")
-     org-log-done t
-     org-enforce-todo-dependencies t
-     ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
-     org-refile-targets '((org-agenda-files :maxlevel . 3))
-     org-refile-use-outline-path 'file
-     org-outline-path-complete-in-steps nil
-     org-refile-allow-creating-parent-nodes 'confirm
-     org-startup-folded t
-     org-agenda-log-mode-items '(closed clock state)
-     org-src-tab-acts-natively t)
-    ;; custom todo tags
-    (setq org-todo-keywords
-	  '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
-	    (sequence "MEET(m@)" "|" "DONE(d!)")
-	    (sequence "IDEA(a!)" "|" "DONE(d!)")))
-    (setq org-agenda-custom-commands
-	  '(("d" "Daily agenda and all TODOs"
-	     ((todo "IN-PROGRESS"
-		    ((org-agenda-overriding-header "Unfinished tasks:")))
-	      (agenda "" ((org-agenda-span 1)))
-	      (tags ":refile:"
-		    ((org-agenda-overriding-header "To refile:")))
-	      (todo "TODO"
-		    ((org-agenda-overriding-header "Open tasks:")))
-	      (todo "MEET"
-		    ((org-agenda-overriding-header "People to meet:")
-		     (org-agenda-max-entries 5)))
-	      (todo "IDEA"
-		    ((org-agenda-overriding-header "Ideas:")
-		     (org-agenda-max-entries 5))))
-	     ((org-agenda-compact-blocks t)))
-	    ("p" "3-week context plan"
-	     ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
-	     ((org-agenda-compact-blocks t)
-	      (org-agenda-include-inactive-timestamps 't)))
-	    ("h" "last half dates"
-	     ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
-	     ((org-agenda-compact-blocks t)
-	      (org-agenda-include-inactive-timestamps 't)))))
-    (require 'ol-notmuch)
-    :bind (
-      ("C-c c" . org-capture)
-      ("C-c l" . org-store-link)
-      :map org-mode-map
-      ("C-c g" . org-mac-safari-insert-frontmost-url)
-    ))
+       ;; Now, the culprit function is `org-check-version', which is
+       ;; defined in org-compat.el and called from org.el. The problem with
+       ;; this function is that if the version of Org in use is not a
+       ;; release version (i.e. it's running straight from the repo, as we
+       ;; are doing), then it prints a warning. We don't want this. The
+       ;; natural thought is to override `org-check-version'.
+       ;; Unfortunately, this is completely impossible since
+       ;; `org-check-version' is a macro, and org.el (which is where the
+       ;; macro is used) is byte-compiled, so the code of
+       ;; `org-check-version' is hardcoded into org.elc. The easiest way
+       ;; around the problem, other than doing something even more
+       ;; horrifying like suppressing warnings while loading Org, seems to
+       ;; be to *pretend* that org-version.el is available, even though it
+       ;; doesn't exist. Then `org-check-version' happily defines
+       ;; `org-git-version' and `org-release' as autoloads pointing to
+       ;; org-version.el. Of course, then after Org is loaded, we have to
+       ;; override those autoloads to make the functions point back to what
+       ;; we want. Right now, the definition of `org-release' generated by
+       ;; `org-check-version' is the same as the one used above, so we
+       ;; don't bother to change it. That should change, FIXME.
+       (provide 'org-version)
+       (with-eval-after-load 'org
+	 (defalias #'org-git-version #'radian--org-git-version))
+       :config
+       (setq
+	org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.notes")
+	org-log-done t
+	org-enforce-todo-dependencies t
+	;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
+	org-refile-targets '((org-agenda-files :maxlevel . 3))
+	org-refile-use-outline-path 'file
+	org-outline-path-complete-in-steps nil
+	org-refile-allow-creating-parent-nodes 'confirm
+	org-startup-folded t
+	org-agenda-log-mode-items '(closed clock state)
+	org-src-tab-acts-natively t)
+       ;; custom todo tags
+       (setq org-todo-keywords
+	     '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
+	       (sequence "MEET(m@)" "|" "DONE(d!)")
+	       (sequence "IDEA(a!)" "|" "DONE(d!)")))
+       (setq org-agenda-custom-commands
+	     '(("d" "Daily agenda and all TODOs"
+		((todo "IN-PROGRESS"
+		       ((org-agenda-overriding-header "Unfinished tasks:")))
+		 (agenda "" ((org-agenda-span 1)))
+		 (tags ":refile:"
+		       ((org-agenda-overriding-header "To refile:")))
+		 (todo "TODO"
+		       ((org-agenda-overriding-header "Open tasks:")))
+		 (todo "MEET"
+		       ((org-agenda-overriding-header "People to meet:")
+			(org-agenda-max-entries 5)))
+		 (todo "IDEA"
+		       ((org-agenda-overriding-header "Ideas:")
+			(org-agenda-max-entries 5))))
+		((org-agenda-compact-blocks t)))
+	       ("p" "3-week context plan"
+		((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
+		((org-agenda-compact-blocks t)
+		 (org-agenda-include-inactive-timestamps 't)))
+	       ("h" "last half dates"
+		((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
+		((org-agenda-compact-blocks t)
+		 (org-agenda-include-inactive-timestamps 't)))))
+       (require 'ol-notmuch)
+       :bind (
+	      ("C-c c" . org-capture)
+	      ("C-c l" . org-store-link)
+	      :map org-mode-map
+	      ("C-c g" . org-mac-safari-insert-frontmost-url)
+	      ))
 
-  (use-package helm-org
-    :straight t
-    :config
-    (setq helm-org-ignore-autosaves t
-	  helm-org-headings-fontify t
-	  helm-org-format-outline-path t
-	  helm-org-show-filename t
-	  helm-org-headings-max-depth 6)
-    :bind (:map org-mode-map
-		("s-r" . helm-org-agenda-files-headings)))
-#+END_SRC
+     (use-package helm-org
+       :straight t
+       :config
+       (setq helm-org-ignore-autosaves t
+	     helm-org-headings-fontify t
+	     helm-org-format-outline-path t
+	     helm-org-show-filename t
+	     helm-org-headings-max-depth 6)
+       :bind (:map org-mode-map
+		   ("s-r" . helm-org-agenda-files-headings)))
+   #+END_SRC
 
 *** Prettier org mode
 Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
@@ -1073,83 +1018,83 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
    #+END_SRC
 
 ** ANTLR
-#+BEGIN_SRC emacs-lisp
-  (use-package antlr-mode
-    :mode ("\\.g4\\'" . antlr-mode)
-    :straight t)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package antlr-mode
+       :mode ("\\.g4\\'" . antlr-mode)
+       :straight t)
+   #+END_SRC
 ** C++
 
    CQuery is disabled, but I still want C++ support
 
    #+BEGIN_SRC emacs-lisp :tangle no
      (use-package cquery
-	 :straight t
-	 :if
-	 (file-exists-p "/bin/cquery")
-	 :bind
-	 (:map c-mode-base-map
-	       ("C-t h c" . cquery-call-hierarchy)
-	       ("C-t h i" . cquery-inheritance-hierarchy)
-	       ("C-t i" . lsp-ui-sideline-toggle-symbols-info)
-	       ("C-t I". helm-imenu)
-	       ("C-t h m" . cquery-member-hierarchy)
-	       ("C-t ." . lsp-ui-peek-find-definitions)
-	       ("C-t ?" . lsp-ui-peek-find-references))
-	 :preface
-	 (defun cquery//enable ()
-	   (condition-case nil
-	       (lsp)
-	     (user-error nil)))
-	 :init
-	 (add-hook 'c-mode-common-hook #'cquery//enable)
-	 (defun cquery-cache-dir (dir)
-	   (expand-file-name cquery-cache-dir "/home/mhj/.cquery_cache"))
-	 (setq cquery-cache-dir-function #'cquery-cache-dir)
-	 :config
-	 (setq
-	  cquery-executable "/bin/cquery"
-	  cquery-extra-args '("--log-file=/tmp/cq.log")
-	  cquery-extra-init-params '(:completion (:detailedLabel t))
-	  cquery-sem-highlight-method 'font-lock
-	  company-transformers nil
-	  company-lsp-async t
-	  company-lsp-cache-candidates nil
-	  xref-prompt-for-identifier '(not
-				       xref-find-definitions
-				       xref-find-definitions-other-window
-				       xref-find-definitions-other-frame
-				       xref-find-references)))
+       :straight t
+       :if
+       (file-exists-p "/bin/cquery")
+       :bind
+       (:map c-mode-base-map
+	     ("C-t h c" . cquery-call-hierarchy)
+	     ("C-t h i" . cquery-inheritance-hierarchy)
+	     ("C-t i" . lsp-ui-sideline-toggle-symbols-info)
+	     ("C-t I". helm-imenu)
+	     ("C-t h m" . cquery-member-hierarchy)
+	     ("C-t ." . lsp-ui-peek-find-definitions)
+	     ("C-t ?" . lsp-ui-peek-find-references))
+       :preface
+       (defun cquery//enable ()
+	 (condition-case nil
+	     (lsp)
+	   (user-error nil)))
+       :init
+       (add-hook 'c-mode-common-hook #'cquery//enable)
+       (defun cquery-cache-dir (dir)
+	 (expand-file-name cquery-cache-dir "/home/mhj/.cquery_cache"))
+       (setq cquery-cache-dir-function #'cquery-cache-dir)
+       :config
+       (setq
+	cquery-executable "/bin/cquery"
+	cquery-extra-args '("--log-file=/tmp/cq.log")
+	cquery-extra-init-params '(:completion (:detailedLabel t))
+	cquery-sem-highlight-method 'font-lock
+	company-transformers nil
+	company-lsp-async t
+	company-lsp-cache-candidates nil
+	xref-prompt-for-identifier '(not
+				     xref-find-definitions
+				     xref-find-definitions-other-window
+				     xref-find-definitions-other-frame
+				     xref-find-references)))
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
-       (use-package clang-format
-	 :straight t
-	 :config
-	 (progn
-	   (defun clang-format-before-save ()
-	     "Add this to .emacs to clang-format on save
+     (use-package clang-format
+       :straight t
+       :config
+       (progn
+	 (defun clang-format-before-save ()
+	   "Add this to .emacs to clang-format on save
       (add-hook 'before-save-hook 'clang-format-before-save)."
 
-	     (interactive)
-	     (when (eq major-mode 'c++-mode) (clang-format-buffer))))
-	 :hook ('before-save . #'clang-format-before-save))
+	   (interactive)
+	   (when (eq major-mode 'c++-mode) (clang-format-buffer))))
+       :hook ('before-save . #'clang-format-before-save))
 
      (use-package cc-mode
        :mode ("\\.h|\\.cpp" . c++-mode))
    #+END_SRC
 ** Python
-#+BEGIN_SRC emacs-lisp
-  (use-package blacken
-    :straight t
-    :hook (python-mode . blacken-mode))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package blacken
+       :straight t
+       :hook (python-mode . blacken-mode))
+   #+END_SRC
 
 ** Cython
-#+BEGIN_SRC emacs-lisp
-  (use-package cython-mode
-    :straight t)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package cython-mode
+       :straight t)
+   #+END_SRC
 
 ** Rust
 
@@ -1196,11 +1141,11 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
 
-#+BEGIN_SRC emacs-lisp
-  (server-start)
-  (org-agenda nil "d")
-  (delete-other-windows)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (server-start)
+     (org-agenda nil "d")
+     (delete-other-windows)
+   #+END_SRC
 
 * License
 
