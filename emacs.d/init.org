@@ -1124,7 +1124,7 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
        (emacs-bazel-mode
 	:host github
 	:repo "bazelbuild/emacs-bazel-mode")
-       :mode "BUILD"
+       :mode ("BUILD" "WORKSPACE" "\\.bzl\\'")
        :custom (
 		(bazel-mode-buildifier-before-save t)
 		(bazel-mode-buildifier-command "~/go/bin/buildifier"))
