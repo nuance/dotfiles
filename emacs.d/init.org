@@ -314,7 +314,8 @@
 *** Dark: Gotham theme
    #+BEGIN_SRC emacs-lisp
      (use-package gotham-theme
-       :straight t
+       :straight (gotham-theme :host github :repo "wasamasa/gotham-theme"
+			       :fork (:host github "nuance/gotham-theme"))
        :config
        (customize-set-variable 'gotham-tty-256-colors t)
        (load-theme 'gotham t))
