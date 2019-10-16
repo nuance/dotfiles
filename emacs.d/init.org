@@ -311,24 +311,22 @@
 ** Light / Dark theme toggle
    I'd like to toggle between light & dark themes.
 
-*** Dark: Gotham theme
+*** Dark: Gruvbox-dark-hard
    #+BEGIN_SRC emacs-lisp
-     (use-package gotham-theme
-       :straight (gotham-theme :host github :repo "wasamasa/gotham-theme"
-			       :fork (:host github "nuance/gotham-theme"))
+     (use-package gruvbox-theme
+       :straight t
        :config
-       (customize-set-variable 'gotham-tty-256-colors t)
-       (load-theme 'gotham t))
+       (load-theme 'gruvbox-dark-hard t))
 
-     (defvar dark-theme 'gotham)
+     (defvar dark-theme 'gruvbox-dark-hard)
    #+END_SRC
 
-*** Light:
+*** Light: Gruvbox-light-hard
    #+BEGIN_SRC emacs-lisp
-     (use-package solarized-theme
+     (use-package gruvbox-theme
        :straight t)
 
-     (defvar light-theme 'solarized-light)
+     (defvar light-theme 'gruvbox-light-hard)
    #+END_SRC
 
 *** Toggle
