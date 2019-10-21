@@ -354,6 +354,17 @@
 			 :width 'normal)
    #+END_SRC
 
+*** Set titlebar color
+
+   #+BEGIN_SRC emacs-lisp
+     (when (eq system-type 'darwin)
+       (use-package ns-auto-titlebar
+	 :straight t
+	 :config
+	 (ns-auto-titlebar-mode)))
+   #+END_SRC
+
+
 * UI Interaction
 ** Helm
    #+BEGIN_SRC emacs-lisp
