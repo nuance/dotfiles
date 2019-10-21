@@ -986,8 +986,8 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
 
        (custom-theme-set-faces
 	'user
-	'(variable-pitch ((t (:family "SF Pro Text" :height 120 :weight light))))
-	'(fixed-pitch ((t ( :family "Fira Code Retina" :slant normal :weight normal :height 110 :width normal)))))
+	'(variable-pitch ((t (:family "IBM Plex Sans" :height 120 :weight light))))
+	'(fixed-pitch ((t ( :family "IBM Plex Mono" :slant normal :weight normal :height 110 :width normal)))))
        (add-hook 'org-mode-hook 'variable-pitch-mode)
        (add-hook 'org-mode-hook 'visual-line-mode)
        (custom-theme-set-faces
