@@ -14,14 +14,14 @@ export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7
 alias ls="ls -G"
 
 
-if [[ $(which subl) ]]; then
-    export EDITOR="subl -w"
-elif [[ $(which emacsclient) ]]; then
-    echo "Setting EDITOR to emacsclient"
+if [[ $(which emacsclient) ]]; then
     export EDITOR="emacsclient -ta ''"
 elif [[ $(which emacs) ]]; then
     echo "Setting EDITOR to emacs"
     export EDITOR="emacs"
+elif [[ $(which subl) ]]; then
+    echo "Setting EDITOR to subl -w"
+    export EDITOR="subl -w"
 elif [[ $(which atom-beta) ]]; then
     export EDITOR="atom-beta -w"
 elif [[ $(which atom) ]]; then
@@ -30,6 +30,11 @@ elif [[ $(which vim) ]]; then
     echo "Setting EDITOR to vim"
     export EDITOR="vim"
 fi
+
+case "$INSIDE_EMACS" in
+    *term*)
+	export EDITOR="emacsclient"
+esac
 
 if [[ $(which gh) ]]; then
     eval "$(gh alias -s)"
