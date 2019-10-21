@@ -922,7 +922,8 @@ Interact with gmail via notmuch.
 	org-refile-allow-creating-parent-nodes 'confirm
 	org-startup-folded t
 	org-agenda-log-mode-items '(closed clock state)
-	org-src-tab-acts-natively t)
+	org-src-tab-acts-natively t
+	org-agenda-include-diary t)
        ;; custom todo tags
        (setq org-todo-keywords
 	     '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
