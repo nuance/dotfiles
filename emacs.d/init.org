@@ -844,6 +844,13 @@ Interact with gmail via notmuch.
        :straight t)
    #+END_SRC
 
+** Protobuf
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package protobuf-mode
+       :straight t)
+   #+END_SRC
+
 ** Lua
    #+BEGIN_SRC emacs-lisp
      (use-package lua-mode
