@@ -1,32 +1,37 @@
 # -*- mode: shell-script; -*-
 
+if [[ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+fi
+
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # PS1 is "(remote host name)? (directory) ([non-zero exit code])? $"
 export PS1="\[\033[0;32m\]\W\[\033[00m\] \$(exit_code="\$?"; ((\$exit_code)) && echo \"\[\033[0;31m\][\$exit_code] $\" || echo \"\[\033[0;32m\]$\" )\[\033[00m\] "
-if [[ "$(hostname)" != *.local && "$(hostname)" != matt-MBP13-* && "$(hostname)" != *mjones ]]; then
+if [[ "$(uname)" != Darwin ]]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
-export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:/Users/matt/Library/Python/2.7/bin:$HOME/go/bin
+export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:$HOME/Library/Python/3.7/bin:$HOME/Library/Python/2.7/bin:$HOME/go/bin
 # export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
 alias ls="ls -G"
 
 
-if [[ $(which emacsclient) ]]; then
+if [[ $(command -v emacsclient) ]]; then
     export EDITOR="emacsclient -ta ''"
-elif [[ $(which emacs) ]]; then
+elif [[ $(command -v emacs) ]]; then
     echo "Setting EDITOR to emacs"
     export EDITOR="emacs"
-elif [[ $(which subl) ]]; then
+elif [[ $(command -v subl) ]]; then
     echo "Setting EDITOR to subl -w"
     export EDITOR="subl -w"
-elif [[ $(which atom-beta) ]]; then
+elif [[ $(command -v atom-beta) ]]; then
     export EDITOR="atom-beta -w"
-elif [[ $(which atom) ]]; then
+elif [[ $(command -v atom) ]]; then
     export EDITOR="atom -w"
-elif [[ $(which vim) ]]; then
+elif [[ $(command -v vim) ]]; then
     echo "Setting EDITOR to vim"
     export EDITOR="vim"
 fi
@@ -36,20 +41,14 @@ case "$INSIDE_EMACS" in
 	export EDITOR="emacsclient"
 esac
 
-if [[ $(which gh) ]]; then
-    eval "$(gh alias -s)"
-elif [[ $(which hub) ]]; then
-    eval "$(hub alias -s)"
-fi
-
 alias g=git
 alias gg="git grep"
 
 alias onepage='head -n $(echo "$(tput lines) - 2" | bc)'
 
-alias notes="git --git-dir=/Users/matt/Dropbox/Notes.git/.git --work-tree=/Users/matt/Dropbox/Notes"
-
-alias e="$EDITOR"
+e() {
+    $EDITOR "$@"
+}
 
 shopt -s histappend
 export HISTFILESIZE=100000
@@ -60,21 +59,11 @@ _bash_history_append() {
 }
 PROMPT_COMMAND="_bash_history_append; $PROMPT_COMMAND"
 
-if [[ $(which src-hilite-lesspipe.sh) ]]; then
-    LESSPIPE=`which src-hilite-lesspipe.sh`
-elif [[ -x /usr/share/source-highlight/src-hilite-lesspipe.sh ]]; then
-    LESSPIPE="/usr/share/source-highlight/src-hilite-lesspipe.sh"
-fi
-
-if [[ $LESSPIPE != "" ]]; then
-    export LESSOPEN="| ${LESSPIPE} %s"
-    export LESS='-R'
-fi
-
 export PYTHONIOENCODING=UTF-8
 
-for src in `ls ~/.bash_includes`; do
-    source ~/.bash_includes/$src
+for src in ~/.bash_includes/*; do
+    # shellcheck source=/dev/null
+    . "$src"
 done
 
 #CHEF.NO.SOURCE
