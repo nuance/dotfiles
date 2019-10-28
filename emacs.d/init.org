@@ -1179,6 +1179,7 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
    #+BEGIN_SRC emacs-lisp
      (use-package go-mode
        :straight t
+       :config (setq gofmt-command "goimports")
        :hook ('before-save . #'gofmt-before-save))
    #+END_SRC
 
