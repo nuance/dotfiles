@@ -776,9 +776,20 @@ Auto-revert to new tags file
 
 ** Flycheck
    #+BEGIN_SRC emacs-lisp
+     (use-package flymake
+       :bind (("M-n" . flymake-goto-next-error)
+	      ("M-p" . flymake-goto-prev-error)))
+
      (use-package flycheck
        :straight t
        :hook ('prog-mode . #'global-flycheck-mode))
+
+     (use-package flymake-diagnostic-at-point
+       :straight t
+       :hook ('flymake-mode-hook . #'flymake-diagnostic-at-point-mode)
+       :config (setq
+		flymake-diagnostic-at-point-error-prefix ""
+		flymake-diagnostic-at-point-display-diagnostic-function 'flymake-diagnostic-at-point-display-minibuffer))
    #+END_SRC
 ** LSP
    I'm trying out an alternate to lsp-mode, so this is currently disabled
