@@ -9,5 +9,5 @@ nss-cacert-3.46
 protobuf-3.9.1
 ripgrep-11.0.2
 ShellCheck-0.7.0
-terraform-0.12.10
+terraform-0.12.12
 tflint-0.12.0
