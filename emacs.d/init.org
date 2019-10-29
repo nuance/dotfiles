@@ -835,6 +835,23 @@ Interact with gmail via notmuch.
 
    Use this by invoking `M-x bug-hunter-init-file` and following instructions.
 
+** Projectile
+
+   Use projectile to index git repos.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package projectile
+       :straight t
+       :config
+       (projectile-mode))
+
+     (use-package helm-projectile
+       :straight t
+       :init (use-package helm-rg :straight t)
+       :bind (([remap helm-etags-select] . 'helm-projectile-find-file-dwim))
+       (("s-F" . 'helm-projectile-rg)))
+   #+END_SRC
+
 * File-type support
 ** YAML
    #+BEGIN_SRC emacs-lisp
