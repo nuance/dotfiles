@@ -1207,7 +1207,15 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
        :mode (("README\\.md\\'" . gfm-mode)
 	      ("\\.md\\'" . markdown-mode)
 	      ("\\.markdown\\'" . markdown-mode))
-       :init (setq markdown-command "multimarkdown"))
+       :init (setq markdown-command "multimarkdown"
+		   markdown-header-scaling t
+		   markdown-hide-urls t
+		   markdown-marginalize-headers nil
+		   markdown-marginalize-headers-margin-width 4
+		   markdown-fontify-code-blocks-natively t)
+       :hook
+       (('markdown-mode .'variable-pitch-mode)
+       ('markdown-mode . 'visual-line-mode)))
    #+END_SRC
 
 ** Terraform
