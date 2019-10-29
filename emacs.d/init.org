@@ -640,6 +640,12 @@
    #+BEGIN_SRC emacs-lisp
      (global-auto-revert-mode t)
    #+END_SRC
+*** s-w is kill-buffer
+
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "s-w") 'kill-this-buffer)
+   #+END_SRC
+
 ** CTags
 Auto-revert to new tags file
    #+BEGIN_SRC emacs-lisp
