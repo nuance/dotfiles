@@ -617,8 +617,7 @@
 	      ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
 	      ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
 	      ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
-	      ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))
-	      ("s-T" . ace-window)))
+	      ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))))
    #+END_SRC
 *** Go to line
    #+BEGIN_SRC emacs-lisp
