@@ -928,6 +928,7 @@ Interact with gmail via notmuch.
    #+END_SRC
 
 ** Org
+*** Installation
    #+BEGIN_SRC emacs-lisp
      (use-package org
        :straight org-plus-contrib
@@ -1002,48 +1003,6 @@ Interact with gmail via notmuch.
        (with-eval-after-load 'org
 	 (defalias #'org-git-version #'radian--org-git-version))
        :config
-       (setq
-	org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.notes")
-	org-log-done t
-	org-enforce-todo-dependencies t
-	;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
-	org-refile-targets '((org-agenda-files :maxlevel . 3))
-	org-refile-use-outline-path 'file
-	org-outline-path-complete-in-steps nil
-	org-refile-allow-creating-parent-nodes 'confirm
-	org-startup-folded t
-	org-agenda-log-mode-items '(closed clock state)
-	org-src-tab-acts-natively t
-	org-agenda-include-diary t)
-       ;; custom todo tags
-       (setq org-todo-keywords
-	     '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
-	       (sequence "MEET(m@)" "|" "DONE(d!)")
-	       (sequence "IDEA(a!)" "|" "DONE(d!)")))
-       (setq org-agenda-custom-commands
-	     '(("d" "Daily agenda and all TODOs"
-		((todo "IN-PROGRESS"
-		       ((org-agenda-overriding-header "Unfinished tasks:")))
-		 (agenda "" ((org-agenda-span 1)))
-		 (tags ":refile:"
-		       ((org-agenda-overriding-header "To refile:")))
-		 (todo "TODO"
-		       ((org-agenda-overriding-header "Open tasks:")))
-		 (todo "MEET"
-		       ((org-agenda-overriding-header "People to meet:")
-			(org-agenda-max-entries 5)))
-		 (todo "IDEA"
-		       ((org-agenda-overriding-header "Ideas:")
-			(org-agenda-max-entries 5))))
-		((org-agenda-compact-blocks t)))
-	       ("p" "3-week context plan"
-		((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
-		((org-agenda-compact-blocks t)
-		 (org-agenda-include-inactive-timestamps 't)))
-	       ("h" "last half dates"
-		((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
-		((org-agenda-compact-blocks t)
-		 (org-agenda-include-inactive-timestamps 't)))))
        (require 'ol-notmuch)
        :bind (
 	      ("C-c c" . org-capture)
@@ -1062,6 +1021,52 @@ Interact with gmail via notmuch.
 	     helm-org-headings-max-depth 6)
        :bind (:map org-mode-map
 		   ("s-r" . helm-org-agenda-files-headings)))
+   #+END_SRC
+*** Agenda
+
+   #+BEGIN_SRC emacs-lisp
+     (setq
+      org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.notes")
+      org-log-done t
+      org-enforce-todo-dependencies t
+      ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
+      org-refile-targets '((org-agenda-files :maxlevel . 3))
+      org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil
+      org-refile-allow-creating-parent-nodes 'confirm
+      org-startup-folded t
+      org-agenda-log-mode-items '(closed clock state)
+      org-src-tab-acts-natively t
+      org-agenda-include-diary t)
+     ;; custom todo tags
+     (setq org-todo-keywords
+	   '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
+	     (sequence "MEET(m@)" "|" "DONE(d!)")
+	     (sequence "IDEA(a!)" "|" "DONE(d!)")))
+     (setq org-agenda-custom-commands
+	   '(("d" "Daily agenda and all TODOs"
+	      ((todo "IN-PROGRESS"
+		     ((org-agenda-overriding-header "Unfinished tasks:")))
+	       (agenda "" ((org-agenda-span 1)))
+	       (tags ":refile:"
+		     ((org-agenda-overriding-header "To refile:")))
+	       (todo "TODO"
+		     ((org-agenda-overriding-header "Open tasks:")))
+	       (todo "MEET"
+		     ((org-agenda-overriding-header "People to meet:")
+		      (org-agenda-max-entries 5)))
+	       (todo "IDEA"
+		     ((org-agenda-overriding-header "Ideas:")
+		      (org-agenda-max-entries 5))))
+	      ((org-agenda-compact-blocks t)))
+	     ("p" "3-week context plan"
+	      ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
+	      ((org-agenda-compact-blocks t)
+	       (org-agenda-include-inactive-timestamps 't)))
+	     ("h" "last half dates"
+	      ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
+	      ((org-agenda-compact-blocks t)
+	       (org-agenda-include-inactive-timestamps 't)))))
    #+END_SRC
 
 *** Prettier org mode
