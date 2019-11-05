@@ -67,3 +67,5 @@
     default = current
 [http]
 	cookiefile = /Users/matt/.gitcookies
+[credential "https://source.developers.google.com"]
+	helper = gcloud.sh
