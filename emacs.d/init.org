@@ -1201,6 +1201,21 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
      (setq
       flycheck-python-pycompile-executable "python3"
       flycheck-python-flake8-executable "flake8")
+
+     (use-package pyvenv
+       :straight t
+       :config
+       (defun pyvenv-autoload ()
+	 "Automatically activates pyvenv version if .venv directory exists."
+	 (f-traverse-upwards
+	  (lambda (path)
+	    (let ((venv-path (f-expand ".venv" path)))
+	      (if (f-exists? venv-path)
+		  (progn
+		    (pyvenv-workon venv-path))
+		t)))))
+       :hook
+       ('python-mode-hook . #'pyvenv-autoload))
    #+END_SRC
 
 ** Cython
