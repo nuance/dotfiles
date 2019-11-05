@@ -1292,6 +1292,12 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
      (add-to-list 'flycheck-checkers 'terraform-validate)
    #+END_SRC
 
+** Dockerfile
+
+   #+BEGIN_SRC emacs-lisp
+      (use-package dockerfile-mode :straight t)
+   #+END_SRC
+
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
 
