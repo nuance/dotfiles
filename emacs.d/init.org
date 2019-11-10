@@ -413,7 +413,7 @@
 			 :width 'normal)
    #+END_SRC
 
-*** Set titlebar color
+** Set titlebar color
 
    #+BEGIN_SRC emacs-lisp
      (when (eq system-type 'darwin)
