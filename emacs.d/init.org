@@ -1027,7 +1027,7 @@ Interact with gmail via notmuch.
 
    #+BEGIN_SRC emacs-lisp
      (setq
-      org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.notes")
+      org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes")
       org-log-done t
       org-enforce-todo-dependencies t
       ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
@@ -1045,7 +1045,11 @@ Interact with gmail via notmuch.
 	     (sequence "MEET(m@)" "|" "DONE(d!)")
 	     (sequence "IDEA(a!)" "|" "DONE(d!)")))
      (setq org-agenda-custom-commands
-	   '(("d" "Daily agenda and all TODOs"
+	     '(("f" "Today"
+		((agenda "" ((org-agenda-span 1)))
+		 (tags ":today:" ((org-agenda-overriding-header "Today"))))
+		((org-agenda-compact-blocks t)))
+	       ("d" "Daily agenda and all TODOs"
 	      ((todo "IN-PROGRESS"
 		     ((org-agenda-overriding-header "Unfinished tasks:")))
 	       (agenda "" ((org-agenda-span 1)))
