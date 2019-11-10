@@ -777,6 +777,7 @@ Auto-revert to new tags file
 ** Flycheck
    #+BEGIN_SRC emacs-lisp
      (use-package flymake
+       :straight t
        :bind (("M-n" . flymake-goto-next-error)
 	      ("M-p" . flymake-goto-prev-error)))
 
