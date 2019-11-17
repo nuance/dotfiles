@@ -504,6 +504,12 @@
    #+BEGIN_SRC emacs-lisp
      (setq require-final-newline t)
    #+END_SRC
+*** Disable tab indentation
+
+   #+BEGIN_SRC emacs-lisp
+     (setq-default indent-tabs-mode nil)
+   #+END_SRC
+
 *** Remove trailing whitespace
    #+BEGIN_SRC emacs-lisp
      (add-hook 'before-save-hook 'delete-trailing-whitespace)
