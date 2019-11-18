@@ -20,7 +20,7 @@ alias ls="ls -G"
 
 
 if [[ $(command -v emacsclient) ]]; then
-    export EDITOR="emacsclient -ta ''"
+    export EDITOR="emacsclient -ta '' -s $HOME/.emacs.d/server/server"
 elif [[ $(command -v emacs) ]]; then
     echo "Setting EDITOR to emacs"
     export EDITOR="emacs"
@@ -38,7 +38,7 @@ fi
 
 case "$INSIDE_EMACS" in
     *term*)
-	export EDITOR="emacsclient"
+	export EDITOR="emacsclient -s $HOME/.emacs.d/server/server"
 esac
 
 alias g=git
@@ -65,7 +65,5 @@ for src in ~/.bash_includes/*; do
     # shellcheck source=/dev/null
     . "$src"
 done
-
-#CHEF.NO.SOURCE
 
 export PATH="$HOME/.cargo/bin:$PATH"
