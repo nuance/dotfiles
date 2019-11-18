@@ -766,7 +766,6 @@ Auto-revert to new tags file
      (global-set-key (kbd "s-T") 'nuance-toggle-term)
    #+END_SRC
 
-
 * Packages
 ** Magit
    #+BEGIN_SRC emacs-lisp
@@ -864,70 +863,6 @@ Auto-revert to new tags file
        :init (use-package helm-rg :straight t)
        :bind (([remap helm-etags-select] . 'helm-projectile-find-file-dwim))
        (("s-F" . 'helm-projectile-rg)))
-   #+END_SRC
-
-* File-type support
-** YAML
-   #+BEGIN_SRC emacs-lisp
-     (use-package yaml-mode
-       :straight t
-       :mode "\\.yml\\'")
-   #+END_SRC
-
-** Thrift
-   #+BEGIN_SRC emacs-lisp
-     (use-package thrift-mode
-       :straight t)
-   #+END_SRC
-
-** Protobuf
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package protobuf-mode
-       :straight t)
-   #+END_SRC
-
-** Lua
-   #+BEGIN_SRC emacs-lisp
-     (use-package lua-mode
-       :straight t
-       :config
-       (flycheck-define-checker lua-luacheck-old
-	 "A Lua syntax checker using luacheck.
-
-     See URL `https://github.com/mpeterv/luacheck'."
-	 :command ("luacheck"
-		   ;; "--formatter" "plain"
-		   ;; "--codes"                   ; Show warning codes
-		   "--no-color"
-		   (option-list "--std" flycheck-luacheck-standards)
-		   (config-file "--config" flycheck-luacheckrc)
-		   ;; "--filename" source-original
-		   ;; Read from standard input
-		   source-original)
-	 :standard-input t
-	 :error-patterns
-	 ((warning line-start
-		   (optional (minimal-match (one-or-more not-newline)))
-		   ":" line ":" column
-		   ": (" (id "W" (one-or-more digit)) ") "
-		   (message) line-end)
-	  (error line-start
-		 (optional (minimal-match (one-or-more not-newline)))
-		 ":" line ":" column ":"
-		 ;; `luacheck' before 0.11.0 did not output codes for errors, hence
-		 ;; the ID is optional here
-		 (optional " (" (id "E" (one-or-more digit)) ") ")
-		 (message) line-end))
-	 :modes lua-mode)
-       :hook
-       (lua-mode
-	.
-	(lambda()
-	  (set (make-local-variable 'compile-command)
-	       (let ((file (file-name-nondirectory buffer-file-name)))
-		 (format "luacheck --no-color %s" file))))))
-
    #+END_SRC
 
 ** Org
@@ -1139,6 +1074,70 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
    #+BEGIN_SRC emacs-lisp
      (setq org-src-window-setup 'current-window)
    #+END_SRC
+* File-type support
+** YAML
+   #+BEGIN_SRC emacs-lisp
+     (use-package yaml-mode
+       :straight t
+       :mode "\\.yml\\'")
+   #+END_SRC
+
+** Thrift
+   #+BEGIN_SRC emacs-lisp
+     (use-package thrift-mode
+       :straight t)
+   #+END_SRC
+
+** Protobuf
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package protobuf-mode
+       :straight t)
+   #+END_SRC
+
+** Lua
+   #+BEGIN_SRC emacs-lisp
+     (use-package lua-mode
+       :straight t
+       :config
+       (flycheck-define-checker lua-luacheck-old
+	 "A Lua syntax checker using luacheck.
+
+     See URL `https://github.com/mpeterv/luacheck'."
+	 :command ("luacheck"
+		   ;; "--formatter" "plain"
+		   ;; "--codes"                   ; Show warning codes
+		   "--no-color"
+		   (option-list "--std" flycheck-luacheck-standards)
+		   (config-file "--config" flycheck-luacheckrc)
+		   ;; "--filename" source-original
+		   ;; Read from standard input
+		   source-original)
+	 :standard-input t
+	 :error-patterns
+	 ((warning line-start
+		   (optional (minimal-match (one-or-more not-newline)))
+		   ":" line ":" column
+		   ": (" (id "W" (one-or-more digit)) ") "
+		   (message) line-end)
+	  (error line-start
+		 (optional (minimal-match (one-or-more not-newline)))
+		 ":" line ":" column ":"
+		 ;; `luacheck' before 0.11.0 did not output codes for errors, hence
+		 ;; the ID is optional here
+		 (optional " (" (id "E" (one-or-more digit)) ") ")
+		 (message) line-end))
+	 :modes lua-mode)
+       :hook
+       (lua-mode
+	.
+	(lambda()
+	  (set (make-local-variable 'compile-command)
+	       (let ((file (file-name-nondirectory buffer-file-name)))
+		 (format "luacheck --no-color %s" file))))))
+
+   #+END_SRC
+
 ** ANTLR
    #+BEGIN_SRC emacs-lisp
      (use-package antlr-mode
