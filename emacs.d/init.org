@@ -754,6 +754,19 @@ Auto-revert to new tags file
      (add-hook 'term-mode-hook (lambda () (define-key term-raw-map "\C-y" 'my-term-paste)))
    #+END_SRC
 
+*** Switch to terminal
+
+   #+BEGIN_SRC emacs-lisp
+     (defun nuance-toggle-term ()
+       (interactive)
+       (if (get-buffer "*ansi-term*")
+           (pop-to-buffer "*ansi-term*" 'display-buffer-reuse-window)
+         (ansi-term "/bin/bash")))
+
+     (global-set-key (kbd "s-T") 'nuance-toggle-term)
+   #+END_SRC
+
+
 * Packages
 ** Magit
    #+BEGIN_SRC emacs-lisp
