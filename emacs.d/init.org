@@ -1313,6 +1313,22 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
       (use-package dockerfile-mode :straight t)
    #+END_SRC
 
+** Nix
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package nix-mode
+       :straight t
+       :mode ("\\.nix\\'" "\\.nix.in\\'"))
+
+     (use-package nix-drv-mode
+       :mode "\\.drv\\'")
+
+     (use-package nix-shell
+       :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
+
+     (use-package nix-repl
+       :commands (nix-repl))
+   #+END_SRC
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
 
