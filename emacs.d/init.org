@@ -1074,6 +1074,37 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
    #+BEGIN_SRC emacs-lisp
      (setq org-src-window-setup 'current-window)
    #+END_SRC
+** Jupyter
+   Support for working with jupyter notebooks, mostlfy focused on interaction with org / org-babel.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package jupyter
+       :straight t
+       :config
+       (org-babel-do-load-languages
+        'org-babel-load-languages
+        '((latex . t)
+          (python . t)
+          (jupyter . t)))
+       (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                    (:session . "py")
+                                                    (:kernel . "python3")))
+       (org-babel-jupyter-override-src-block "python"))
+   #+END_SRC
+
+*** Demo:
+
+    Hit C-c C-c in the src block to trigger.
+
+   #+BEGIN_SRC python
+     x = 'foo'
+     y = 'baz'
+     x + ' ' + y
+   #+END_SRC
+
+   #+RESULTS:
+   : foo baz
+
 * File-type support
 ** YAML
    #+BEGIN_SRC emacs-lisp
