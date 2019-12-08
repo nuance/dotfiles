@@ -1097,7 +1097,13 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
        (org-babel-jupyter-override-src-block "python"))
    #+END_SRC
 
+** Tramp
 
+#+BEGIN_SRC emacs-lisp
+  (use-package tramp
+    :config
+    (setq tramp-auto-save-directory "/tmp" tramp-ssh-controlmaster-options ""))
+#+END_SRC
 
 * File-type support
 ** YAML
