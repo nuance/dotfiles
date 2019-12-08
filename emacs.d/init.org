@@ -138,22 +138,19 @@
 ** Bootstrap straight.el
 
    #+BEGIN_SRC emacs-lisp
-     ;; disable the GNU ELPA
-     (setq package-archives nil)
-     ;; initialize the package system
-     (package-initialize)
+     (setq straight-repository-branch "develop")
 
      (defvar bootstrap-version)
      (let ((bootstrap-file
-	    (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-	   (bootstrap-version 5))
+            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+           (bootstrap-version 5))
        (unless (file-exists-p bootstrap-file)
-	 (with-current-buffer
-	     (url-retrieve-synchronously
-	      "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-	      'silent 'inhibit-cookies)
-	   (goto-char (point-max))
-	   (eval-print-last-sexp)))
+         (with-current-buffer
+             (url-retrieve-synchronously
+              "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+              'silent 'inhibit-cookies)
+           (goto-char (point-max))
+           (eval-print-last-sexp)))
        (load bootstrap-file nil 'nomessage))
 
      (straight-use-package 'use-package)
