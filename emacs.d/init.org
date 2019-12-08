@@ -1089,25 +1089,15 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
         'org-babel-load-languages
         '((latex . t)
           (python . t)
+          (emacs-lisp . t)
           (jupyter . t)))
        (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
-                                                    (:session . "py")
-                                                    (:kernel . "python3")))
+                                                            (:session . "py")
+                                                            (:kernel . "python3")))
        (org-babel-jupyter-override-src-block "python"))
    #+END_SRC
 
-*** Demo:
 
-    Hit C-c C-c in the src block to trigger.
-
-   #+BEGIN_SRC python
-     x = 'foo'
-     y = 'baz'
-     x + ' ' + y
-   #+END_SRC
-
-   #+RESULTS:
-   : foo baz
 
 * File-type support
 ** YAML
