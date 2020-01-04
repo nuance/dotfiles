@@ -800,7 +800,7 @@ Auto-revert to new tags file
 
      (use-package flycheck
        :straight t
-       :hook ('prog-mode . #'global-flycheck-mode))
+       :hook ('prog-mode . #'flycheck-mode))
 
      (use-package flymake-diagnostic-at-point
        :straight t
