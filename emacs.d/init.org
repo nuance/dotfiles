@@ -356,8 +356,8 @@
      (use-package nlinum
        :straight t
        :commands global-nlinum-mode
-       :config
-       (global-nlinum-mode))
+       :config (setq nlinum-highlight-current-line t)
+       :hook ('prog-mode . #'nlinum-mode))
    #+END_SRC
 ** Matching parens highlight
    #+BEGIN_SRC emacs-lisp
