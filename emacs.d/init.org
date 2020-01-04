@@ -367,22 +367,23 @@
 ** Light / Dark theme toggle
    I'd like to toggle between light & dark themes.
 
-*** Dark: Gruvbox-dark-hard
+*** Dark: doom-gruvbox
    #+BEGIN_SRC emacs-lisp
-     (use-package gruvbox-theme
+     (use-package doom-themes
        :straight t
        :config
-       (load-theme 'gruvbox-dark-hard t))
+       (load-theme 'doom-gruvbox t)
+       (doom-themes-org-config))
 
-     (defvar dark-theme 'gruvbox-dark-hard)
+     (defvar dark-theme 'doom-gruvbox)
    #+END_SRC
 
 *** Light: Gruvbox-light-hard
    #+BEGIN_SRC emacs-lisp
-     (use-package gruvbox-theme
+     (use-package doom-themes
        :straight t)
 
-     (defvar light-theme 'gruvbox-light-hard)
+     (defvar light-theme 'doom-tomorrow-day)
    #+END_SRC
 
 *** Toggle
