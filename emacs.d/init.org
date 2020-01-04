@@ -1110,6 +1110,16 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
     (setq tramp-auto-save-directory "/tmp" tramp-ssh-controlmaster-options ""))
 #+END_SRC
 
+** Direnv
+   #+BEGIN_SRC emacs-lisp
+     (use-package direnv
+       :straight t
+       :config
+       (setq direnv-always-show-summary t)
+       (direnv-mode)
+       :hook ('eshell-directory-change-hook . #'direnv-update-directory-environment))
+   #+END_SRC
+
 * File-type support
 ** YAML
    #+BEGIN_SRC emacs-lisp
