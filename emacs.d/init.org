@@ -787,7 +787,8 @@ Auto-revert to new tags file
        :straight t
        :config
        (global-diff-hl-mode)
-       (diff-hl-margin-mode))
+       (diff-hl-margin-mode)
+       (diff-hl-flydiff-mode))
    #+END_SRC
 
 ** Flycheck
