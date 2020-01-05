@@ -490,6 +490,19 @@
        :config (helm-descbinds-mode))
    #+END_SRC
 
+** Posframe
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm-posframe :straight t
+       :when (eq (window-system) 'mac)
+       :config
+       (setq
+        helm-posframe-poshandler 'posframe-poshandler-frame-top-center
+        helm-posframe-width 500
+        helm-posframe-parameters '((internal-border-width . 10)))
+       (helm-posframe-enable))
+   #+END_SRC
+
 ** Aggressive Indent
 
    #+BEGIN_SRC emacs-lisp
