@@ -408,16 +408,20 @@
   (when (eq system-type 'darwin)
     (defun nuance/dark-mode-p ()
       (not (string-equal
-            (shell-command-to-string "printf %s \"$( osascript -e \'tell application \"System Events\" to tell appearance preferences to return dark mode\' )\"")
-            "false")))
+	    (shell-command-to-string "printf %s \"$( osascript -e \'tell application \"System Events\" to tell appearance preferences to return dark mode\' )\"")
+	    "false")))
+
+    (add-hook
+     'after-init-hook
+     (lambda ()
+       (when (not (nuance/dark-mode-p)) (toggle-theme))))
 
     (run-with-idle-timer
      60 t
      (lambda ()
        (when (not (eq dark-mode (nuance/dark-mode-p)))
-         (toggle-theme)))))
+	 (toggle-theme)))))
 #+END_SRC
-
 
 ** Fixed-width font
    #+BEGIN_SRC emacs-lisp
