@@ -457,7 +457,6 @@
 	      ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
 	      ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
 	      ([remap find-file] . 'helm-find-files) ;; C-x C-f
-	      ("s-r" . 'helm-occur)
 	      ("s-e" . 'helm-all-mark-rings)
 	      ("s-p" . 'helm-etags-select)
 	      ("s-t" . 'helm-buffers-list)
@@ -479,6 +478,10 @@
 			    helm-etags-fuzzy-match                t
 			    helm-etags-match-part-only            'all
 			    helm-split-window-inside-p t)))
+
+     (use-package helm-swoop
+       :straight t
+       :bind ("s-r" . 'helm-swoop))
 
      (use-package helm-xref
        :straight t
