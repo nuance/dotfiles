@@ -313,6 +313,24 @@
      (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
    #+END_SRC
 
+** Native fullscreen for emacs-mac
+
+   #+BEGIN_SRC emacs-lisp
+     (when (eq window-system 'mac)
+       (defun mac-fullscreen ()
+         (interactive)
+         (let ((fullscreen (frame-parameter nil 'fullscreen)))
+           (if (memq fullscreen '(fullscreen fullboth))
+               (let ((fullscreen-restore (frame-parameter nil 'fullscreen-restore)))
+                 (if (memq fullscreen-restore '(maximized fullheight fullwidth))
+                     (set-frame-parameter nil 'fullscreen fullscreen-restore)
+                   (set-frame-parameter nil 'fullscreen nil)))
+             (modify-frame-parameters
+              nil `((fullscreen . fullscreen) (fullscreen-restore . ,fullscreen))))))
+
+       (bind-key "C-x 5 4" 'mac-fullscreen))
+   #+END_SRC
+
 ** Modeline
    #+BEGIN_SRC emacs-lisp
      (column-number-mode 1)
