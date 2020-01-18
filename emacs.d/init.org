@@ -513,13 +513,16 @@
 
 ** Posframe
 
-   #+BEGIN_SRC emacs-lisp
-     (use-package helm-posframe :straight t
+   #+BEGIN_SRC emacs-lisp :tangle no
+     (use-package helm-posframe :straight
+       (helm-posframe :type git :host github :repo "tumashu/helm-posframe"
+                      :fork (:host github :repo "nuance/helm-posframe"))
        :when (eq (window-system) 'mac)
        :config
        (setq
         helm-posframe-poshandler 'posframe-poshandler-frame-top-center
-        helm-posframe-width 500
+        helm-posframe-width 100
+        helm-posframe-height 100
         helm-posframe-parameters '((internal-border-width . 10)))
        (helm-posframe-enable))
    #+END_SRC
