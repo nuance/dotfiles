@@ -422,7 +422,7 @@
        (when (not (nuance/dark-mode-p)) (toggle-theme))))
 
     (run-with-idle-timer
-     60 t
+     10 t
      (lambda ()
        (when (not (eq dark-mode (nuance/dark-mode-p)))
 	 (toggle-theme)))))
