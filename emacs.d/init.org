@@ -340,10 +340,13 @@
        :straight t
        :hook (after-init . doom-modeline-mode)
        :config
+       (column-number-mode 1)
        (setq
         doom-modeline-minor-modes nil
         doom-modeline-buffer-encoding nil
-        ))
+        doom-modeline-height 1)
+       (set-face-attribute 'mode-line nil :height 110)
+       (set-face-attribute 'mode-line-inactive nil :height 110))
    #+END_SRC
 
 ** Line numbering
