@@ -61,7 +61,7 @@
    I want lexical scoping for the init-file, which can be specified in the
    header. The first line of the configuration is as follows:
 
-   #+BEGIN_SRC emacs-lisp :tangle no
+   #+BEGIN_SRC emacs-lisp
      ;;; -*- lexical-binding: t -*-
    #+END_SRC
 
