@@ -300,10 +300,12 @@
      (setq cursor-type 'hbar)
      (blink-cursor-mode 0)
    #+END_SRC
+
 ** Highlight line
    #+BEGIN_SRC emacs-lisp
      (global-hl-line-mode +1)
    #+END_SRC
+
 ** Minimal UI
 
    #+BEGIN_SRC emacs-lisp
@@ -352,6 +354,7 @@
        :config (setq nlinum-highlight-current-line t)
        :hook ('prog-mode . #'nlinum-mode))
    #+END_SRC
+
 ** Matching parens highlight
    #+BEGIN_SRC emacs-lisp
      (show-paren-mode)
@@ -388,11 +391,10 @@
      (defun toggle-theme ()
        (interactive)
        (progn
-	 (disable-theme (if dark-mode dark-theme light-theme))
-	 (load-theme (if dark-mode light-theme dark-theme) t)
-	 (setq dark-mode (not dark-mode))
-	 (adapt-theme-org-colors)
-	 ))
+         (disable-theme (if dark-mode dark-theme light-theme))
+         (load-theme (if dark-mode light-theme dark-theme) t)
+         (setq dark-mode (not dark-mode))
+         (adapt-theme-org-colors)))
    #+END_SRC
 
 *** MacOS dark mode
