@@ -3,7 +3,7 @@
 {
   home.packages = with pkgs; [
     direnv
-    emacsMacport
+    emacs
     go
     google-cloud-sdk
     ispell
