@@ -930,25 +930,25 @@ Auto-revert to new tags file
        ;; in org-fixup.el.) We should really define a function that will
        ;; return the latest tag, as well, but this remains a FIXME for now.
        (defun radian--org-git-version ()
-	 "Return the abbreviated SHA for the Org Git repo."
-	 (let ((default-directory (concat user-emacs-directory
-					  "straight/repos/org/")))
-	   (if (executable-find "git")
-	       (with-temp-buffer
-		 ;; Returns the shortest prefix of the SHA for HEAD that is
-		 ;; unique, down to a minimum of 4 characters (see
-		 ;; git-rev-parse(1)).
-		 (call-process "git" nil '(t nil) nil
-			       "rev-parse" "--short" "HEAD")
-		 (if (> (buffer-size) 0)
-		     (string-trim (buffer-string))
-		   ;; This shouldn't happen, unless somehow Org is not
-		   ;; actually a Git repo.
-		   "revision unknown"))
-	     ;; This also shouldn't happen, because how would you have
-	     ;; gotten Org in the first place, then? But the real world
-	     ;; sucks and we have to account for stuff like this.
-	     "git not available")))
+         "Return the abbreviated SHA for the Org Git repo."
+         (let ((default-directory (concat user-emacs-directory
+                                          "straight/repos/org/")))
+           (if (executable-find "git")
+               (with-temp-buffer
+                 ;; Returns the shortest prefix of the SHA for HEAD that is
+                 ;; unique, down to a minimum of 4 characters (see
+                 ;; git-rev-parse(1)).
+                 (call-process "git" nil '(t nil) nil
+                               "rev-parse" "--short" "HEAD")
+                 (if (> (buffer-size) 0)
+                     (string-trim (buffer-string))
+                   ;; This shouldn't happen, unless somehow Org is not
+                   ;; actually a Git repo.
+                   "revision unknown"))
+             ;; This also shouldn't happen, because how would you have
+             ;; gotten Org in the first place, then? But the real world
+             ;; sucks and we have to account for stuff like this.
+             "git not available")))
 
        ;; Here we're defining `org-git-version' and `org-release' eagerly.
        ;; Pay close attention here, since we actually do this multiple
@@ -986,36 +986,40 @@ Auto-revert to new tags file
        ;; don't bother to change it. That should change, FIXME.
        (provide 'org-version)
        (with-eval-after-load 'org
-	 (defalias #'org-git-version #'radian--org-git-version))
-       :config
-       (require 'ol-notmuch)
+         (defalias #'org-git-version #'radian--org-git-version))
        :bind (
-	      ("C-c c" . org-capture)
-	      ("C-c l" . org-store-link)
-	      :map org-mode-map
-	      ("C-c g" . org-mac-safari-insert-frontmost-url)
-	      ))
+              ("C-c c" . org-capture)
+              ("C-c l" . org-store-link)
+              :map org-mode-map
+              ("C-c g" . org-mac-safari-insert-frontmost-url)
+              ))
 
-     (use-package helm-org
-       :straight t
-       :config
-       (setq helm-org-ignore-autosaves t
-	     helm-org-headings-fontify t
-	     helm-org-format-outline-path t
-	     helm-org-show-filename t
-	     helm-org-headings-max-depth 6)
-       :bind (:map org-mode-map
-		   ("s-r" . helm-org-agenda-files-headings)))
+          (use-package helm-org
+            :straight t
+            :config
+            (setq helm-org-ignore-autosaves t
+                  helm-org-headings-fontify t
+                  helm-org-format-outline-path t
+                  helm-org-show-filename t
+                  helm-org-headings-max-depth 6)
+            :bind (:map org-mode-map
+                        ("s-r" . helm-org-agenda-files-headings)))
    #+END_SRC
 *** Agenda
 
    #+BEGIN_SRC emacs-lisp
+     (defun nuance/current-org-buffer ()
+       (delq nil
+             (mapcar (lambda (buffer)
+                       (buffer-file-name buffer))
+                     (org-buffer-list 'files t))))
+
      (setq
       org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes")
       org-log-done t
       org-enforce-todo-dependencies t
       ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
-      org-refile-targets '((org-agenda-files :maxlevel . 3))
+      org-refile-targets '((org-agenda-files :maxlevel . 3) (nuance/current-org-buffer :maxlevel . 3))
       org-refile-use-outline-path 'file
       org-outline-path-complete-in-steps nil
       org-refile-allow-creating-parent-nodes 'confirm
@@ -1025,37 +1029,37 @@ Auto-revert to new tags file
       org-agenda-include-diary t)
      ;; custom todo tags
      (setq org-todo-keywords
-	   '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
-	     (sequence "MEET(m@)" "|" "DONE(d!)")
-	     (sequence "IDEA(a!)" "|" "DONE(d!)")))
+           '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
+             (sequence "MEET(m@)" "|" "DONE(d!)")
+             (sequence "IDEA(a!)" "|" "DONE(d!)")))
      (setq org-agenda-custom-commands
-	     '(("f" "Today"
-		((agenda "" ((org-agenda-span 1)))
-		 (tags ":today:" ((org-agenda-overriding-header "Today"))))
-		((org-agenda-compact-blocks t)))
-	       ("d" "Daily agenda and all TODOs"
-	      ((todo "IN-PROGRESS"
-		     ((org-agenda-overriding-header "Unfinished tasks:")))
-	       (agenda "" ((org-agenda-span 1)))
-	       (tags ":refile:"
-		     ((org-agenda-overriding-header "To refile:")))
-	       (todo "TODO"
-		     ((org-agenda-overriding-header "Open tasks:")))
-	       (todo "MEET"
-		     ((org-agenda-overriding-header "People to meet:")
-		      (org-agenda-max-entries 5)))
-	       (todo "IDEA"
-		     ((org-agenda-overriding-header "Ideas:")
-		      (org-agenda-max-entries 5))))
-	      ((org-agenda-compact-blocks t)))
-	     ("p" "3-week context plan"
-	      ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
-	      ((org-agenda-compact-blocks t)
-	       (org-agenda-include-inactive-timestamps 't)))
-	     ("h" "last half dates"
-	      ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
-	      ((org-agenda-compact-blocks t)
-	       (org-agenda-include-inactive-timestamps 't)))))
+             '(("f" "Today"
+                ((agenda "" ((org-agenda-span 1)))
+                 (tags ":today:" ((org-agenda-overriding-header "Today"))))
+                ((org-agenda-compact-blocks t)))
+               ("d" "Daily agenda and all TODOs"
+              ((todo "IN-PROGRESS"
+                     ((org-agenda-overriding-header "Unfinished tasks:")))
+               (agenda "" ((org-agenda-span 1)))
+               (tags ":refile:"
+                     ((org-agenda-overriding-header "To refile:")))
+               (todo "TODO"
+                     ((org-agenda-overriding-header "Open tasks:")))
+               (todo "MEET"
+                     ((org-agenda-overriding-header "People to meet:")
+                      (org-agenda-max-entries 5)))
+               (todo "IDEA"
+                     ((org-agenda-overriding-header "Ideas:")
+                      (org-agenda-max-entries 5))))
+              ((org-agenda-compact-blocks t)))
+             ("p" "3-week context plan"
+              ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
+              ((org-agenda-compact-blocks t)
+               (org-agenda-include-inactive-timestamps 't)))
+             ("h" "last half dates"
+              ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
+              ((org-agenda-compact-blocks t)
+               (org-agenda-include-inactive-timestamps 't)))))
    #+END_SRC
 
 *** Prettier org mode
