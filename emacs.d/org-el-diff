@@ -1,0 +1,44 @@
+diff --git a/lisp/org.el b/lisp/org.el
+index 755fc1255..e49efa0b2 100644
+--- a/lisp/org.el
++++ b/lisp/org.el
+@@ -16826,7 +16826,7 @@ buffer boundaries with possible narrowing."
+ 				(progn
+                                   (require 'org-attach)
+ 				  (ignore-errors (org-attach-expand path)))
+-                              (expand-file-name path))))
++                              (substitute-in-file-name (expand-file-name path)))))
+ 		  (when (and file (file-exists-p file))
+ 		    (let ((width
+ 			   ;; Apply `org-image-actual-width' specifications.
+@@ -16857,11 +16857,25 @@ buffer boundaries with possible narrowing."
+ 				'org-image-overlay)))
+ 		      (if (and (car-safe old) refresh)
+ 			  (image-refresh (overlay-get (cdr old) 'display))
+-			(let ((image (create-image file
+-						   (and (image-type-available-p 'imagemagick)
+-							width 'imagemagick)
+-						   nil
+-						   :width width)))
++			(let ((image (create-image
++                                      (if (org-file-remote-p file)
++                                          (let* ((tramp-tmpdir (concat
++                                                                (if (featurep 'xemacs)
++                                                                    (temp-directory)
++                                                                  temporary-file-directory)
++                                                                "/tramp"
++                                                                (file-name-directory (expand-file-name file))))
++                                                 (newname (concat tramp-tmpdir
++                                                                  (file-name-nondirectory (expand-file-name file)))))
++                                            (make-directory tramp-tmpdir t)
++                                            (if (file-newer-than-file-p file newname)
++                                                (copy-file file newname t t))
++                                            newname)
++                                        file)
++                                      (and (image-type-available-p 'imagemagick)
++                                           width 'imagemagick)
++                                      nil
++                                      :width width)))
+ 			  (when image
+ 			    (let ((ov (make-overlay
+ 				       (org-element-property :begin link)
