@@ -427,7 +427,7 @@
 
 *** MacOS dark mode
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (when (eq system-type 'darwin)
     (defun nuance/dark-mode-p ()
       (not (string-equal
@@ -877,7 +877,6 @@ Auto-revert to new tags file
    #+BEGIN_SRC emacs-lisp
      (use-package yasnippet :straight t :config (yas-global-mode))
    #+END_SRC
-
 
 ** LSP
    I'm trying out an alternate to lsp-mode, so this is currently disabled
