@@ -113,20 +113,45 @@
 	    (load-file private-file)))))
    #+END_SRC
 
-* Garbage collector tweaks
-** Init-time
+* Performance optimizations
 
-  #+BEGIN_SRC emacs-lisp
-    (setq gc-cons-threshold most-positive-fixnum)
-    (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
-  #+END_SRC
+  Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org#performance-optimization][dot-emacs/init.org at master · zzamboni/dot-emacs]]
 
-** Minibuffer
+** Disable file handlers
 
-  #+BEGIN_SRC emacs-lisp
-    (add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
-    (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq
+      nuance/file-name-handler-alist file-name-handler-alist
+      file-name-handler-alist nil)
+     (add-hook 'after-init-hook (lambda () (setq file-name-handler-alist nuance/file-name-handler-alist)))
+   #+END_SRC
+
+** Report startup performance
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'emacs-startup-hook
+               (lambda ()
+                 (message "Emacs ready in %s with %d garbage collections."
+                          (format "%.2f seconds"
+                                  (float-time
+                                   (time-subtract after-init-time before-init-time)))
+                          gcs-done)))
+   #+END_SRC
+
+** Garbage collector tweaks
+*** Init-time
+
+   #+BEGIN_SRC emacs-lisp
+     (setq gc-cons-threshold most-positive-fixnum)
+     (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
+   #+END_SRC
+
+*** Minibuffer
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
+     (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
+   #+END_SRC
 
 * straight.el
 ** Cache SSL lookups
@@ -1160,6 +1185,14 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
        (setq direnv-always-show-summary t)
        (direnv-mode)
        :hook ('eshell-directory-change-hook . #'direnv-update-directory-environment))
+   #+END_SRC
+
+** GC Magic Hack
+
+   Optimize GC usage
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package gcmh :straight t)
    #+END_SRC
 
 * File-type support
