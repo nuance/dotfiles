@@ -1016,6 +1016,8 @@ Auto-revert to new tags file
               ("C-c l" . org-store-link)
               :map org-mode-map
               ("C-c g" . org-mac-safari-insert-frontmost-url)
+              ("s-b" . org-babel-execute-src-block)
+              ("s-B" . org-babel-execute-buffer)
               ))
 
           (use-package helm-org
