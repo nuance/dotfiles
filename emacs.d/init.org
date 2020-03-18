@@ -587,15 +587,16 @@
      (use-package multiple-cursors
        :straight t
        :config
+       (setq mc/always-run-for-all t)
        (defun select-symbol (arg)
-	 "Sets the region to the symbol under the point"
-	 (interactive "p")
-	 (if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
+         "Sets the region to the symbol under the point"
+         (interactive "p")
+         (if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
        (defun mark-all-like-symbol (arg)
-	 (interactive "p")
-	 (progn
-	   (unless mark-active (er/mark-symbol))
-	   (mc/mark-all-like-this)))
+         (interactive "p")
+         (progn
+           (unless mark-active (er/mark-symbol))
+           (mc/mark-all-like-this)))
        (add-to-list 'mc/unsupported-minor-modes 'company-mode)
        (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
        (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
@@ -605,9 +606,9 @@
        (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
        (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
        :bind (("s-L" . 'mc/edit-lines)
-	      ("s-d" . 'select-symbol)
-	      ("s-D" . 'mark-all-like-symbol)
-	      ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
+              ("s-d" . 'select-symbol)
+              ("s-D" . 'mark-all-like-symbol)
+              ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
    #+END_SRC
 *** Comment line / region
    #+BEGIN_SRC emacs-lisp
@@ -1020,16 +1021,16 @@ Auto-revert to new tags file
               ("s-B" . org-babel-execute-buffer)
               ))
 
-          (use-package helm-org
-            :straight t
-            :config
-            (setq helm-org-ignore-autosaves t
-                  helm-org-headings-fontify t
-                  helm-org-format-outline-path t
-                  helm-org-show-filename t
-                  helm-org-headings-max-depth 6)
-            :bind (:map org-mode-map
-                        ("s-r" . helm-org-agenda-files-headings)))
+     (use-package helm-org
+       :straight t
+       :config
+       (setq helm-org-ignore-autosaves t
+             helm-org-headings-fontify t
+             helm-org-format-outline-path t
+             helm-org-show-filename t
+             helm-org-headings-max-depth 6)
+       :bind (:map org-mode-map
+                   ("s-r" . helm-org-agenda-files-headings)))
    #+END_SRC
 *** Agenda
 
