@@ -25,6 +25,7 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  home.file."Library/KeyBindings/DefaultKeyBinding.dict".source = ./EmacsKeyBinding.dict;
   home.file."Applications/Emacs.app".source = "${pkgs.emacs}/Applications/Emacs.app";
   home.file.".gitconfig".source = ../gitconfig;
 
