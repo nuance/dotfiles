@@ -26,6 +26,8 @@
   programs.home-manager.enable = true;
 
   home.file."Applications/Emacs.app".source = "${pkgs.emacs}/Applications/Emacs.app";
+  home.file.".gitconfig".source = ../gitconfig;
+
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
