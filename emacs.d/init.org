@@ -591,15 +591,14 @@ Default to dark theme, but make it easy to switch.
   (use-package multiple-cursors
     :straight t
     :config
-    (setq mc/always-run-for-all t)
     (defun select-symbol (arg)
       "Sets the region to the symbol under the point"
       (interactive "p")
-      (if mark-active (mc/mark-next-like-this arg) (er/mark-symbol)))
+      (if (region-active-p) (mc/mark-next-like-this arg) (er/mark-symbol)))
     (defun mark-all-like-symbol (arg)
       (interactive "p")
       (progn
-        (unless mark-active (er/mark-symbol))
+        (unless (region-active-p) (er/mark-symbol))
         (mc/mark-all-like-this)))
     (add-to-list 'mc/unsupported-minor-modes 'company-mode)
     (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
