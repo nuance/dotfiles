@@ -1126,7 +1126,10 @@ Support for working with jupyter notebooks, mostlfy focused on interaction with 
 #+BEGIN_SRC emacs-lisp
   (use-package tramp
     :config
-    (setq tramp-auto-save-directory "/tmp" tramp-ssh-controlmaster-options ""))
+    (setq
+     tramp-auto-save-directory "/tmp"
+     tramp-ssh-controlmaster-options ""
+     tramp-inline-compress-start-size 262144))
 #+END_SRC
 
 ** Direnv
