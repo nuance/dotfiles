@@ -562,6 +562,7 @@ Default to dark theme, but make it easy to switch.
 ** Default to regexp search
 #+BEGIN_SRC emacs-lisp
   (global-set-key [remap isearch-forward] 'isearch-forward-regexp) ;; C-s
+  (global-set-key [remap isearch-backward] 'isearch-backward-regexp) ;; C-r
 #+END_SRC
 ** Sublime-like
 *** Automatically add newlines at EOF
