@@ -466,6 +466,8 @@ Default to dark theme, but make it easy to switch.
            ("s-p" . 'helm-etags-select)
            ("s-t" . 'helm-buffers-list)
            ("s-;" . 'helm-calcul-expression)
+           ("s-o" . 'helm-moccur-all)
+           ("s-R" . 'helm-moccur-org)
            ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
     :config (progn (helm-mode 1)
                    (helm-autoresize-mode t)
@@ -482,11 +484,16 @@ Default to dark theme, but make it easy to switch.
                          helm-semantic-fuzzy-match             t
                          helm-etags-fuzzy-match                t
                          helm-etags-match-part-only            'all
-                         helm-split-window-inside-p t)))
+                         helm-split-window-inside-p t))
+    (require 'seq)
 
-  (use-package helm-swoop
-    :straight t
-    :bind ("s-r" . 'helm-swoop))
+    (defun helm-moccur-all ()
+      (interactive)
+      (helm-multi-occur-1 (seq-filter 'buffer-file-name (buffer-list))))
+
+    (defun helm-moccur-org ()
+      (interactive)
+      (helm-multi-occur-1 (seq-filter (lambda (buf) (and (buffer-file-name buf) (with-current-buffer buf (eq major-mode 'org-mode)))) (buffer-list)))))
 
   (use-package helm-xref
     :straight t
