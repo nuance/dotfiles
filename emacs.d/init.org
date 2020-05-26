@@ -508,10 +508,8 @@ Default to dark theme, but make it easy to switch.
 ** Posframe
 
 #+BEGIN_SRC emacs-lisp :tangle no
-  (use-package helm-posframe :straight
-    (helm-posframe :type git :host github :repo "tumashu/helm-posframe"
-                   :fork (:host github :repo "nuance/helm-posframe"))
-    :when (eq (window-system) 'mac)
+  (use-package helm-posframe :straight t
+    :when (eq (window-system) 'ns)
     :config
     (setq
      helm-posframe-poshandler 'posframe-poshandler-frame-top-center
