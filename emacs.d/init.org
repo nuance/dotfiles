@@ -1156,6 +1156,84 @@ Optimize GC usage
   (use-package eldoc :hook (prog-mode . eldoc-mode))
 #+END_SRC
 
+** Formatter
+
+ Generic tramp-friendly helper for formatters that read from stdin / write to stdout
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package async :straight t)
+
+   (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
+
+   (defun nuance/format-buffer (tmp-buf-name binary &optional failure-p &rest args)
+     (if (> (buffer-size) tramp-inline-compress-start-size) (message "Skipping formatting for large file")
+       (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
+             (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
+             (tmp-stderr-buf (generate-new-buffer (format "*%s--stderr*" tmp-buf-name)))
+             (input-buffer (current-buffer))
+             (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
+         (write-region nil nil tmp-stdin-path)
+         (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-buf) nil args)))
+           (if (funcall failure-check errno tmp-stdout-buf tmp-stderr-buf)
+             (progn (replace-buffer-contents tmp-stdout-buf)
+                    (nuance/delete-file-async tmp-stdin-path)
+                    (kill-buffer tmp-stdout-buf)
+                    (kill-buffer tmp-stderr-buf)))))))
+ #+END_SRC
+
+*** autobuildify
+
+ #+BEGIN_SRC emacs-lisp
+   (defvar autobuildify--buildifier-binary
+     "buildifier"
+     "Path to Buildifier binary.")
+
+   (defun autobuildify--run-buildifier-on-current-file ()
+     (interactive)
+     (nuance/format-buffer "buildifier" autobuildify--buildifier-binary))
+
+   (defun autobuildify--save-hook ()
+     (let ((fname (buffer-file-name)))
+       (if (and fname
+                (string-match "/\\(TARGETS\\|BUILD\\)$" fname))
+           (autobuildify--run-buildifier-on-current-file))))
+
+   (add-hook 'before-save-hook 'autobuildify--save-hook)
+ #+END_SRC
+
+*** clang-format
+
+ #+BEGIN_SRC emacs-lisp
+   (defun clang-format-buffer ()
+     (interactive)
+     (nuance/format-buffer
+      "clang-format" "clang-format" nil "-style=file" (format "-assume-filename=%s" (file-local-name (buffer-file-name)))))
+
+   (defun clang-format--save-hook ()
+     "Add this to .emacs to clang-format on save
+   (add-hook 'before-save-hook 'clang-format-before-save)."
+     (interactive)
+     (when (eq major-mode 'c++-mode) (clang-format-buffer)))
+
+   (add-hook 'before-save-hook 'clang-format--save-hook)
+ #+END_SRC
+
+*** blacken
+
+ #+BEGIN_SRC emacs-lisp
+   (defun blacken-buffer ()
+     (interactive)
+     (nuance/format-buffer "black" "black" nil "-" "-q"))
+
+   (defun blacken--save-hook ()
+     "Add this to .emacs to blacken on save
+   (add-hook 'before-save-hook blacken-before-save)."
+     (interactive)
+     (when (eq major-mode 'python-mode) (blacken-buffer)))
+
+   (add-hook 'before-save-hook 'blacken--save-hook)
+ #+END_SRC
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
