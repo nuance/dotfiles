@@ -831,6 +831,19 @@ From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
   (global-set-key (kbd "s-T") 'nuance-toggle-term)
 #+END_SRC
 
+** Reload all buffers
+
+#+BEGIN_SRC emacs-lisp
+  (defun nuance/revert-all-buffers ()
+    (interactive)
+    (let (file)
+      (dolist (buf  (buffer-list))
+        (setq path  (buffer-file-name buf))
+        (when (and path (file-readable-p path) (not (buffer-modified-p buf)))
+          (with-current-buffer buf
+            (with-demoted-errors "Error: %S" (revert-buffer t t)))))))
+#+END_SRC
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
