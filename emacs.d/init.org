@@ -1150,6 +1150,12 @@ Optimize GC usage
   (use-package gcmh :straight t)
 #+END_SRC
 
+** ElDoc
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eldoc :hook (prog-mode . eldoc-mode))
+#+END_SRC
+
 * File-type support
 ** YAML
 #+BEGIN_SRC emacs-lisp
