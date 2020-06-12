@@ -1166,8 +1166,8 @@ Optimize GC usage
 
    (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
 
-   (defun nuance/format-buffer (tmp-buf-name binary &optional failure-p &rest args)
-     (if (> (buffer-size) tramp-inline-compress-start-size) (message "Skipping formatting for large file")
+   (defun nuance/format-buffer (prefix-arg tmp-buf-name binary &optional failure-p &rest args)
+     (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
        (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
              (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
              (tmp-stderr-buf (generate-new-buffer (format "*%s--stderr*" tmp-buf-name)))
@@ -1189,15 +1189,15 @@ Optimize GC usage
      "buildifier"
      "Path to Buildifier binary.")
 
-   (defun autobuildify--run-buildifier-on-current-file ()
-     (interactive)
-     (nuance/format-buffer "buildifier" autobuildify--buildifier-binary))
+   (defun autobuildify--run-buildifier-on-current-file (arg)
+     (interactive "P")
+     (nuance/format-buffer arg "buildifier" autobuildify--buildifier-binary))
 
    (defun autobuildify--save-hook ()
      (let ((fname (buffer-file-name)))
        (if (and fname
                 (string-match "/\\(TARGETS\\|BUILD\\)$" fname))
-           (autobuildify--run-buildifier-on-current-file))))
+           (autobuildify--run-buildifier-on-current-file nil))))
 
    (add-hook 'before-save-hook 'autobuildify--save-hook)
  #+END_SRC
@@ -1205,16 +1205,16 @@ Optimize GC usage
 *** clang-format
 
  #+BEGIN_SRC emacs-lisp
-   (defun clang-format-buffer ()
-     (interactive)
-     (nuance/format-buffer
+   (defun clang-format-buffer (arg)
+     (interactive "P")
+     (nuance/format-buffer arg
       "clang-format" "clang-format" nil "-style=file" (format "-assume-filename=%s" (file-local-name (buffer-file-name)))))
 
    (defun clang-format--save-hook ()
      "Add this to .emacs to clang-format on save
    (add-hook 'before-save-hook 'clang-format-before-save)."
      (interactive)
-     (when (eq major-mode 'c++-mode) (clang-format-buffer)))
+     (when (eq major-mode 'c++-mode) (clang-format-buffer nil)))
 
    (add-hook 'before-save-hook 'clang-format--save-hook)
  #+END_SRC
@@ -1222,15 +1222,15 @@ Optimize GC usage
 *** blacken
 
  #+BEGIN_SRC emacs-lisp
-   (defun blacken-buffer ()
-     (interactive)
-     (nuance/format-buffer "black" "black" nil "-" "-q"))
+   (defun blacken-buffer (arg)
+     (interactive "P")
+     (nuance/format-buffer arg "black" "black" nil "-" "-q"))
 
    (defun blacken--save-hook ()
      "Add this to .emacs to blacken on save
    (add-hook 'before-save-hook blacken-before-save)."
      (interactive)
-     (when (eq major-mode 'python-mode) (blacken-buffer)))
+     (when (eq major-mode 'python-mode) (blacken-buffer nil)))
 
    (add-hook 'before-save-hook 'blacken--save-hook)
  #+END_SRC
