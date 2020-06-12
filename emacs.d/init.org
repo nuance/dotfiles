@@ -1130,7 +1130,7 @@ Support for working with jupyter notebooks, mostlfy focused on interaction with 
     (setq
      tramp-auto-save-directory "/tmp"
      tramp-ssh-controlmaster-options ""
-     tramp-inline-compress-start-size 262144))
+     tramp-inline-compress-start-size (* 64 1024)))
 #+END_SRC
 
 ** Direnv
