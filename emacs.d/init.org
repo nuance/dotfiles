@@ -462,6 +462,7 @@ Default to dark theme, but make it easy to switch.
            ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
            ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
            ([remap find-file] . 'helm-find-files) ;; C-x C-f
+           ([remap eval-expression] . 'helm-eval-expression-with-eldoc) ;; M-;
            ("s-e" . 'helm-all-mark-rings)
            ("s-p" . 'helm-etags-select)
            ("s-t" . 'helm-buffers-list)
