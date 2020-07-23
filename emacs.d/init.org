@@ -1002,9 +1002,7 @@ Use projectile to index git repos.
    org-agenda-include-diary t)
   ;; custom todo tags
   (setq org-todo-keywords
-        '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
-          (sequence "MEET(m@)" "|" "DONE(d!)")
-          (sequence "IDEA(a!)" "|" "DONE(d!)")))
+        '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
   (setq org-agenda-custom-commands
         '(("f" "Today"
            ((agenda "" ((org-agenda-span 1)))
@@ -1017,13 +1015,7 @@ Use projectile to index git repos.
             (tags ":refile:"
                   ((org-agenda-overriding-header "To refile:")))
             (todo "TODO"
-                  ((org-agenda-overriding-header "Open tasks:")))
-            (todo "MEET"
-                  ((org-agenda-overriding-header "People to meet:")
-                   (org-agenda-max-entries 5)))
-            (todo "IDEA"
-                  ((org-agenda-overriding-header "Ideas:")
-                   (org-agenda-max-entries 5))))
+                  ((org-agenda-overriding-header "Open tasks:"))))
            ((org-agenda-compact-blocks t)))
           ("p" "3-week context plan"
            ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
