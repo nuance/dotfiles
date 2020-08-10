@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 
-let emacs = pkgs.emacsGit-nox; in
+let emacs = pkgs.emacsUnstable-nox; in
 {
  nixpkgs.overlays = [
     (import (builtins.fetchTarball {
