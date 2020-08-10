@@ -1403,9 +1403,7 @@ CQuery is disabled, but I still want C++ support
 
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
-    :straight t
-    :config (setq gofmt-command "goimports")
-    :hook ('before-save . #'gofmt-before-save))
+    :straight t)
 #+END_SRC
 
 ** Bazel
