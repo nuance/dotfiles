@@ -1,0 +1,18 @@
+#!/bin/bash
+
+EDIT="vi"
+
+if [[ $(command -v emacsclient) ]]; then
+    EDIT="emacsclient -ta '' --server-file $HOME/.emacs.d/server/server"
+elif [[ $(command -v emacs) ]]; then
+    EDIT="emacs"
+elif [[ $(command -v vim) ]]; then
+    EDIT="vim"
+fi
+
+case "$INSIDE_EMACS" in
+    *term*)
+	EDIT="emacsclient --server-file $HOME/.emacs.d/server/server"
+esac
+
+$EDIT $*

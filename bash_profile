@@ -18,33 +18,12 @@ export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:$HOME/Library/Python/3.7/bin:$
 
 alias ls="ls -G"
 
-
-if [[ $(command -v emacsclient) ]]; then
-    export EDITOR="emacsclient -ta '' -s $HOME/.emacs.d/server/server"
-elif [[ $(command -v emacs) ]]; then
-    echo "Setting EDITOR to emacs"
-    export EDITOR="emacs"
-elif [[ $(command -v subl) ]]; then
-    echo "Setting EDITOR to subl -w"
-    export EDITOR="subl -w"
-elif [[ $(command -v atom-beta) ]]; then
-    export EDITOR="atom-beta -w"
-elif [[ $(command -v atom) ]]; then
-    export EDITOR="atom -w"
-elif [[ $(command -v vim) ]]; then
-    echo "Setting EDITOR to vim"
-    export EDITOR="vim"
-fi
-
-case "$INSIDE_EMACS" in
-    *term*)
-	export EDITOR="emacsclient -s $HOME/.emacs.d/server/server"
-esac
-
 alias g=git
 alias gg="git grep"
 
 alias onepage='head -n $(echo "$(tput lines) - 2" | bc)'
+
+EDITOR=$HOME/bin/editor
 
 e() {
     $EDITOR "$@"
