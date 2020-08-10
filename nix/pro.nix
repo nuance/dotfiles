@@ -12,6 +12,8 @@ let emacs = pkgs.emacsUnstable-nox; in
     direnv
     emacs
     ispell
+    go
+    gopls
     mosh
     pv
     ripgrep
