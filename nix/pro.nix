@@ -31,6 +31,7 @@ let emacs = pkgs.emacsUnstable-nox; in
     "Library/KeyBindings/DefaultKeyBinding.dict".source = ./EmacsKeyBinding.dict;
     "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
     "bin/emacsclient".source = "${emacs}/bin/emacsclient";
+    "bin/editor".source = ../editor;
     ".bashrc".source = ../bashrc;
     ".bash_profile".source = ../bash_profile;
     ".bash_includes/no_op.sh".text = "";
