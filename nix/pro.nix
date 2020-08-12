@@ -21,6 +21,7 @@ in
     ispell
     go
     unstable.gopls
+    nixpkgs-fmt
     mosh
     pv
     ripgrep
