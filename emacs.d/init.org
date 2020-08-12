@@ -1496,6 +1496,22 @@ Trying out terraform for managing AWS stuff.
     :commands (nix-repl))
 #+END_SRC
 
+*** Formatter
+
+ #+BEGIN_SRC emacs-lisp
+   (defun nixpkgs-fmt-buffer (arg)
+     (interactive "P")
+     (nuance/format-buffer arg "nixpkgs-fmt" "nixpkgs-fmt" nil))
+
+   (defun nixpkgs-fmt--save-hook ()
+     "Add this to .emacs to nixpkgs-fmt on save
+   (add-hook 'before-save-hook 'nixpkgs-fmt-before-save)."
+     (interactive)
+     (when (eq major-mode 'nix-mode) (nixpkgs-fmt-buffer nil)))
+
+   (add-hook 'before-save-hook 'nixpkgs-fmt--save-hook)
+ #+END_SRC
+
 * Private.el
 I'd like to keep a few settings private, so we load a =private.el= if it
 exists after the init-file has loaded.
