@@ -1162,16 +1162,16 @@ Optimize GC usage
      (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
        (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
              (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
-             (tmp-stderr-buf (generate-new-buffer (format "*%s--stderr*" tmp-buf-name)))
+             (tmp-stderr-path (make-nearby-temp-file (format "*%s--stderr*" tmp-buf-name)))
              (input-buffer (current-buffer))
              (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
          (write-region nil nil tmp-stdin-path)
-         (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-buf) nil args)))
-           (if (funcall failure-check errno tmp-stdout-buf tmp-stderr-buf)
+         (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-path) nil args)))
+           (if (not (funcall failure-check errno tmp-stdout-buf tmp-stderr-path))
              (progn (replace-buffer-contents tmp-stdout-buf)
                     (nuance/delete-file-async tmp-stdin-path)
                     (kill-buffer tmp-stdout-buf)
-                    (kill-buffer tmp-stderr-buf)))))))
+                    (nuance/delete-file-async tmp-stderr-path)))))))
  #+END_SRC
 
 *** autobuildify
