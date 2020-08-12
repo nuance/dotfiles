@@ -1,19 +1,26 @@
 { config, pkgs, ... }:
 
-let emacs = pkgs.emacsUnstable-nox; in
+let
+  emacs = pkgs.emacsUnstable-nox;
+  unstable = import <unstable> {};
+in
 {
- nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-    }))
- ];
+  nixpkgs.overlays = [
+    (
+      import (
+        builtins.fetchTarball {
+          url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+        }
+      )
+    )
+  ];
 
   home.packages = with pkgs; [
     direnv
     emacs
     ispell
     go
-    gopls
+    unstable.gopls
     mosh
     pv
     ripgrep
