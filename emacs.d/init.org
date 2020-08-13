@@ -1174,81 +1174,81 @@ Optimize GC usage
 
 ** Formatter
 
- Generic tramp-friendly helper for formatters that read from stdin / write to stdout
+Generic tramp-friendly helper for formatters that read from stdin / write to stdout
 
- #+BEGIN_SRC emacs-lisp
-   (use-package async :straight t)
+#+BEGIN_SRC emacs-lisp
+  (use-package async :straight t)
 
-   (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
+  (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
 
-   (defun nuance/format-buffer (prefix-arg tmp-buf-name binary &optional failure-p &rest args)
-     (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
-       (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
-             (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
-             (tmp-stderr-path (make-nearby-temp-file (format "*%s--stderr*" tmp-buf-name)))
-             (input-buffer (current-buffer))
-             (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
-         (write-region nil nil tmp-stdin-path)
-         (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-path) nil args)))
-           (if (not (funcall failure-check errno tmp-stdout-buf tmp-stderr-path))
-             (progn (replace-buffer-contents tmp-stdout-buf)
-                    (nuance/delete-file-async tmp-stdin-path)
-                    (kill-buffer tmp-stdout-buf)
-                    (nuance/delete-file-async tmp-stderr-path)))))))
- #+END_SRC
+  (defun nuance/format-buffer (prefix-arg tmp-buf-name binary &optional failure-p &rest args)
+    (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
+      (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
+            (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
+            (tmp-stderr-path (make-nearby-temp-file (format "*%s--stderr*" tmp-buf-name)))
+            (input-buffer (current-buffer))
+            (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
+        (write-region nil nil tmp-stdin-path)
+        (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-path) nil args)))
+          (if (not (funcall failure-check errno tmp-stdout-buf tmp-stderr-path))
+              (progn (replace-buffer-contents tmp-stdout-buf)
+                     (nuance/delete-file-async tmp-stdin-path)
+                     (kill-buffer tmp-stdout-buf)
+                     (nuance/delete-file-async tmp-stderr-path)))))))
+#+END_SRC
 
 *** autobuildify
 
- #+BEGIN_SRC emacs-lisp
-   (defvar autobuildify--buildifier-binary
-     "buildifier"
-     "Path to Buildifier binary.")
+#+BEGIN_SRC emacs-lisp
+  (defvar autobuildify--buildifier-binary
+    "buildifier"
+    "Path to Buildifier binary.")
 
-   (defun autobuildify--run-buildifier-on-current-file (arg)
-     (interactive "P")
-     (nuance/format-buffer arg "buildifier" autobuildify--buildifier-binary))
+  (defun autobuildify--run-buildifier-on-current-file (arg)
+    (interactive "P")
+    (nuance/format-buffer arg "buildifier" autobuildify--buildifier-binary))
 
-   (defun autobuildify--save-hook ()
-     (let ((fname (buffer-file-name)))
-       (if (and fname
-                (string-match "/\\(TARGETS\\|BUILD\\)$" fname))
-           (autobuildify--run-buildifier-on-current-file nil))))
+  (defun autobuildify--save-hook ()
+    (let ((fname (buffer-file-name)))
+      (if (and fname
+               (string-match "/\\(TARGETS\\|BUILD\\)$" fname))
+          (autobuildify--run-buildifier-on-current-file nil))))
 
-   (add-hook 'before-save-hook 'autobuildify--save-hook)
- #+END_SRC
+  (add-hook 'before-save-hook 'autobuildify--save-hook)
+#+END_SRC
 
 *** clang-format
 
- #+BEGIN_SRC emacs-lisp
-   (defun clang-format-buffer (arg)
-     (interactive "P")
-     (nuance/format-buffer arg
-      "clang-format" "clang-format" nil "-style=file" (format "-assume-filename=%s" (file-local-name (buffer-file-name)))))
+#+BEGIN_SRC emacs-lisp
+  (defun clang-format-buffer (arg)
+    (interactive "P")
+    (nuance/format-buffer arg
+                          "clang-format" "clang-format" nil "-style=file" (format "-assume-filename=%s" (file-local-name (buffer-file-name)))))
 
-   (defun clang-format--save-hook ()
-     "Add this to .emacs to clang-format on save
-   (add-hook 'before-save-hook 'clang-format-before-save)."
-     (interactive)
-     (when (eq major-mode 'c++-mode) (clang-format-buffer nil)))
+  (defun clang-format--save-hook ()
+    "Add this to .emacs to clang-format on save
+  (add-hook 'before-save-hook 'clang-format-before-save)."
+    (interactive)
+    (when (eq major-mode 'c++-mode) (clang-format-buffer nil)))
 
-   (add-hook 'before-save-hook 'clang-format--save-hook)
- #+END_SRC
+  (add-hook 'before-save-hook 'clang-format--save-hook)
+#+END_SRC
 
 *** blacken
 
- #+BEGIN_SRC emacs-lisp
-   (defun blacken-buffer (arg)
-     (interactive "P")
-     (nuance/format-buffer arg "black" "black" nil "-" "-q"))
+#+BEGIN_SRC emacs-lisp
+  (defun blacken-buffer (arg)
+    (interactive "P")
+    (nuance/format-buffer arg "black" "black" nil "-" "-q"))
 
-   (defun blacken--save-hook ()
-     "Add this to .emacs to blacken on save
-   (add-hook 'before-save-hook blacken-before-save)."
-     (interactive)
-     (when (eq major-mode 'python-mode) (blacken-buffer nil)))
+  (defun blacken--save-hook ()
+    "Add this to .emacs to blacken on save
+  (add-hook 'before-save-hook blacken-before-save)."
+    (interactive)
+    (when (eq major-mode 'python-mode) (blacken-buffer nil)))
 
-   (add-hook 'before-save-hook 'blacken--save-hook)
- #+END_SRC
+  (add-hook 'before-save-hook 'blacken--save-hook)
+#+END_SRC
 
 * File-type support
 ** Generic prog-mode improvements
@@ -1521,19 +1521,19 @@ Trying out terraform for managing AWS stuff.
 
 *** Formatter
 
- #+BEGIN_SRC emacs-lisp
-   (defun nixpkgs-fmt-buffer (arg)
-     (interactive "P")
-     (nuance/format-buffer arg "nixpkgs-fmt" "nixpkgs-fmt" nil))
+#+BEGIN_SRC emacs-lisp
+  (defun nixpkgs-fmt-buffer (arg)
+    (interactive "P")
+    (nuance/format-buffer arg "nixpkgs-fmt" "nixpkgs-fmt" nil))
 
-   (defun nixpkgs-fmt--save-hook ()
-     "Add this to .emacs to nixpkgs-fmt on save
-   (add-hook 'before-save-hook 'nixpkgs-fmt-before-save)."
-     (interactive)
-     (when (eq major-mode 'nix-mode) (nixpkgs-fmt-buffer nil)))
+  (defun nixpkgs-fmt--save-hook ()
+    "Add this to .emacs to nixpkgs-fmt on save
+  (add-hook 'before-save-hook 'nixpkgs-fmt-before-save)."
+    (interactive)
+    (when (eq major-mode 'nix-mode) (nixpkgs-fmt-buffer nil)))
 
-   (add-hook 'before-save-hook 'nixpkgs-fmt--save-hook)
- #+END_SRC
+  (add-hook 'before-save-hook 'nixpkgs-fmt--save-hook)
+#+END_SRC
 
 * Private.el
 I'd like to keep a few settings private, so we load a =private.el= if it
