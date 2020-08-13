@@ -520,7 +520,7 @@ Default to dark theme, but make it easy to switch.
 
 ** Posframe
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
   (use-package helm-posframe :straight t
     :when (eq (window-system) 'ns)
     :config
@@ -530,6 +530,12 @@ Default to dark theme, but make it easy to switch.
      helm-posframe-height 100
      helm-posframe-parameters '((internal-border-width . 10)))
     (helm-posframe-enable))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra-posframe :straight (hydra-posframe :type git :host github :repo "Ladicle/hydra-posframe")
+    :when (eq (window-system) 'ns)
+    :hook (after-init . hydra-posframe-enable))
 #+END_SRC
 
 ** Aggressive Indent
@@ -1159,6 +1165,11 @@ Optimize GC usage
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc :hook (prog-mode . eldoc-mode))
+  (use-package eldoc-posframe
+    :straight (eldoc-posframe :host github :repo "terlar/eldoc-posframe" :branch "feature/configurable-position-and-padding")
+    :custom-face (eldoc-posframe-background-face ((t :inherit hl-line)))
+    :custom (eldoc-posframe-poshandler #'posframe-poshandler-point-bottom-left-corner)
+    :hook (prog-mode . eldoc-posframe-mode))
 #+END_SRC
 
 ** Formatter
