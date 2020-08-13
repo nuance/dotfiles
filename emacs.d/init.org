@@ -368,6 +368,10 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
     :commands global-nlinum-mode
     :config (setq nlinum-highlight-current-line t)
     :hook ('prog-mode . #'nlinum-mode))
+
+  (defun nuance/fix-linum-heights ()
+    (let ((height (face-attribute 'default :height)))
+      (set-face-attribute 'linum nil :height height)))
 #+END_SRC
 
 ** Matching parens highlight
@@ -382,11 +386,18 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
     :straight t
+    :after nlinum
+    :init
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
     :config
-    (load-theme 'doom-gruvbox t)
-    (doom-themes-org-config))
+    (load-theme 'doom-sourcerer t)
+    (doom-themes-org-config)
+    (doom-themes-visual-bell-config)
+    (nuance/fix-linum-heights)
+    (adapt-theme-org-colors))
 
-  (defvar dark-theme 'doom-gruvbox)
+  (defvar dark-theme 'doom-sourcerer)
 #+END_SRC
 
 *** Light: Gruvbox-light-hard
@@ -394,7 +405,7 @@ I'd like to toggle between light & dark themes.
   (use-package doom-themes
     :straight t)
 
-  (defvar light-theme 'doom-tomorrow-day)
+  (defvar light-theme 'doom-acario-light)
 #+END_SRC
 
 *** Toggle
@@ -409,7 +420,8 @@ Default to dark theme, but make it easy to switch.
       (disable-theme (if dark-mode dark-theme light-theme))
       (load-theme (if dark-mode light-theme dark-theme) t)
       (setq dark-mode (not dark-mode))
-      (adapt-theme-org-colors)))
+      (adapt-theme-org-colors)
+      (nuance/fix-linum-heights)))
 #+END_SRC
 
 *** MacOS dark mode
