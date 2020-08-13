@@ -980,6 +980,7 @@ Use projectile to index git repos.
     :bind (
            ("C-c c" . org-capture)
            ("C-c l" . org-store-link)
+           ("C-c a" . (lambda () (interactive) (org-agenda nil "d")))
            :map org-mode-map
            ("C-c g" . org-mac-grab-link)
            ("s-b" . org-babel-execute-src-block)
@@ -1006,7 +1007,7 @@ Use projectile to index git repos.
                   (org-buffer-list 'files t))))
 
   (setq
-   org-agenda-files '("~/org" "~/.emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes")
+   org-agenda-files '("~/org" "~/org/journal" "~/.emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes")
    org-log-done t
    org-enforce-todo-dependencies t
    ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
@@ -1023,17 +1024,18 @@ Use projectile to index git repos.
         '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
   (setq org-agenda-custom-commands
         '(("f" "Today"
-           ((agenda "" ((org-agenda-span 1)))
+           ((agenda "" ((org-agenda-span 'day)))
             (tags ":today:" ((org-agenda-overriding-header "Today"))))
            ((org-agenda-compact-blocks t)))
           ("d" "Daily agenda and all TODOs"
-           ((todo "IN-PROGRESS"
-                  ((org-agenda-overriding-header "Unfinished tasks:")))
-            (agenda "" ((org-agenda-span 1)))
+           ((agenda "" ((org-agenda-span 'day)
+                        (org-agenda-repeating-timestamp-show-all t)))
             (tags ":refile:"
-                  ((org-agenda-overriding-header "To refile:")))
+                  ((org-agenda-overriding-header "Refile:")))
+            (todo "IN-PROGRESS"
+                  ((org-agenda-overriding-header "Finish:")))
             (todo "TODO"
-                  ((org-agenda-overriding-header "Open tasks:"))))
+                  ((org-agenda-overriding-header "Next:"))))
            ((org-agenda-compact-blocks t)))
           ("p" "3-week context plan"
            ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
@@ -1109,6 +1111,19 @@ Don't mess up the window layout when editing code blocks.
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
 #+END_SRC
+
+*** Org-Journal
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal
+    :straight t
+    :custom ((org-journal-dir "~/org/journal")
+             (org-journal-file-type 'monthly)
+             (org-journal-date-format "%A <%Y-%m-%d>")
+             (org-journal-file-format "journal.%Y%m%d.org"))
+    :bind (("C-c j" . org-journal-new-entry)))
+#+END_SRC
+
 ** Jupyter
 Support for working with jupyter notebooks, mostlfy focused on interaction with org / org-babel.
 
