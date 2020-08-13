@@ -20,7 +20,7 @@ var (
 	calendarPath = flag.String("calendars", "Library/Calendars", "Path prefix for ical files")
 	diaryOutput  = flag.String("diary", ".emacs.d/diary", "Emacs diary path")
 	urlRegexes   = flag.String("regexes", "dotfiles/ical-to-diary/urls.txt", "file containing url extraction regexes, one per line")
-	extraRegexes   = flag.String("extra", "dotfiles/ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
+	extraRegexes = flag.String("extra", "dotfiles/ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
 )
 
 type entry struct {
@@ -28,7 +28,7 @@ type entry struct {
 	Description string
 	URL         *url.URL
 	People      int
-	Extra string
+	Extra       string
 }
 
 func (e *entry) String() string {
@@ -45,7 +45,7 @@ var diaryTemplate = template.Must(template.New("diary").Parse(`{{.Start.Format "
 `))
 
 var (
-	urlMatchers []*regexp.Regexp
+	urlMatchers   []*regexp.Regexp
 	extraMatchers []*regexp.Regexp
 )
 
@@ -63,7 +63,7 @@ func main() {
 	flag.Parse()
 
 	if rf, err := os.Open(*urlRegexes); err != nil {
-		log.Fatalf("error opening url regex file: %w", err)
+		log.Fatalf("error opening url regex file: %s", err)
 	} else {
 		defer rf.Close()
 		sc := bufio.NewScanner(rf)
@@ -73,7 +73,7 @@ func main() {
 	}
 
 	if rf, err := os.Open(*extraRegexes); err != nil {
-		log.Fatalf("error opening extra regex file: %w", err)
+		log.Fatalf("error opening extra regex file: %s", err)
 	} else {
 		defer rf.Close()
 		sc := bufio.NewScanner(rf)
@@ -136,14 +136,14 @@ func main() {
 				Description: ev.Summary,
 				People:      len(people),
 				URL:         url,
-				Extra: strings.Join(extraParts, " / "),
+				Extra:       strings.Join(extraParts, " / "),
 			}
 
-			if seen[ev.Uid + ev.RecurrenceID] || seen[ent.String()] {
+			if seen[ev.Uid+ev.RecurrenceID] || seen[ent.String()] {
 				continue
 			}
 
-			seen[ev.Uid + ev.RecurrenceID] = true
+			seen[ev.Uid+ev.RecurrenceID] = true
 			seen[ent.String()] = true
 			diary = append(diary, ent)
 		}
