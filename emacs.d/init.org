@@ -394,8 +394,7 @@ I'd like to toggle between light & dark themes.
     (load-theme 'doom-sourcerer t)
     (doom-themes-org-config)
     (doom-themes-visual-bell-config)
-    (nuance/fix-linum-heights)
-    (adapt-theme-org-colors))
+    (nuance/fix-linum-heights))
 
   (defvar dark-theme 'doom-sourcerer)
 #+END_SRC
@@ -1101,8 +1100,8 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
         :straight t
         :config
         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-      (adapt-theme-org-colors)
-      ))
+        (add-hook 'emacs-startup-hook (lambda () (adapt-theme-org-colors))
+      )))
 #+END_SRC
 
 *** Window interaction
