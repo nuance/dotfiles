@@ -519,7 +519,7 @@ Default to dark theme, but make it easy to switch.
 
 ** Posframe
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package helm-posframe :straight t
     :when (eq (window-system) 'ns)
     :config
@@ -531,7 +531,7 @@ Default to dark theme, but make it easy to switch.
     (helm-posframe-enable))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package hydra-posframe :straight (hydra-posframe :type git :host github :repo "Ladicle/hydra-posframe")
     :when (eq (window-system) 'ns)
     :hook (after-init . hydra-posframe-enable))
