@@ -1273,9 +1273,13 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
     (interactive)
     (if (buffer-narrowed-p) (widen) (narrow-to-defun)))
 
+  (defun nuance/toggle-narrow-to-defun-or-region  (beg end)
+    "Narrow to a region or the current function."
+    (interactive "*r")
+    (if (buffer-narrowed-p) (widen) (if (region-active-p) (narrow-to-region beg end) (narrow-to-defun))))
 
   (use-package prog-mode
-    :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun)))
+    :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun-or-region)))
 #+END_SRC
 
 ** YAML
