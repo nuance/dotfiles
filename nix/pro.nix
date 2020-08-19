@@ -44,6 +44,7 @@ in
     ".bashrc".source = ../bashrc;
     ".bash_profile".source = ../bash_profile;
     ".bash_includes/no_op.sh".text = "";
+    ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
   };
 
   # This value determines the Home Manager release that your
