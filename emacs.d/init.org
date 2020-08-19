@@ -996,6 +996,7 @@
               helm-org-headings-max-depth 6)
         :bind ("s-r" . helm-org-agenda-files-headings))
     #+END_SRC
+
 *** Agenda
 
     #+BEGIN_SRC emacs-lisp
@@ -1077,7 +1078,6 @@
          '(fixed-pitch ((t ( :family "IBM Plex Mono" :slant normal :weight normal :height 110 :width normal)))))
         (add-hook 'org-mode-hook 'variable-pitch-mode)
         (add-hook 'org-mode-hook 'visual-line-mode)
-        (add-hook 'org-mode-hook 'org-indent-mode)
         (custom-theme-set-faces
          'user
          '(org-block                 ((t (:inherit fixed-pitch))))
@@ -1103,6 +1103,18 @@
           (add-hook 'emacs-startup-hook (lambda () (adapt-theme-org-colors))
                     )))
     #+END_SRC
+
+*** Auto indent
+
+    Indent org buffers on save.
+
+    #+begin_src emacs-lisp
+      (defun org-save-hook ()
+        (interactive)
+        (when (eq major-mode 'org-mode)
+          (indent-region (buffer-end -1) (buffer-end 1))))
+      (add-hook 'before-save-hook 'org-save-hook)
+    #+end_src
 
 *** Window interaction
     Don't mess up the window layout when editing code blocks.
