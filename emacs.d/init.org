@@ -266,7 +266,9 @@
        (when (memq window-system '(mac ns x))
          (exec-path-from-shell-initialize)))
    #+END_SRC
+
 ** Elisp helpers
+
    #+BEGIN_SRC emacs-lisp
      ;; functional helpers
      (use-package dash
@@ -280,6 +282,12 @@
      (use-package f
        :straight t)
    #+END_SRC
+
+** Encrypted authinfo
+
+   #+begin_src emacs-lisp
+     (setq auth-sources '((:source "~/.authinfo.gpg")))
+   #+end_src
 
 * UI Appearance
 ** UI Interaction
