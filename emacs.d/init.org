@@ -797,6 +797,10 @@
 ** Ansi-term improvements
    From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
 
+   #+BEGIN_SRC emacs-lisp
+     (use-package term)
+   #+END_SRC
+
 *** Close terminal windows when shell exits
 
     #+BEGIN_SRC emacs-lisp
@@ -856,6 +860,23 @@
 
       (global-set-key (kbd "s-T") 'nuance-toggle-term)
     #+END_SRC
+
+*** Line / Char mode toggle
+
+    #+begin_src emacs-lisp
+      (defun jnm/term-toggle-mode ()
+        "Toggles term between line mode and char mode"
+        (interactive)
+        (if (term-in-line-mode)
+            (term-char-mode)
+          (term-line-mode)))
+
+      (define-key term-mode-map (kbd "C-c C-j") 'jnm/term-toggle-mode)
+      (define-key term-mode-map (kbd "C-c C-k") 'jnm/term-toggle-mode)
+
+      (define-key term-raw-map (kbd "C-c C-j") 'jnm/term-toggle-mode)
+      (define-key term-raw-map (kbd "C-c C-k") 'jnm/term-toggle-mode)
+    #+end_src
 
 ** Reload all buffers
 
