@@ -20,6 +20,7 @@ in
     direnv
     emacs
     ispell
+    gnupg1
     go
     unstable.gopls
     nixpkgs-fmt
