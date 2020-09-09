@@ -140,6 +140,12 @@
       (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
     #+END_SRC
 
+** so-long
+
+   #+begin_src emacs-lisp
+     (global-so-long-mode t)
+   #+end_src
+
 * straight.el
 ** Cache SSL lookups
 
