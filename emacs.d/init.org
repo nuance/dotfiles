@@ -1616,6 +1616,7 @@
   Launch a server if not currently running, default to showing org daily agenda
 
   #+BEGIN_SRC emacs-lisp
+    (setq server-use-tcp t)
     (setq server-socket-dir "~/.emacs.d/server")
     (server-start)
     (org-agenda nil "d")
