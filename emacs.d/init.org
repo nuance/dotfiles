@@ -553,7 +553,7 @@
 
 ** Aggressive Indent
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :tangle no
      (use-package aggressive-indent
        :straight t
        :config
