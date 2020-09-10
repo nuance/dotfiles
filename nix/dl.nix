@@ -18,6 +18,7 @@ in
 
   home.packages = with pkgs; [
     direnv
+    jupyter_core
     ispell
     gnupg1
     go
