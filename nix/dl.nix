@@ -29,6 +29,7 @@ in
     shellcheck
     tree
     curl
+    ripgrep
     rsync
     watch
   ];
