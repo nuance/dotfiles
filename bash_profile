@@ -13,8 +13,7 @@ if [[ "$(uname)" != Darwin ]]; then
     export PS1="\[\033[0;33m\]\h\[\033[00m\] $PS1"
 fi
 
-export PATH=$HOME/bin:$PATH:/usr/local/go/bin:bin:$HOME/Library/Python/3.7/bin:$HOME/Library/Python/2.7/bin:$HOME/go/bin
-# export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
+export PATH=$HOME/bin:$PATH
 
 alias ls="ls -G"
 
@@ -44,5 +43,3 @@ for src in ~/.bash_includes/*; do
     # shellcheck source=/dev/null
     . "$src"
 done
-
-export PATH="$HOME/.cargo/bin:$PATH"
