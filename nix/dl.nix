@@ -18,8 +18,6 @@ in
 
   home.packages = with pkgs; [
     direnv
-    emacs
-    jupyter_core
     ispell
     gnupg1
     go
@@ -36,6 +34,15 @@ in
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  programs.emacs = {
+    enable = true;
+    package = emacs;
+  };
+
+  services.emacs = {
+    enable = true;
+  };
 
   home.file = {
     "bin/emacsclient".source = "${emacs}/bin/emacsclient";
