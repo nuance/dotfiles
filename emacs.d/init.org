@@ -1191,7 +1191,7 @@
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
-     (setq safe-local-variable-values '((eval venv--activate-dir "virt") (org-confirm-babel-evaluate)))
+     (setq safe-local-variable-values '((org-confirm-babel-evaluate)))
    #+END_SRC
 
 ** Tramp
