@@ -945,7 +945,7 @@
 ** Snippets
 
    #+BEGIN_SRC emacs-lisp
-     (use-package yasnippet :straight t :config (yas-global-mode))
+     (use-package yasnippet-snippets :straight t :config (yas-global-mode))
    #+END_SRC
 
 ** LSP
