@@ -1,27 +1,22 @@
 { config, pkgs, ... }:
 
-let emacs = pkgs.emacsUnstable-nox; in
 {
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-    }))
-  ];
-
   home.packages = with pkgs; [
+    cacert
+    curl
     direnv
     emacs
+    gnupg1
     go
     google-cloud-sdk
+    gopls
     ispell
     mosh
-    cacert
     pv
     ripgrep
+    rsync
     shellcheck
     tree
-    curl
-    rsync
     watch
   ];
 
@@ -30,8 +25,12 @@ let emacs = pkgs.emacsUnstable-nox; in
 
   home.file = {
     "Library/KeyBindings/DefaultKeyBinding.dict".source = ./EmacsKeyBinding.dict;
-    "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
-    "bin/emacsclient".source = "${emacs}/bin/emacsclient";
+    "Applications/Emacs.app".source = "${pkgs.emacs}/Applications/Emacs.app";
+    "bin/emacsclient".source = "${pkgs.emacs}/bin/emacsclient";
+    "bin/editor".source = ../editor;
+    ".bash_profile".source = ../bash_profile;
+    ".bash_includes/no_op.sh".text = "";
+    ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
   };
 
   # This value determines the Home Manager release that your
@@ -42,5 +41,5 @@ let emacs = pkgs.emacsUnstable-nox; in
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "19.09";
+  home.stateVersion = "20.03";
 }
