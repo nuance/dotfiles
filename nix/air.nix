@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
 
+let emacs = pkgs.emacsUnstable-nox; in
 {
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    }))
+  ];
+
   home.packages = with pkgs; [
     direnv
     emacs
@@ -10,24 +17,22 @@
     mosh
     cacert
     pv
-    python37
-    python37Packages.python-language-server
-    python37Packages.pyls-black
-    python37Packages.pyls-isort
-    python37Packages.pyls-mypy
-    qrencode
     ripgrep
     shellcheck
     tree
-    xquartz
+    curl
+    rsync
+    watch
   ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  home.file."Library/KeyBindings/DefaultKeyBinding.dict".source = ./EmacsKeyBinding.dict;
-  home.file."Applications/Emacs.app".source = "${pkgs.emacs}/Applications/Emacs.app";
-  home.file.".gitconfig".source = ../gitconfig;
+  home.file = {
+    "Library/KeyBindings/DefaultKeyBinding.dict".source = ./EmacsKeyBinding.dict;
+    "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
+    "bin/emacsclient".source = "${emacs}/bin/emacsclient";
+  };
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
