@@ -35,6 +35,20 @@
       onChange = "cd ~/.emacs.d && ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\"";
     };
     ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
+
+    ".home-manager-trigger-config" = {
+      text = ''
+        #!/usr/bin/env bash
+
+        echo -n "Applying configuration... "
+
+        defaults write -g KeyRepeat -int 1 # normal minimum is 2 (30 ms)
+        defaults write -g InitialKeyRepeat -int 12 # normal minimum is 15 (225 ms)
+
+        echo "done."
+        '';
+      onChange = "/usr/bin/env bash ~/.home-manager-trigger-config";
+    };
   };
 
   # This value determines the Home Manager release that your
