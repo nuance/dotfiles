@@ -1617,7 +1617,6 @@
 
   #+BEGIN_SRC emacs-lisp
     (setq server-use-tcp t)
-    (setq server-socket-dir "~/.emacs.d/server")
     (server-start)
     (org-agenda nil "d")
     (delete-other-windows)
