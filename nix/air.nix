@@ -6,6 +6,7 @@
     curl
     direnv
     emacs
+    ghostscript
     gnupg1
     go
     google-cloud-sdk
@@ -16,6 +17,7 @@
     ripgrep
     rsync
     shellcheck
+    texlive.combined.scheme-small
     tree
     watch
   ];
