@@ -130,7 +130,7 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq gc-cons-threshold most-positive-fixnum)
-      (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
+      (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 100000000)))
     #+END_SRC
 
 *** Minibuffer
@@ -144,6 +144,12 @@
 
    #+begin_src emacs-lisp
      (global-so-long-mode t)
+   #+end_src
+
+** Increase read process output buffer size
+
+   #+begin_src emacs-lisp
+     (setq read-process-output-max (* 1024 1024)) ;; 1mb
    #+end_src
 
 * straight.el
