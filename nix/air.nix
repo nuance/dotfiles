@@ -34,7 +34,7 @@
     ".bash_includes/no_op.sh".text = "";
     ".emacs.d/init.org" = {
       source = ../emacs.d/init.org;
-      onChange = "cd ~/.emacs.d && ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\"";
+      onChange = "cd ~/.emacs.d ; ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${pkgs.emacs}/bin/emacs --batch --load init.el;";
     };
     ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
 
