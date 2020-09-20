@@ -34,9 +34,12 @@
     ".bash_includes/no_op.sh".text = "";
     ".emacs.d/init.org" = {
       source = ../emacs.d/init.org;
-      onChange = "cd ~/.emacs.d ; ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${pkgs.emacs}/bin/emacs --batch --load init.el;";
+      onChange = "cd ~/.emacs.d ; ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${pkgs.emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
-    ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
+    ".emacs.d/straight/versions/default.el" = {
+      source = ../straight-package-versions.el;
+      onChange = "cd ~/.emacs.d ; ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${pkgs.emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+    };
 
     ".home-manager-trigger-config" = {
       text = ''
