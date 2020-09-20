@@ -1,24 +1,10 @@
 { config, pkgs, ... }:
-
 let
-  emacs = pkgs.emacsUnstable-nox;
-  unstable = import <unstable> {};
+  unstable = import <unstable> { };
 in
 {
-  nixpkgs.overlays = [
-    (
-      import (
-        builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/641c77b05036f76d5b48b6bcdb817ba81e05e4cb.tar.gz;
-          sha256 = "1gz78dy6g2jfrdnr0mxq3ppsl26nrr24s40wbpj0f8r14x8w87y9";
-        }
-      )
-    )
-  ];
-
   home.packages = with pkgs; [
     direnv
-    jupyter_core
     ispell
     gnupg1
     go
@@ -39,7 +25,7 @@ in
 
   programs.emacs = {
     enable = true;
-    package = emacs;
+    package = unstable.emacs-nox;
   };
 
   services.emacs = {
@@ -47,11 +33,19 @@ in
   };
 
   home.file = {
-    "bin/emacsclient".source = "${emacs}/bin/emacsclient";
+    "bin/emacsclient".source = "${unstable.emacs-nox}/bin/emacsclient";
     "bin/editor".source = ../editor;
     ".bash_profile".source = ../bash_profile;
     ".bash_includes/no_op.sh".text = "";
-    ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
+
+    ".emacs.d/init.org" = {
+      source = ../emacs.d/init.org;
+      onChange = "cd ~/.emacs.d ; ${unstable.enacs-nox}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${unstable.enacs-nox}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+    };
+    ".emacs.d/straight/versions/default.el" = {
+      source = ../straight-package-versions.el;
+      onChange = "cd ~/.emacs.d ; ${unstable.enacs-nox}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${unstable.enacs-nox}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+    };
   };
 
   # This value determines the Home Manager release that your
