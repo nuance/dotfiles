@@ -574,10 +574,9 @@
               company-idle-delay 0.1
               company-minimum-prefix-length 3)
        :config
-       (global-company-mode)
        (add-to-list 'company-backends 'company-dabbrev)
        (add-to-list 'company-backends 'company-etags)
-       (add-to-list 'company-frontends 'company-tng-frontend)
+       (global-company-mode)
        (setq company-dabbrev-downcase nil))
 
      (use-package company-quickhelp
