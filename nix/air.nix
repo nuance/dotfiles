@@ -13,6 +13,7 @@
     gopls
     ispell
     mosh
+    nixpkgs-fmt
     pv
     ripgrep
     rsync
@@ -51,7 +52,7 @@
         defaults write -g InitialKeyRepeat -int 12 # normal minimum is 15 (225 ms)
 
         echo "done."
-        '';
+      '';
       onChange = "/usr/bin/env bash ~/.home-manager-trigger-config";
     };
   };
