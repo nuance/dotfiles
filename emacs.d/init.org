@@ -1338,6 +1338,15 @@
      find ~/.emacs.d/straight/build -iname "*-autoloads.el" -exec ~/fix-path.sh {} \;
    #+end_src
 
+** Explain pause
+
+   #+begin_src emacs-lisp
+     (use-package explain-pause-mode
+       :defer 2
+       :straight (explain-pause-mode :type git :host github :repo "lastquestion/explain-pause-mode")
+       :config (explain-pause-mode))
+   #+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
