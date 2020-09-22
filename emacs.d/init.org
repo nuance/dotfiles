@@ -592,10 +592,9 @@
               company-idle-delay 0.1
               company-minimum-prefix-length 3)
        :config
-       (add-to-list 'company-backends 'company-dabbrev)
-       (add-to-list 'company-backends 'company-etags)
-       (global-company-mode)
-       (setq company-dabbrev-downcase nil))
+       (setq company-backends '(company-dabbrev company-etags company-capf)
+             company-dabbrev-downcase nil)
+       (global-company-mode))
 
      (use-package company-quickhelp
        :straight t
@@ -654,9 +653,6 @@
         (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
         (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
         (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
-        (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-doc-mode)
-        (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
-        (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
         :bind (("s-L" . 'mc/edit-lines)
                ("s-d" . 'select-symbol)
                ("s-D" . 'mark-all-like-symbol)
@@ -989,7 +985,6 @@
    #+END_SRC
 
 ** LSP
-
    #+BEGIN_SRC emacs-lisp
      (use-package eglot
        :straight t
@@ -1007,17 +1002,6 @@
    #+END_SRC
 
    Use this by invoking `M-x bug-hunter-init-file` and following instructions.
-
-** Projectile
-
-   Use projectile to index git repos.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package projectile
-       :straight t
-       :config
-       (projectile-mode))
-   #+END_SRC
 
 ** Org
 *** Installation
@@ -1200,30 +1184,6 @@
                                           (case-fn . downcase))))
     #+end_src
 
-** Jupyter
-
-   Support for working with jupyter notebooks, mostlfy focused on interaction with org / org-babel.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package jupyter
-       :straight t
-       :config
-       (org-babel-do-load-languages
-        'org-babel-load-languages
-        '((latex . t)
-          (python . t)
-          (emacs-lisp . t)
-          (jupyter . t)))
-       (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
-                                                            (:session . "py")
-                                                            (:kernel . "python3")))
-       (org-babel-jupyter-override-src-block "python"))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (setq safe-local-variable-values '((eval venv--activate-dir "virt") (org-confirm-babel-evaluate)))
-   #+END_SRC
-
 ** Tramp
 
    #+BEGIN_SRC emacs-lisp
@@ -1233,16 +1193,6 @@
         tramp-auto-save-directory "/tmp"
         tramp-ssh-controlmaster-options ""
         tramp-inline-compress-start-size (* 64 1024)))
-   #+END_SRC
-
-** Direnv
-   #+BEGIN_SRC emacs-lisp
-     (use-package direnv
-       :straight t
-       :config
-       (setq direnv-always-show-summary t)
-       (direnv-mode)
-       :hook ('eshell-directory-change-hook . #'direnv-update-directory-environment))
    #+END_SRC
 
 ** GC Magic Hack
@@ -1411,6 +1361,7 @@
       (use-package prog-mode
         :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun-or-region)))
     #+END_SRC
+
 ** JSON
 
    #+BEGIN_SRC emacs-lisp
@@ -1443,57 +1394,6 @@
        :straight t)
    #+END_SRC
 
-** Lua
-   #+BEGIN_SRC emacs-lisp
-     (use-package lua-mode
-       :straight t
-       :defer 2
-       :config
-       (flycheck-define-checker lua-luacheck-old
-         "A Lua syntax checker using luacheck.
-
-     See URL `https://github.com/mpeterv/luacheck'."
-         :command ("luacheck"
-                   ;; "--formatter" "plain"
-                   ;; "--codes"                   ; Show warning codes
-                   "--no-color"
-                   (option-list "--std" flycheck-luacheck-standards)
-                   (config-file "--config" flycheck-luacheckrc)
-                   ;; "--filename" source-original
-                   ;; Read from standard input
-                   source-original)
-         :standard-input t
-         :error-patterns
-         ((warning line-start
-                   (optional (minimal-match (one-or-more not-newline)))
-                   ":" line ":" column
-                   ": (" (id "W" (one-or-more digit)) ") "
-                   (message) line-end)
-          (error line-start
-                 (optional (minimal-match (one-or-more not-newline)))
-                 ":" line ":" column ":"
-                 ;; `luacheck' before 0.11.0 did not output codes for errors, hence
-                 ;; the ID is optional here
-                 (optional " (" (id "E" (one-or-more digit)) ") ")
-                 (message) line-end))
-         :modes lua-mode)
-       :hook
-       (lua-mode
-        .
-        (lambda()
-          (set (make-local-variable 'compile-command)
-               (let ((file (file-name-nondirectory buffer-file-name)))
-                 (format "luacheck --no-color %s" file))))))
-
-   #+END_SRC
-
-** ANTLR
-   #+BEGIN_SRC emacs-lisp
-     (use-package antlr-mode
-       :mode ("\\.g4\\'" . antlr-mode)
-       :defer 2
-       :straight t)
-   #+END_SRC
 ** C++
 
    #+BEGIN_SRC emacs-lisp
@@ -1502,17 +1402,11 @@
    #+END_SRC
 
 ** Python
-
    #+BEGIN_SRC emacs-lisp
-     (setq
-      flycheck-python-pycompile-executable "python3"
-      flycheck-python-flake8-executable "flake8")
-
-     (use-package virtualenvwrapper
-       :defer 2
-       :straight t
-       :init (setq venv-location (expand-file-name "~/.pyenv/versions"))
-       :config (venv-initialize-interactive-shells))
+     (use-package python
+       :config (setq
+                flycheck-python-pycompile-executable "python3"
+                flycheck-python-flake8-executable "flake8"))
    #+END_SRC
 
 ** Cython
@@ -1573,46 +1467,6 @@
        :hook
        (('markdown-mode .'variable-pitch-mode)
         ('markdown-mode . 'visual-line-mode)))
-   #+END_SRC
-
-** Terraform
-   Trying out terraform for managing AWS stuff.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package terraform-mode
-       :defer 2
-       :straight t
-       :hook ('terraform-mode-hook . #'terraform-format-on-save-mode))
-
-     (use-package company-terraform
-       :defer 2
-       :straight t
-       :config
-       (company-terraform-init))
-
-     (add-to-list 'eglot-server-programs '(terraform-mode . ("tflint" "--langserver")))
-
-     (flycheck-define-checker terraform-validate
-       "A Terraform syntax checker with `terraform validate.
-               See URL `https://www.terraform.io/docs/commands/validate.html'."
-       :command ("terraform" "validate" "-no-color")
-       :standard-input t
-       :error-patterns
-       ((error line-start "Error: " (one-or-more not-newline)
-               "\n\n  on " (file-name) " line " line ", " (one-or-more not-newline) "\n"
-               (one-or-more not-newline) "\n\n"
-               (message (one-or-more (and (one-or-more (not (any ?\n))) ?\n)))
-               line-end))
-       :next-checkers ((warning . terraform-tflint))
-       :modes terraform-mode)
-
-     (add-to-list 'flycheck-checkers 'terraform-validate)
-   #+END_SRC
-
-** Dockerfile
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package dockerfile-mode :straight t :defer 2)
    #+END_SRC
 
 ** Nix
