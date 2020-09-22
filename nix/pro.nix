@@ -1,36 +1,36 @@
 { config, pkgs, ... }:
 
 let
-  emacs = pkgs.emacsUnstable-nox;
-  unstable = import <unstable> {};
+  unstable = import <unstable> {
+    overlays = [
+      (
+        import (
+          builtins.fetchTarball {
+            url = https://github.com/nix-community/emacs-overlay/archive/ca5095edbd2fcbeba3300d618960b5a332c65a69.tar.gz;
+          }
+        )
+      )
+    ];
+  };
+  emacs = unstable.emacsGit-nox;
 in
 {
-  nixpkgs.overlays = [
-    (
-      import (
-        builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/641c77b05036f76d5b48b6bcdb817ba81e05e4cb.tar.gz;
-          sha256 = "1gz78dy6g2jfrdnr0mxq3ppsl26nrr24s40wbpj0f8r14x8w87y9";
-        }
-      )
-    )
-  ];
-
   home.packages = with pkgs; [
+    curl
     direnv
-    emacs
-    ispell
     gnupg1
+    pinentry_mac
     go
-    unstable.gopls
-    nixpkgs-fmt
+    ispell
     mosh
+    nixpkgs-fmt
     pv
     ripgrep
+    rsync
     shellcheck
     tree
-    curl
-    rsync
+    emacs
+    unstable.gopls
     watch
   ];
 
@@ -45,7 +45,28 @@ in
     ".bashrc".source = ../bashrc;
     ".bash_profile".source = ../bash_profile;
     ".bash_includes/no_op.sh".text = "";
-    ".emacs.d/straight/versions/default.el".source = ../straight-package-versions.el;
+    ".emacs.d/init.org" = {
+      source = ../emacs.d/init.org;
+      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+    };
+    ".emacs.d/straight/versions/default.el" = {
+      source = ../straight-package-versions.el;
+      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+    };
+
+    ".home-manager-trigger-config" = {
+      text = ''
+        #!/usr/bin/env bash
+
+        echo -n "Applying configuration... "
+
+        defaults write -g KeyRepeat -int 1 # normal minimum is 2 (30 ms)
+        defaults write -g InitialKeyRepeat -int 12 # normal minimum is 15 (225 ms)
+
+        echo "done."
+      '';
+      onChange = "/usr/bin/env bash ~/.home-manager-trigger-config";
+    };
   };
 
   # This value determines the Home Manager release that your
