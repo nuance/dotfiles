@@ -907,6 +907,14 @@
                  magit-push-always-verify nil
                  ;; Get rid of the previous advice to go into fullscreen
                  magit-restore-window-configuration t)
+
+           (defun update-vc ()
+             "Update vc in all verson-controlled buffers when magit refreshes."
+             (dolist (buf (buffer-list))
+               (with-current-buffer buf
+                 (vc-refresh-state))))
+           (add-hook 'magit-post-refresh-hook #'update-vc)
+
            :bind ("C-x g" . magit-status)))
    #+END_SRC
 
