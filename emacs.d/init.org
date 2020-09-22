@@ -950,7 +950,7 @@
 ** Snippets
 
    #+BEGIN_SRC emacs-lisp
-     (use-package yasnippet-snippets :straight t :config (yas-global-mode))
+     (use-package yasnippet-snippets :straight t :defer 1 :config (yas-global-mode))
    #+END_SRC
 
 ** LSP
@@ -1369,12 +1369,14 @@
    #+BEGIN_SRC emacs-lisp
      (use-package yaml-mode
        :straight t
+       :defer 2
        :mode "\\.yml\\'")
    #+END_SRC
 
 ** Thrift
    #+BEGIN_SRC emacs-lisp
      (use-package thrift-mode
+       :defer 2
        :straight t)
    #+END_SRC
 
@@ -1382,6 +1384,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package protobuf-mode
+       :defer 2
        :straight t)
    #+END_SRC
 
@@ -1389,6 +1392,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package lua-mode
        :straight t
+       :defer 2
        :config
        (flycheck-define-checker lua-luacheck-old
          "A Lua syntax checker using luacheck.
@@ -1432,6 +1436,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package antlr-mode
        :mode ("\\.g4\\'" . antlr-mode)
+       :defer 2
        :straight t)
    #+END_SRC
 ** C++
@@ -1440,6 +1445,7 @@
 
    #+BEGIN_SRC emacs-lisp :tangle no
      (use-package cquery
+       :defer 2
        :straight t
        :if
        (file-exists-p "/bin/cquery")
@@ -1481,6 +1487,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package clang-format
        :straight t
+       :defer 2
        :config
        (progn
          (defun clang-format-before-save ()
@@ -1497,6 +1504,7 @@
 ** Python
    #+BEGIN_SRC emacs-lisp
      (use-package blacken
+       :defer 2
        :straight t
        :hook (python-mode . blacken-mode))
 
@@ -1505,6 +1513,7 @@
       flycheck-python-flake8-executable "flake8")
 
      (use-package virtualenvwrapper
+       :defer 2
        :straight t
        :init (setq venv-location (expand-file-name "~/.pyenv/versions"))
        :config (venv-initialize-interactive-shells))
@@ -1513,6 +1522,7 @@
 ** Cython
    #+BEGIN_SRC emacs-lisp
      (use-package cython-mode
+       :defer 2
        :straight t)
    #+END_SRC
 
@@ -1520,6 +1530,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package rust-mode
+       :defer 2
        :straight t)
    #+END_SRC
 
@@ -1527,6 +1538,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package go-mode
+       :defer 2
        :straight t)
    #+END_SRC
 
@@ -1534,6 +1546,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package bazel-mode
+       :defer 2
        :straight
        (emacs-bazel-mode
         :host github
@@ -1549,6 +1562,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package markdown-mode
+       :defer 2
        :straight t
        :commands (markdown-mode gfm-mode)
        :mode (("README\\.md\\'" . gfm-mode)
@@ -1570,10 +1584,12 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package terraform-mode
+       :defer 2
        :straight t
        :hook ('terraform-mode-hook . #'terraform-format-on-save-mode))
 
      (use-package company-terraform
+       :defer 2
        :straight t
        :config
        (company-terraform-init))
@@ -1600,23 +1616,27 @@
 ** Dockerfile
 
    #+BEGIN_SRC emacs-lisp
-     (use-package dockerfile-mode :straight t)
+     (use-package dockerfile-mode :straight t :defer 2)
    #+END_SRC
 
 ** Nix
 
    #+BEGIN_SRC emacs-lisp
      (use-package nix-mode
+       :defer 2
        :straight t
        :mode ("\\.nix\\'" "\\.nix.in\\'"))
 
      (use-package nix-drv-mode
+       :defer 2
        :mode "\\.drv\\'")
 
      (use-package nix-shell
+       :defer 2
        :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
 
      (use-package nix-repl
+       :defer 2
        :commands (nix-repl))
    #+END_SRC
 
