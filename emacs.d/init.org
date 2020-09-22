@@ -1318,6 +1318,26 @@
       (add-hook 'before-save-hook 'blacken--save-hook)
     #+END_SRC
 
+** ESUP
+
+   #+begin_src emacs-lisp
+     (use-package esup :straight t :custom ((esup-depth 0)))
+   #+end_src
+
+   Note that ESUP is broken with package.el, so you'll need to do the following:
+
+   Create a script in ~/fix-path.sh:
+
+   #+begin_src bash :tangle no
+     #/bin/bash
+     FILE="$PWD/$1"
+     sed -i.bak -e "s|^\(.*\)#\$\(.*\)$|;;\1#$\2\n\1\"$FILE\"\2|" "$1"
+   #+end_src
+
+   #+begin_src bash :tangle no
+     find ~/.emacs.d/straight/build -iname "*-autoloads.el" -exec ~/fix-path.sh {} \;
+   #+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
