@@ -537,25 +537,16 @@
        :config (helm-descbinds-mode))
    #+END_SRC
 
-** Posframe
+** Mini frame
 
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (use-package helm-posframe :straight t
-       :when (eq (window-system) 'ns)
-       :config
-       (setq
-        helm-posframe-poshandler 'posframe-poshandler-frame-top-center
-        helm-posframe-width 100
-        helm-posframe-height 100
-        helm-posframe-parameters '((internal-border-width . 10)))
-       (helm-posframe-enable))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (use-package hydra-posframe :straight (hydra-posframe :type git :host github :repo "Ladicle/hydra-posframe")
-       :when (eq (window-system) 'ns)
-       :hook (after-init . hydra-posframe-enable))
-   #+END_SRC
+   #+begin_src emacs-lisp
+     (use-package mini-frame
+       :straight t
+       :custom
+       ((mini-frame-show-parameters '((left . 0.5) (top . 20) (width . 0.7) (height . 26)))
+        (mini-frame-resize 'grow-only))
+       :config (mini-frame-mode))
+   #+end_src
 
 ** Aggressive Indent
 
@@ -1231,13 +1222,8 @@
 ** ElDoc
 
    #+BEGIN_SRC emacs-lisp
-     (use-package eldoc :hook (prog-mode . eldoc-mode))
-     (use-package eldoc-posframe
-       :when (memq window-system '(mac ns x))
-       :straight (eldoc-posframe :host github :repo "terlar/eldoc-posframe" :branch "feature/configurable-position-and-padding")
-       :custom-face (eldoc-posframe-background-face ((t :inherit hl-line)))
-       :custom (eldoc-posframe-poshandler #'posframe-poshandler-point-bottom-left-corner)
-       :hook (prog-mode . eldoc-posframe-mode))
+     (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
+     (use-package eldoc-box :straight t :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
    #+END_SRC
 
 ** Formatter
