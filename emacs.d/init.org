@@ -1369,6 +1369,14 @@
       (use-package prog-mode
         :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun-or-region)))
     #+END_SRC
+** JSON
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package json-mode
+       :straight t
+       :defer 2
+       :mode "\\.json\\'")
+   #+END_SRC
 
 ** YAML
    #+BEGIN_SRC emacs-lisp
