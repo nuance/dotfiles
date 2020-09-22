@@ -484,58 +484,86 @@
    #+END_SRC
 
 * UI Interaction
-** Helm
-   #+BEGIN_SRC emacs-lisp
-     (use-package helm
+** Selectrum
+
+   #+begin_src emacs-lisp
+     (use-package selectrum
        :straight t
-       :demand t
-       :bind (([remap execute-extended-command] . 'helm-M-x) ;; M-x
-              ([remap switch-to-buffer] . 'helm-mini) ;; C-x b
-              ([remap bookmark-jump] . 'helm-filtered-bookmarks) ;; C-x r b
-              ([remap find-file] . 'helm-find-files) ;; C-x C-f
-              ([remap eval-expression] . 'helm-eval-expression-with-eldoc) ;; M-;
-              ("s-e" . 'helm-all-mark-rings)
-              ("s-p" . 'helm-etags-select)
-              ("s-t" . 'helm-buffers-list)
-              ("s-;" . 'helm-calcul-expression)
-              ("s-o" . 'helm-moccur-all)
-              ("s-R" . 'helm-moccur-org)
-              ([remap yank-pop] . 'helm-show-kill-ring)) ;; M-y
-       :config (progn (helm-mode 1)
-                      (helm-autoresize-mode t)
-                      (setq helm-M-x-fuzzy-match                  t
-                            helm-bookmark-show-location           t
-                            helm-buffers-fuzzy-matching           t
-                            helm-completion-in-region-fuzzy-match t
-                            helm-file-cache-fuzzy-match           t
-                            helm-imenu-fuzzy-match                t
-                            helm-mode-fuzzy-match                 t
-                            helm-locate-fuzzy-match               t
-                            helm-quick-update                     t
-                            helm-recentf-fuzzy-match              t
-                            helm-semantic-fuzzy-match             t
-                            helm-etags-fuzzy-match                t
-                            helm-etags-match-part-only            'all
-                            helm-split-window-inside-p t))
-       (require 'seq)
+       :bind (("s-t" . 'switch-to-buffer)
+              ("s-o" . 'selectrum-swiper)
+              ([remap yank-pop] . 'yank-pop+))
+       :config
+       (setq selectrum-num-candidates-displayed 25)
+       (selectrum-mode 1)
 
-       (defun helm-moccur-all ()
+       (defvar selectrum-swiper-history nil "Submission history for `selectrum-swiper'.")
+       (defun selectrum-swiper ()
+         "Search for a matching line and jump to the beginning of its text.  Obeys narrowing."
          (interactive)
-         (helm-multi-occur-1 (seq-filter 'buffer-file-name (buffer-list))))
+         (let* ((selectrum-should-sort-p nil)
+                (line-choices (cl-loop
+                               with minimum-line-number = (line-number-at-pos (point-min) t)
+                               with buffer-text-lines = (split-string (buffer-string) "\n")
+                               with number-format = (format "%%0%dd: " (length (number-to-string (length buffer-text-lines))))
+                               for txt in buffer-text-lines
+                               for num from minimum-line-number to (+ minimum-line-number
+                                                                      (1- (length buffer-text-lines)))
+                               unless (string-empty-p txt) ; Just skip empty lines.
+                               collect (concat (format number-format num) txt)))
+                ;; Get the matching line.
+                (chosen-line (completing-read "Jump to matching line: " line-choices
+                                              nil t nil 'selectrum-swiper-history))
+                ;; Stop at the ":". It is followed by one " ".
+                (line-number-prefix (seq-take-while (lambda (char)
+                                                      (not (char-equal ?: char)))
+                                                    chosen-line))
+                ;; Get the corresponding line number, skipping the "L" in line-number-prefix.
+                (chosen-line-number (string-to-number (substring line-number-prefix 1)))
+                ;; Get the current line number for determining the travel distance.
+                (current-line-number (line-number-at-pos (point) t)))
 
-       (defun helm-moccur-org ()
-         (interactive)
-         (helm-multi-occur-1 (seq-filter (lambda (buf) (and (buffer-file-name buf) (with-current-buffer buf (eq major-mode 'org-mode)))) (buffer-list)))))
+           (push-mark (point) t)
+           ;; Manually edit history to remove line numbers.
+           (setcar selectrum-swiper-history (substring chosen-line
+                                                       ;; Want after line-prefix followed by ": ".
+                                                       (+ (length line-number-prefix) 2)))
+           (forward-line (- chosen-line-number current-line-number))
+           (beginning-of-line-text 1)))
 
-     (use-package helm-xref
+       (defun yank-pop+ (&optional arg)
+         "Call `yank-pop' with ARG when appropriate, or offer completion."
+         (interactive "*P")
+         (if arg (yank-pop arg)
+           (let* ((old-last-command last-command)
+                  (selectrum-should-sort-p nil)
+                  (enable-recursive-minibuffers t)
+                  (text (completing-read
+                         "Yank: "
+                         (cl-remove-duplicates
+                          kill-ring :test #'string= :from-end t)
+                         nil t nil nil))
+                  ;; Find `text' in `kill-ring'.
+                  (pos (cl-position text kill-ring :test #'string=))
+                  ;; Translate relative to `kill-ring-yank-pointer'.
+                  (n (+ pos (length kill-ring-yank-pointer))))
+             (unless (string= text (current-kill n t))
+               (error "Could not setup for `current-kill'"))
+             ;; Restore `last-command' over Selectrum commands.
+             (setq last-command old-last-command)
+             ;; Delegate to `yank-pop' if appropriate or just insert.
+             (if (eq last-command 'yank)
+                 (yank-pop n) (insert-for-yank text))))))
+
+     (use-package prescient
        :straight t
        :config
-       (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
+       (setq prescient-filter-method '(literal initialism regexp fuzzy))
+       (prescient-persist-mode t))
 
-     (use-package helm-descbinds
+     (use-package selectrum-prescient
        :straight t
-       :config (helm-descbinds-mode))
-   #+END_SRC
+       :config (selectrum-prescient-mode 1))
+   #+end_src
 
 ** Mini frame
 
@@ -632,7 +660,6 @@
         (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
         (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
         (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
-        (add-to-list 'mc/unsupported-minor-modes 'helm-mode)
         (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-doc-mode)
         (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-sideline-mode)
         (add-to-list 'mc/unsupported-minor-modes 'lsp-ui-mode)
@@ -1002,12 +1029,6 @@
        :straight t
        :config
        (projectile-mode))
-
-     (use-package helm-projectile
-       :straight t
-       :init (use-package helm-rg :straight t)
-       :bind (([remap helm-etags-select] . 'helm-projectile-find-file-dwim))
-       (("s-F" . 'helm-projectile-rg)))
    #+END_SRC
 
 ** Org
@@ -1024,16 +1045,6 @@
                ("s-b" . org-babel-execute-src-block)
                ("s-B" . org-babel-execute-buffer)
                ("s-." . org-toggle-narrow-to-subtree)))
-
-      (use-package helm-org
-        :straight t
-        :config
-        (setq helm-org-ignore-autosaves t
-              helm-org-headings-fontify t
-              helm-org-format-outline-path t
-              helm-org-show-filename t
-              helm-org-headings-max-depth 6)
-        :bind ("s-r" . helm-org-agenda-files-headings))
     #+END_SRC
 
 *** Agenda
@@ -1448,7 +1459,6 @@
              ("C-t h c" . cquery-call-hierarchy)
              ("C-t h i" . cquery-inheritance-hierarchy)
              ("C-t i" . lsp-ui-sideline-toggle-symbols-info)
-             ("C-t I". helm-imenu)
              ("C-t h m" . cquery-member-hierarchy)
              ("C-t ." . lsp-ui-peek-find-definitions)
              ("C-t ?" . lsp-ui-peek-find-references))
