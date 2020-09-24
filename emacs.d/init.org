@@ -443,27 +443,6 @@
           (nuance/fix-linum-heights)))
     #+END_SRC
 
-*** MacOS dark mode
-
-    #+BEGIN_SRC emacs-lisp :tangle no
-      (when (eq system-type 'darwin)
-        (defun nuance/dark-mode-p ()
-          (not (string-equal
-                (shell-command-to-string "printf %s \"$( osascript -e \'tell application \"System Events\" to tell appearance preferences to return dark mode\' )\"")
-                "false")))
-
-        (add-hook
-         'after-init-hook
-         (lambda ()
-           (when (not (nuance/dark-mode-p)) (toggle-theme))))
-
-        (run-with-idle-timer
-         10 t
-         (lambda ()
-           (when (not (eq dark-mode (nuance/dark-mode-p)))
-             (toggle-theme)))))
-    #+END_SRC
-
 ** Fixed-width font
    #+BEGIN_SRC emacs-lisp
      (set-face-attribute 'default nil
@@ -574,15 +553,6 @@
        :config (mini-frame-mode))
    #+end_src
 
-** Aggressive Indent
-
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (use-package aggressive-indent
-       :straight t
-       :config
-       (global-aggressive-indent-mode 1))
-   #+END_SRC
-
 ** Company
    #+BEGIN_SRC emacs-lisp
      (use-package company
@@ -611,13 +581,6 @@
                       (kind-num (if (hash-table-p lsp-item) (gethash "kind" lsp-item)
                                   (plist-get lsp-item :kind))))
            (alist-get kind-num company-box-icons--lsp-alist))))
-   #+END_SRC
-
-** Default to regexp search
-
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (global-set-key [remap isearch-forward] 'isearch-forward-regexp) ;; C-s
-     (global-set-key [remap isearch-backward] 'isearch-backward-regexp) ;; C-r
    #+END_SRC
 
 ** CtrlF
@@ -992,27 +955,6 @@
    #+END_SRC
 
 ** LSP
-   I'm trying out an alternate to lsp-mode, so this is currently disabled
-
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (use-package lsp-mode
-       :straight t
-       :config
-       (setq
-        lsp-ui-sideline-show-code-actions nil
-        lsp-ui-sideline-show-hover nil
-        ))
-     (use-package company-lsp
-       :straight t
-       :config (add-to-list 'company-backends 'company-lsp))
-     (use-package lsp-ui
-       :straight t
-       :init (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-     (use-package lsp-ui-flycheck
-       :init (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
-   #+END_SRC
-
-   Instead, I'm trying to use eglot
 
    #+BEGIN_SRC emacs-lisp
      (use-package eglot
@@ -1467,72 +1409,14 @@
    #+END_SRC
 ** C++
 
-   CQuery is disabled, but I still want C++ support
-
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (use-package cquery
-       :defer 2
-       :straight t
-       :if
-       (file-exists-p "/bin/cquery")
-       :bind
-       (:map c-mode-base-map
-             ("C-t h c" . cquery-call-hierarchy)
-             ("C-t h i" . cquery-inheritance-hierarchy)
-             ("C-t i" . lsp-ui-sideline-toggle-symbols-info)
-             ("C-t h m" . cquery-member-hierarchy)
-             ("C-t ." . lsp-ui-peek-find-definitions)
-             ("C-t ?" . lsp-ui-peek-find-references))
-       :preface
-       (defun cquery//enable ()
-         (condition-case nil
-             (lsp)
-           (user-error nil)))
-       :init
-       (add-hook 'c-mode-common-hook #'cquery//enable)
-       (defun cquery-cache-dir (dir)
-         (expand-file-name cquery-cache-dir "/home/mhj/.cquery_cache"))
-       (setq cquery-cache-dir-function #'cquery-cache-dir)
-       :config
-       (setq
-        cquery-executable "/bin/cquery"
-        cquery-extra-args '("--log-file=/tmp/cq.log")
-        cquery-extra-init-params '(:completion (:detailedLabel t))
-        cquery-sem-highlight-method 'font-lock
-        company-transformers nil
-        company-lsp-async t
-        company-lsp-cache-candidates nil
-        xref-prompt-for-identifier '(not
-                                     xref-find-definitions
-                                     xref-find-definitions-other-window
-                                     xref-find-definitions-other-frame
-                                     xref-find-references)))
-   #+END_SRC
-
    #+BEGIN_SRC emacs-lisp
-     (use-package clang-format
-       :straight t
-       :defer 2
-       :config
-       (progn
-         (defun clang-format-before-save ()
-           "Add this to .emacs to clang-format on save
-      (add-hook 'before-save-hook 'clang-format-before-save)."
-
-           (interactive)
-           (when (eq major-mode 'c++-mode) (clang-format-buffer))))
-       :hook ('before-save . #'clang-format-before-save))
-
      (use-package cc-mode
        :mode ("\\.h|\\.cpp" . c++-mode))
    #+END_SRC
-** Python
-   #+BEGIN_SRC emacs-lisp
-     (use-package blacken
-       :defer 2
-       :straight t
-       :hook (python-mode . blacken-mode))
 
+** Python
+
+   #+BEGIN_SRC emacs-lisp
      (setq
       flycheck-python-pycompile-executable "python3"
       flycheck-python-flake8-executable "flake8")
