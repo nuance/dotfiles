@@ -614,10 +614,24 @@
    #+END_SRC
 
 ** Default to regexp search
-   #+BEGIN_SRC emacs-lisp
+
+   #+BEGIN_SRC emacs-lisp :tangle no
      (global-set-key [remap isearch-forward] 'isearch-forward-regexp) ;; C-s
      (global-set-key [remap isearch-backward] 'isearch-backward-regexp) ;; C-r
    #+END_SRC
+
+** CtrlF
+
+   #+begin_src emacs-lisp
+     (use-package ctrlf
+       :straight t
+       :custom (ctrlf-mode-bindings
+                '(("C-s" . ctrlf-forward-fuzzy-regexp)
+                  ("C-r" . ctrlf-backward-fuzzy-regexp)
+                  ("M-s" . ctrlf-forward-symbol)))
+       :config (ctrlf-mode t))
+   #+end_src
+
 ** Sublime-like
 *** Automatically add newlines at EOF
     #+BEGIN_SRC emacs-lisp
