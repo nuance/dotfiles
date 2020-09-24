@@ -570,9 +570,7 @@
    #+begin_src emacs-lisp
      (use-package mini-frame
        :straight t
-       :custom
-       ((mini-frame-show-parameters '((left . 0.5) (top . 20) (width . 0.7) (height . 26)))
-        (mini-frame-resize 'grow-only))
+       :custom ((mini-frame-show-parameters '((left . 0.5) (top . 20) (width . 0.7) (height . 25))))
        :config (mini-frame-mode))
    #+end_src
 
