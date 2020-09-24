@@ -5,6 +5,7 @@
  ("company-box" . "b1cf2c89a50c8c41c2fabca7e84f2c4b956d8a61")
  ("company-mode" . "0edc87d423b83c707e6c708f421d96f4d198803d")
  ("company-quickhelp" . "5a86731de461142db3b7ca26b4681756edb4b773")
+ ("ctrlf" . "2279f684f8d75a75f6b98ddaa908182f08c0d877")
  ("cython" . "aa8b0d9b89030c0b9ace5698ae5131c623acefa4")
  ("dash.el" . "b92ab5a39b987e4fe69317b9d9fda452300baf20")
  ("diff-hl" . "2281a89a3ddc6616073da6f190dda08d23b18ba6")
