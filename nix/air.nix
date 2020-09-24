@@ -1,6 +1,16 @@
 { config, pkgs, ... }:
-
+let emacs = pkgs.emacsGit-nox; in
 {
+  nixpkgs.overlays = [
+    (
+      import (
+        builtins.fetchTarball {
+          url = https://github.com/nix-community/emacs-overlay/archive/ca5095edbd2fcbeba3300d618960b5a332c65a69.tar.gz;
+        }
+      )
+    )
+  ];
+
   home.packages = with pkgs; [
     cacert
     curl
