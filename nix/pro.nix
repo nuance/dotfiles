@@ -1,20 +1,19 @@
 { config, pkgs, ... }:
-
 let
-  unstable = import <unstable> {
-    overlays = [
-      (
-        import (
-          builtins.fetchTarball {
-            url = https://github.com/nix-community/emacs-overlay/archive/ca5095edbd2fcbeba3300d618960b5a332c65a69.tar.gz;
-          }
-        )
-      )
-    ];
-  };
-  emacs = unstable.emacsGit-nox;
+  emacs = pkgs.emacsGcc;
 in
 {
+
+  nixpkgs.overlays = [
+    (
+      import (
+        builtins.fetchTarball {
+          url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+        }
+      )
+    )
+  ];
+
   home.packages = with pkgs; [
     curl
     direnv
