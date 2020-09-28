@@ -990,6 +990,12 @@
     #+BEGIN_SRC emacs-lisp
       (use-package org
         :straight org-plus-contrib
+        :config
+        (org-babel-do-load-languages
+         'org-babel-load-languages
+         '((python . t)
+           (emacs-lisp . t)))
+        (setq org-babel-python-command "python3")
         :bind (
                ("C-c c" . org-capture)
                ("C-c l" . org-store-link)
