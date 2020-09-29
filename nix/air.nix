@@ -38,18 +38,18 @@ let emacs = pkgs.emacsGit-nox; in
 
   home.file = {
     "Library/KeyBindings/DefaultKeyBinding.dict".source = ./EmacsKeyBinding.dict;
-    "Applications/Emacs.app".source = "${pkgs.emacs}/Applications/Emacs.app";
-    "bin/emacsclient".source = "${pkgs.emacs}/bin/emacsclient";
+    "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
+    "bin/emacsclient".source = "${emacs}/bin/emacsclient";
     "bin/editor".source = ../editor;
     ".bash_profile".source = ../bash_profile;
     ".bash_includes/no_op.sh".text = "";
     ".emacs.d/init.org" = {
       source = ../emacs.d/init.org;
-      onChange = "cd ~/.emacs.d ; ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${pkgs.emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
     ".emacs.d/straight/versions/default.el" = {
       source = ../straight-package-versions.el;
-      onChange = "cd ~/.emacs.d ; ${pkgs.emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${pkgs.emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
 
     ".home-manager-trigger-config" = {
