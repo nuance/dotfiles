@@ -1340,6 +1340,20 @@
        :config (explain-pause-mode))
    #+end_src
 
+** Helpful
+
+   #+begin_src emacs-lisp
+     (use-package helpful
+       :straight t
+       :bind (
+              ([remap describe-funtion] . 'helpful-callable)
+              ([remap describe-variable] . 'helpful-variable)
+              ([remap describe-key] . 'helpful-key)
+              ("C-c C-d" . 'helpful-at-point)
+              ("C-h F" . 'helpful-function)
+              ("C-h C" . 'helpful-command)))
+   #+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
