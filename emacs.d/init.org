@@ -1354,6 +1354,14 @@
               ("C-h C" . 'helpful-command)))
    #+end_src
 
+** Misc packages
+
+   Manually pull in packages used in private elisp so we can freeze / thaw versions.
+
+   #+begin_src emacs-lisp
+     (use-package deferred :straight t)
+   #+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
