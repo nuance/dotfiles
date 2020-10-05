@@ -1359,7 +1359,8 @@
    Manually pull in packages used in private elisp so we can freeze / thaw versions.
 
    #+begin_src emacs-lisp
-     (use-package deferred :straight t)
+     (use-package deferred :straight t :defer 2)
+     (use-package button-lock :straight t :defer 2)
    #+end_src
 
 * File-type support
