@@ -1172,6 +1172,11 @@
     #+BEGIN_SRC emacs-lisp
       (use-package org-journal
         :straight t
+        :init
+        (defun skip-version (orig-fun &rest args) nil)
+        (advice-add 'version< :around #'skip-version)
+        :config
+        (advice-remove 'version< #'skip-version)
         :custom ((org-journal-dir "~/org/journal")
                  (org-journal-file-type 'monthly)
                  (org-journal-date-format "%A <%Y-%m-%d>")
