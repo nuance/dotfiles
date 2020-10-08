@@ -497,7 +497,11 @@
        :straight t
        :bind (("s-t" . 'switch-to-buffer)
               ("s-o" . 'selectrum-swiper)
-              ([remap yank-pop] . 'yank-pop+))
+              ([remap yank-pop] . 'yank-pop+)
+              :map selectrum-minibuffer-map
+              ;; sorta mimic helm bindings I'm used to
+              ("C-j" . 'selectrum-insert-current-candidate)
+              ("C-l" . 'backward-kill-word))
        :config
        (setq selectrum-num-candidates-displayed 25)
        (selectrum-mode 1)
