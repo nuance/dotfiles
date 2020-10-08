@@ -1311,11 +1311,15 @@
 
       (defun blacken--save-hook ()
         "Add this to .emacs to blacken on save
-      (add-hook 'before-save-hook blacken-before-save)."
+            (add-hook 'before-save-hook blacken-before-save)."
         (interactive)
-        (when (eq major-mode 'python-mode) (blacken-buffer nil)))
+        (when (and python-blacken-mode (eq major-mode 'python-mode)) (blacken-buffer nil)))
+
+      (define-minor-mode python-blacken-mode
+        "Toggle python formatting")
 
       (add-hook 'before-save-hook 'blacken--save-hook)
+      (add-hook 'python-mode-hook 'python-blacken-mode)
     #+END_SRC
 
 ** ESUP
