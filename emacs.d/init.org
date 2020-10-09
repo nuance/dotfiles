@@ -1175,13 +1175,14 @@
       (use-package deft
         :straight t
         :bind (("s-i" . 'deft))
-        :config (setq
-                 deft-directory "~/org"
-                 deft-recursive t
-                 deft-use-filter-string-for-filenames t
-                 deft-file-naming-rules '((noslash . "-")
-                                          (nospace . "-")
-                                          (case-fn . downcase))))
+        :custom ((deft-directory "~/org")
+                 (deft-recursive t)
+                 (deft-extensions '("org" "md"))
+                 (deft-use-filter-string-for-filename t)
+                 (deft-file-naming-rules '((noslash . "-")
+                                           (nospace . "-")
+                                           (case-fn . downcase)))
+                 (deft-org-mode-title-prefix t)))
     #+end_src
 
 ** Tramp
