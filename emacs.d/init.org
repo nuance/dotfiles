@@ -577,11 +577,24 @@
 
 ** Mini frame
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (use-package mini-frame
        :straight t
        :custom ((mini-frame-show-parameters '((left . 0.5) (top . 0) (width . 0.7))))
        :config (mini-frame-mode))
+   #+end_src
+
+** Maple Minibuffer
+
+   #+begin_src emacs-lisp
+     (use-package maple-minibuffer
+       :straight (maple-minibuffer  :type git :host github :repo "honmaple/emacs-maple-minibuffer")
+       :hook (after-init . maple-minibuffer-mode)
+       :config
+       (setq maple-minibuffer:position-type 'window-top-center
+             maple-minibuffer:border-color "gray50"
+             maple-minibuffer:height nil
+             maple-minibuffer:width 0.7))
    #+end_src
 
 ** Company
