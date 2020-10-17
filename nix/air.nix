@@ -1,11 +1,11 @@
 { config, pkgs, ... }:
-let emacs = pkgs.emacsGit-nox; in
+let emacs = pkgs.emacsGcc; in
 {
   nixpkgs.overlays = [
     (
       import (
         builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/ca5095edbd2fcbeba3300d618960b5a332c65a69.tar.gz;
+          url = https://github.com/nix-community/emacs-overlay/archive/cd8519f61d1c251070bf90f0cc07fa12846a2b07.tar.gz;
         }
       )
     )
