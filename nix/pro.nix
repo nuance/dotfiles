@@ -31,6 +31,8 @@ in
     emacs
     gopls
     watch
+    python37Packages.flake8
+    python37Packages.black
   ];
 
   # Let Home Manager install and manage itself.
