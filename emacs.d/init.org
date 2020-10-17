@@ -1195,7 +1195,8 @@
                  (deft-file-naming-rules '((noslash . "-")
                                            (nospace . "-")
                                            (case-fn . downcase)))
-                 (deft-org-mode-title-prefix t)))
+                 (deft-org-mode-title-prefix t)
+                 (deft-auto-save-interval 30.0)))
     #+end_src
 
 ** Tramp
