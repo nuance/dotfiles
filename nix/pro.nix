@@ -8,7 +8,7 @@ in
     (
       import (
         builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+          url = https://github.com/nix-community/emacs-overlay/archive/924f61bfcaa53bbba502635dd23ffe823e79fb45.tar.gz;
         }
       )
     )
