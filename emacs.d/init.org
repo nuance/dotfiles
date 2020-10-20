@@ -170,7 +170,10 @@
 ** so-long
 
    #+begin_src emacs-lisp
-     (global-so-long-mode t)
+     (use-package so-long
+       :config (global-so-long-mode 1)
+       ;; Force so-long to be on in compilation buffers
+       :hook (compilation-mode . so-long-minor-mode))
    #+end_src
 
 ** Increase read process output buffer size
@@ -699,16 +702,18 @@
       (global-set-key (kbd "C-\\") 'comment-line-or-region)
       (global-set-key (kbd "s-/") 'comment-line-or-region)
     #+END_SRC
+
 *** Select whole buffer
     #+BEGIN_SRC emacs-lisp
       (global-set-key (kbd "s-a") 'mark-whole-buffer)
     #+END_SRC
+
 *** Compilation mode tweaks
     #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "s-B") 'compile)
-      (global-set-key (kbd "s-b") 'recompile)
+      (use-package compile
+        :bind (("s-B" . compile) ("s-b" . recompile))
+        :custom ((compilation-scroll-output 'first-error)))
 
-      (setq compilation-scroll-output 'first-error)
       (use-package ansi-color
         :config
         (defun colorize-compilation-buffer ()
