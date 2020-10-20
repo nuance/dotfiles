@@ -158,15 +158,6 @@
       (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
     #+END_SRC
 
-** so-long
-
-   #+begin_src emacs-lisp
-     (use-package so-long
-       :config (global-so-long-mode 1)
-       ;; Force so-long to be on in compilation buffers
-       :hook (compilation-mode . so-long-minor-mode))
-   #+end_src
-
 ** Increase read process output buffer size
 
    #+begin_src emacs-lisp
@@ -320,6 +311,15 @@
 
    #+begin_src emacs-lisp
      (setq auth-sources '((:source "~/.authinfo.gpg")))
+   #+end_src
+
+** so-long
+
+   #+begin_src emacs-lisp
+     (use-package so-long
+       :config (global-so-long-mode 1)
+       ;; Force so-long to be on in compilation buffers
+       :hook (compilation-mode . so-long-minor-mode))
    #+end_src
 
 * UI Appearance
