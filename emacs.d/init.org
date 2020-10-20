@@ -1220,20 +1220,25 @@
 
      (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
 
+     (define-minor-mode nuance-skip-formatter-mode
+       "Toggle python formatting")
+
+
      (defun nuance/format-buffer (prefix-arg tmp-buf-name binary &optional failure-p &rest args)
-       (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
-         (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
-               (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
-               (tmp-stderr-path (make-nearby-temp-file (format "*%s--stderr*" tmp-buf-name)))
-               (input-buffer (current-buffer))
-               (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
-           (write-region nil nil tmp-stdin-path)
-           (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-path) nil args)))
-             (if (not (funcall failure-check errno tmp-stdout-buf tmp-stderr-path))
-                 (progn (replace-buffer-contents tmp-stdout-buf)
-                        (nuance/delete-file-async tmp-stdin-path)
-                        (kill-buffer tmp-stdout-buf)
-                        (nuance/delete-file-async tmp-stderr-path)))))))
+       (unless nuance-skip-formatter-mode
+         (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
+           (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
+                 (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
+                 (tmp-stderr-path (make-nearby-temp-file (format "*%s--stderr*" tmp-buf-name)))
+                 (input-buffer (current-buffer))
+                 (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
+             (write-region nil nil tmp-stdin-path)
+             (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-path) nil args)))
+               (if (not (funcall failure-check errno tmp-stdout-buf tmp-stderr-path))
+                   (progn (replace-buffer-contents tmp-stdout-buf)
+                          (nuance/delete-file-async tmp-stdin-path)
+                          (kill-buffer tmp-stdout-buf)
+                          (nuance/delete-file-async tmp-stderr-path))))))))
    #+END_SRC
 
 *** autobuildify
@@ -1284,13 +1289,9 @@
         "Add this to .emacs to blacken on save
             (add-hook 'before-save-hook blacken-before-save)."
         (interactive)
-        (when (and python-blacken-mode (eq major-mode 'python-mode)) (blacken-buffer nil)))
-
-      (define-minor-mode python-blacken-mode
-        "Toggle python formatting")
+        (when (eq major-mode 'python-mode) (blacken-buffer nil)))
 
       (add-hook 'before-save-hook 'blacken--save-hook)
-      (add-hook 'python-mode-hook 'python-blacken-mode)
     #+END_SRC
 
 ** ESUP
