@@ -594,10 +594,10 @@
        :straight (maple-minibuffer  :type git :host github :repo "honmaple/emacs-maple-minibuffer")
        :hook (after-init . maple-minibuffer-mode)
        :config
-       (setq maple-minibuffer:position-type 'window-top-center
+       (setq maple-minibuffer:position-type 'frame-top-center
              maple-minibuffer:border-color "gray50"
              maple-minibuffer:height nil
-             maple-minibuffer:width 0.7))
+             maple-minibuffer:width 0.8))
    #+end_src
 
 ** Company
