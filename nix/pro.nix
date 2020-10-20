@@ -17,22 +17,23 @@ in
   home.packages = with pkgs; [
     curl
     direnv
+    emacs
+    gitAndTools.delta
     gnupg1
-    pinentry_mac
     go
+    gopls
     ispell
     mosh
     nixpkgs-fmt
+    pinentry_mac
     pv
+    python37Packages.black
+    python37Packages.flake8
     ripgrep
     rsync
     shellcheck
     tree
-    emacs
-    gopls
     watch
-    python37Packages.flake8
-    python37Packages.black
   ];
 
   # Let Home Manager install and manage itself.
