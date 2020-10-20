@@ -949,6 +949,14 @@
        :bind ("C-x g" . magit-status))
    #+END_SRC
 
+*** magit-delta
+
+    #+begin_src emacs-lisp
+      (use-package magit-delta
+        :straight t
+        :hook (magit-mode . (lambda () (magit-delta-mode +1))))
+    #+end_src
+
 ** Diff Highlight
    #+BEGIN_SRC emacs-lisp
      (use-package diff-hl
