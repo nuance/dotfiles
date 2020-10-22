@@ -569,24 +569,36 @@
 
 ** Mini frame
 
-   #+begin_src emacs-lisp :tangle no
+   #+begin_src emacs-lisp
      (use-package mini-frame
        :straight t
-       :custom ((mini-frame-show-parameters '((left . 0.5) (top . 0) (width . 0.7))))
-       :config (mini-frame-mode))
+       :custom
+       ((mini-frame-show-parameters '((left . 0.5) (top . 10) (width . 0.7) (height 1)))
+        (mini-frame-ignore-commands '(eval-expression "edebug-eval-expression" debugger-eval-expression "^phi-")))
+       :init
+       (define-advice fit-frame-to-buffer (:around (f &rest args) dont-skip-ws-for-mini-frame)
+         (cl-letf (((symbol-function #'window-text-pixel-size)
+                    (lambda (win from to &rest args)
+                      (apply #'window-text-pixel-size
+                             (append (list win from (if (window-minibuffer-p win) nil to) args))))))
+           (apply f args)))
+       :config
+       (mini-frame-mode))
    #+end_src
 
 ** Maple Minibuffer
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (use-package maple-minibuffer
-       :straight (maple-minibuffer  :type git :host github :repo "honmaple/emacs-maple-minibuffer")
-       :hook (after-init . maple-minibuffer-mode)
+       :straight (maple-minibuffer :type git :host github :repo "honmaple/emacs-maple-minibuffer")
+       :custom
+       ((maple-minibuffer:position-type 'frame-top-center)
+        (maple-minibuffer:border-color "gray50")
+        (maple-minibuffer:height nil)
+        (maple-minibuffer:width 0.8)
+        (maple-minibuffer:ignore-regexp '("^phi-")))
        :config
-       (setq maple-minibuffer:position-type 'frame-top-center
-             maple-minibuffer:border-color "gray50"
-             maple-minibuffer:height nil
-             maple-minibuffer:width 0.8))
+       (maple-minibuffer-mode))
    #+end_src
 
 ** Company
