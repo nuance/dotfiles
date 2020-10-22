@@ -672,7 +672,7 @@
        (use-package phi-search
          :straight t
          :bind (([remap isearch-forward] . phi-search)
-                ([rempa isearch-backward] . phi-search-backward)))
+                ([remap isearch-backward] . phi-search-backward)))
 
        (use-package phi-replace
          :after phi-search
