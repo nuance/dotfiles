@@ -593,12 +593,13 @@
    #+BEGIN_SRC emacs-lisp
      (use-package company
        :straight t
-       :init (setq
-              company-idle-delay 0.1
-              company-minimum-prefix-length 3)
+       :custom
+       ((company-idle-delay 0.1)
+        (company-minimum-prefix-length 3)
+        (company-backends '(company-elisp company-capf company-dabbrev-code company-etags company-dabbrev))
+        (company-dabbrev-downcase nil)
+        (company-dabbrev-code-everywhere t))
        :config
-       (setq company-backends '(company-dabbrev company-etags company-capf)
-             company-dabbrev-downcase nil)
        (global-company-mode))
 
      (use-package company-quickhelp
