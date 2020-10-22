@@ -636,6 +636,7 @@
     #+BEGIN_SRC emacs-lisp
       (setq require-final-newline t)
     #+END_SRC
+
 *** Disable tab indentation
 
     #+BEGIN_SRC emacs-lisp
@@ -646,6 +647,7 @@
     #+BEGIN_SRC emacs-lisp
       (add-hook 'before-save-hook 'delete-trailing-whitespace)
     #+END_SRC
+
 *** Expand region
     #+BEGIN_SRC emacs-lisp
       (use-package expand-region
@@ -653,6 +655,7 @@
         :bind (("s-f" . 'er/expand-region)
                ("s-F" . 'er/contract-region)))
     #+END_SRC
+
 *** Multiple cursors
     #+BEGIN_SRC emacs-lisp
       (use-package multiple-cursors
@@ -738,6 +741,7 @@
       (global-set-key (kbd "s-[") 'dedent)
       (global-set-key (kbd "s-]") 'indent)
     #+END_SRC
+
 *** Guess indentation settings
     #+BEGIN_SRC emacs-lisp
       (use-package dtrt-indent
@@ -746,6 +750,7 @@
         (dtrt-indent-mode 1)
         )
     #+END_SRC
+
 *** Window navigation
     #+BEGIN_SRC emacs-lisp
       (global-set-key (kbd "M-j") 'previous-multiframe-window)
@@ -770,6 +775,7 @@
                ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
                ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))))
     #+END_SRC
+
 *** Go to line
     #+BEGIN_SRC emacs-lisp
       (global-set-key (kbd "s-l") 'goto-line)
@@ -782,14 +788,17 @@
       ;; (global-set-key (kbd "s-k s-u") 'upcase-region)
       ;; (global-set-key (kbd "s-k s-l") 'downcase-region)
     #+END_SRC
+
 *** Electric pair
     #+BEGIN_SRC emacs-lisp
       (electric-pair-mode 1)
     #+END_SRC
+
 *** Auto revert
     #+BEGIN_SRC emacs-lisp
       (global-auto-revert-mode t)
     #+END_SRC
+
 *** s-w is kill-buffer
 
     #+BEGIN_SRC emacs-lisp
@@ -801,6 +810,7 @@
    #+BEGIN_SRC emacs-lisp
      (setq tags-revert-without-query 1)
    #+END_SRC
+
 ** Map Super-* to C-c * + smartrep
 
    #+BEGIN_SRC emacs-lisp
