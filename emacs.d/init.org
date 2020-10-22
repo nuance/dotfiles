@@ -1003,22 +1003,13 @@
 
 ** Flycheck
    #+BEGIN_SRC emacs-lisp
-     (use-package flymake
-       :straight t
-       :bind (("M-n" . flymake-goto-next-error)
-              ("M-p" . flymake-goto-prev-error)))
-
      (use-package flycheck
        :straight t
-       :hook ('prog-mode . #'flycheck-mode))
-
-     (use-package flymake-diagnostic-at-point
-       :straight t
-       :hook ('flymake-mode-hook . #'flymake-diagnostic-at-point-mode)
-       :config (setq
-                flymake-diagnostic-at-point-error-prefix ""
-                flymake-diagnostic-at-point-display-diagnostic-function 'flymake-diagnostic-at-point-display-minibuffer))
+       :hook ('prog-mode . #'flycheck-mode)
+       :bind (("M-n" . flycheck-next-error)
+              ("M-p" . flycheck-previous-error)))
    #+END_SRC
+
 ** Snippets
 
    #+BEGIN_SRC emacs-lisp
