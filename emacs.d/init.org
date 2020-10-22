@@ -942,6 +942,19 @@
       (define-key term-raw-map (kbd "C-c C-k") 'jnm/term-toggle-mode)
     #+end_src
 
+** EShell
+
+   #+begin_src emacs-lisp
+     (use-package eshell
+       :bind ("s-e" . eshell)
+       :config
+       (defun toggle-eshell-company ()
+         (company-mode (if (file-remote-p default-directory) -1 t)))
+       :hook
+       ((eshell-mode . toggle-eshell-company)
+        (eshell-directory-change . toggle-eshell-company)))
+   #+end_src
+
 ** Reload all buffers
 
    #+BEGIN_SRC emacs-lisp
