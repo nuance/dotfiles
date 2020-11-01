@@ -42,6 +42,7 @@ let emacs = pkgs.emacsGcc; in
     "bin/emacsclient".source = "${emacs}/bin/emacsclient";
     "bin/editor".source = ../editor;
     ".bash_profile".source = ../bash_profile;
+    ".bashrc".source = ../bashrc;
     ".bash_includes/no_op.sh".text = "";
     ".emacs.d/init.org" = {
       source = ../emacs.d/init.org;
