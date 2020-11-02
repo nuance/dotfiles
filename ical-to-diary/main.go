@@ -21,6 +21,7 @@ var (
 	diaryOutput  = flag.String("diary", ".emacs.d/diary", "Emacs diary path")
 	urlRegexes   = flag.String("regexes", "dotfiles/ical-to-diary/urls.txt", "file containing url extraction regexes, one per line")
 	extraRegexes = flag.String("extra", "dotfiles/ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
+	timezone = flag.String("timezone", "America/New_York", "time zone to load")
 )
 
 type entry struct {
@@ -82,6 +83,11 @@ func main() {
 		}
 	}
 
+	loc, err := time.LoadLocation(*timezone)
+	if err != nil {
+		log.Fatalf("couldn't load local timezone: %s", err)
+	}
+
 	var diary []entry
 	seen := map[string]bool{}
 
@@ -131,8 +137,8 @@ func main() {
 			}
 
 			ent := entry{
-				Start:       *ev.Start,
-				End:         *ev.End,
+				Start:       ev.Start.In(loc),
+				End:         ev.End.In(loc),
 				Description: ev.Summary,
 				People:      len(people),
 				URL:         url,
