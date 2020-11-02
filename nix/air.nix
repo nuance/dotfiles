@@ -5,7 +5,7 @@ let emacs = pkgs.emacsGcc; in
     (
       import (
         builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/5cb7caf09e90749dd394152eb8704265979a7470.tar.gz;
+          url = https://github.com/nix-community/emacs-overlay/archive/d169208d78a1ca2fb0197678429cc8d24b779dd6.tar.gz;
         }
       )
     )
