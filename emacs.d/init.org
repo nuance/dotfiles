@@ -391,7 +391,9 @@
        :straight t
        :hook (after-init . doom-modeline-mode)
        :config
+       (line-number-mode 1)
        (column-number-mode 1)
+       (size-indication-mode 1)
        (setq
         doom-modeline-minor-modes nil
         doom-modeline-buffer-encoding nil
@@ -624,6 +626,13 @@
    #+END_SRC
 
 ** Sublime-like
+*** Don't create random files
+
+    #+begin_src emacs-lisp
+      (setq make-backup-files nil
+            auto-save-default nil)
+    #+end_src
+
 *** Automatically add newlines at EOF
     #+BEGIN_SRC emacs-lisp
       (setq require-final-newline t)
