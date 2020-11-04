@@ -971,6 +971,55 @@
                (with-demoted-errors "Error: %S" (revert-buffer t t)))))))
    #+END_SRC
 
+** Scroll through errors
+
+   This is really poorly structured, but flymake doesn't provide a
+   next-error-function implementation, so define a wrapper that navigates
+   between both flymake & flycheck errors.
+
+   #+begin_src emacs-lisp
+     (defun nuance/next-error ()
+       (interactive)
+       (let*
+           ((here (point))
+            (next-generic-error (save-excursion
+                                  (next-error)
+                                  (unless (eq (point) here) (point))))
+            (next-flymake-error (save-excursion
+                                  (flymake-goto-next-error)
+                                  (unless (eq (point) here) (point))))
+            (next-flycheck-error (flycheck-next-error-pos 1))
+            (errors (sort (seq-filter 'numberp (list next-flymake-error next-flycheck-error)) '<))
+            (here-index (seq-position errors here '>))
+            (rel-index (if (numberp here-index) here-index)))
+         (cond ((not errors) nil)
+               ((not (numberp rel-index)) nil)
+               ((or (< rel-index 0) (>= rel-index (length errors))) nil)
+               (t (goto-char (seq-elt errors rel-index))))))
+
+     (defun nuance/previous-error ()
+       (interactive)
+       (let*
+           ((here (point))
+            (prev-generic-error (save-excursion
+                                  (previous-error)
+                                  (unless (eq (point) here) (point))))
+            (prev-flymake-error (save-excursion
+                                  (flymake-goto-prev-error)
+                                  (unless (eq (point) here) (point))))
+            (prev-flycheck-error (flycheck-next-error-pos -1))
+            (errors (sort (seq-filter 'numberp (list prev-flymake-error prev-flycheck-error)) '>))
+            (here-index (seq-position errors here '<))
+            (rel-index (if (numberp here-index) here-index)))
+         (cond ((not errors) nil)
+               ((not (numberp rel-index)) nil)
+               ((or (< rel-index 0) (>= rel-index (length errors))) nil)
+               (t (goto-char (seq-elt errors rel-index))))))
+
+     (bind-key (kbd "M-n") 'nuance/next-error)
+     (bind-key (kbd "M-p") 'nuance/previous-error)
+   #+end_src
+
 * Packages
 ** Magit
    #+BEGIN_SRC emacs-lisp
@@ -1000,9 +1049,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package flycheck
        :straight t
-       :hook ('prog-mode . #'flycheck-mode)
-       :bind (("M-n" . flycheck-next-error)
-              ("M-p" . flycheck-previous-error)))
+       :hook ('prog-mode . #'flycheck-mode))
    #+END_SRC
 
 ** Snippets
