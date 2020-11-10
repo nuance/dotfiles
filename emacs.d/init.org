@@ -1123,7 +1123,7 @@
        org-agenda-include-diary t)
       ;; custom todo tags
       (setq org-todo-keywords
-            '((sequence "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
+            '((sequence "PLAN()" "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
       (setq org-agenda-custom-commands
             '(("f" "Today"
                ((agenda "" ((org-agenda-span 'day)))
@@ -1132,6 +1132,8 @@
               ("d" "Daily agenda and all TODOs"
                ((agenda "" ((org-agenda-span 'day)
                             (org-agenda-repeating-timestamp-show-all t)))
+                (todo "PLAN"
+                      ((org-agenda-overriding-header "Snippets:")))
                 (tags ":refile:"
                       ((org-agenda-overriding-header "Refile:")))
                 (todo "IN-PROGRESS"
