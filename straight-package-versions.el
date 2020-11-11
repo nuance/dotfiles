@@ -45,7 +45,6 @@
  ("melpa" . "6fd01687e84065e33885927055c5c1e05da61955")
  ("multiple-cursors.el" . "83abb0533a9d9635bc86d6d52a4e7641b0eaaf63")
  ("nix-mode" . "30587b2205859810d8a00877718be2912e349b9b")
- ("nlinum" . "5c1bfcf62b9d3e5c038a1ffd66d933c25c5ed5ad")
  ("ns-auto-titlebar" . "60273e764bf8d95abc40dd2fdc23af87ea9ee33b")
  ("org" . "a0aacaac2e2d30fe515a6f30a5ab2ab6db7427ce")
  ("org-bullets" . "767f55feb58b840a5a04eabfc3fbbf0d257c4792")
