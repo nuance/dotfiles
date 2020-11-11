@@ -405,17 +405,12 @@
    #+END_SRC
 
 ** Line numbering
-   #+BEGIN_SRC emacs-lisp
-     (use-package nlinum
-       :straight t
-       :commands global-nlinum-mode
-       :config (setq nlinum-highlight-current-line t)
-       :hook ('prog-mode . #'nlinum-mode))
 
-     (defun nuance/fix-linum-heights ()
-       (let ((height (face-attribute 'default :height)))
-         (set-face-attribute 'linum nil :height height)))
-   #+END_SRC
+   #+begin_src emacs-lisp
+     (use-package emacs
+       :custom ((display-line-numbers-width t))
+       :hook ('prog-mode . #'display-line-numbers-mode))
+   #+end_src
 
 ** Matching parens highlight
    #+BEGIN_SRC emacs-lisp
@@ -429,15 +424,13 @@
     #+BEGIN_SRC emacs-lisp
       (use-package doom-themes
         :straight t
-        :after nlinum
         :init
         (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
               doom-themes-enable-italic t) ; if nil, italics is universally disabled
         :config
         (load-theme 'doom-sourcerer t)
         (doom-themes-org-config)
-        (doom-themes-visual-bell-config)
-        (nuance/fix-linum-heights))
+        (doom-themes-visual-bell-config))
 
       (defvar dark-theme 'doom-sourcerer)
     #+END_SRC
@@ -462,8 +455,7 @@
           (disable-theme (if dark-mode dark-theme light-theme))
           (load-theme (if dark-mode light-theme dark-theme) t)
           (setq dark-mode (not dark-mode))
-          (adapt-theme-org-colors)
-          (nuance/fix-linum-heights)))
+          (adapt-theme-org-colors)))
     #+END_SRC
 
 ** Fixed-width font
