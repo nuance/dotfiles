@@ -22,7 +22,6 @@ in
     curl
     direnv
     emacs
-    gitAndTools.delta
     gnupg1
     go
     gopls
