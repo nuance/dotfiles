@@ -20,21 +20,14 @@ in
 
   home.packages = with pkgs; [
     curl
-    direnv
     emacs
     gnupg1
     go
-    gopls
     ispell
-    mosh
     nixpkgs-fmt
     pinentry_mac
-    pv
     python37Packages.black
     python37Packages.flake8
-    ripgrep
-    rsync
-    shellcheck
     tree
     watch
   ];
