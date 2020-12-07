@@ -491,75 +491,14 @@ Default to dark theme, but make it easy to switch.
 #+begin_src emacs-lisp
   (use-package selectrum
     :straight t
-    :bind (("s-t" . 'switch-to-buffer)
-           ("s-o" . 'selectrum-swiper)
-           ([remap yank-pop] . 'yank-pop+)
-           :map selectrum-minibuffer-map
-           ;; sorta mimic helm bindings I'm used to
-           ("C-j" . 'selectrum-insert-current-candidate)
-           ("C-l" . 'backward-kill-word)
-           ("s-<return>" . 'selectrum-submit-exact-input))
+    :bind (:map selectrum-minibuffer-map
+                ;; sorta mimic helm bindings I'm used to
+                ("C-j" . 'selectrum-insert-current-candidate)
+                ("C-l" . 'backward-kill-word)
+                ("s-<return>" . 'selectrum-submit-exact-input))
     :config
     (setq selectrum-num-candidates-displayed 25)
-    (selectrum-mode 1)
-
-    (defvar selectrum-swiper-history nil "Submission history for `selectrum-swiper'.")
-    (defun selectrum-swiper ()
-      "Search for a matching line and jump to the beginning of its text.  Obeys narrowing."
-      (interactive)
-      (let* ((selectrum-should-sort-p nil)
-             (line-choices (cl-loop
-                            with minimum-line-number = (line-number-at-pos (point-min) t)
-                            with buffer-text-lines = (split-string (buffer-string) "\n")
-                            with number-format = (format "%%0%dd: " (length (number-to-string (length buffer-text-lines))))
-                            for txt in buffer-text-lines
-                            for num from minimum-line-number to (+ minimum-line-number
-                                                                   (1- (length buffer-text-lines)))
-                            unless (string-empty-p txt) ; Just skip empty lines.
-                            collect (concat (format number-format num) txt)))
-             ;; Get the matching line.
-             (chosen-line (completing-read "Jump to matching line: " line-choices
-                                           nil t nil 'selectrum-swiper-history))
-             ;; Stop at the ":". It is followed by one " ".
-             (line-number-prefix (seq-take-while (lambda (char)
-                                                   (not (char-equal ?: char)))
-                                                 chosen-line))
-             ;; Get the corresponding line number, skipping the "L" in line-number-prefix.
-             (chosen-line-number (string-to-number (substring line-number-prefix 1)))
-             ;; Get the current line number for determining the travel distance.
-             (current-line-number (line-number-at-pos (point) t)))
-
-        (push-mark (point) t)
-        ;; Manually edit history to remove line numbers.
-        (setcar selectrum-swiper-history (substring chosen-line
-                                                    ;; Want after line-prefix followed by ": ".
-                                                    (+ (length line-number-prefix) 2)))
-        (forward-line (- chosen-line-number current-line-number))
-        (beginning-of-line-text 1)))
-
-    (defun yank-pop+ (&optional arg)
-      "Call `yank-pop' with ARG when appropriate, or offer completion."
-      (interactive "*P")
-      (if arg (yank-pop arg)
-        (let* ((old-last-command last-command)
-               (selectrum-should-sort-p nil)
-               (enable-recursive-minibuffers t)
-               (text (completing-read
-                      "Yank: "
-                      (cl-remove-duplicates
-                       kill-ring :test #'string= :from-end t)
-                      nil t nil nil))
-               ;; Find `text' in `kill-ring'.
-               (pos (cl-position text kill-ring :test #'string=))
-               ;; Translate relative to `kill-ring-yank-pointer'.
-               (n (+ pos (length kill-ring-yank-pointer))))
-          (unless (string= text (current-kill n t))
-            (error "Could not setup for `current-kill'"))
-          ;; Restore `last-command' over Selectrum commands.
-          (setq last-command old-last-command)
-          ;; Delegate to `yank-pop' if appropriate or just insert.
-          (if (eq last-command 'yank)
-              (yank-pop n) (insert-for-yank text))))))
+    (selectrum-mode 1))
 
   (use-package prescient
     :straight t
@@ -571,6 +510,45 @@ Default to dark theme, but make it easy to switch.
     :straight t
     :config (selectrum-prescient-mode 1))
 #+end_src
+
+*** Consult
+
+#+begin_src emacs-lisp
+  (use-package consult
+    :straight (consult :type git :host github :repo "minad/consult")
+    ;; Replace bindings. Lazily loaded due to use-package.
+    :bind (("s-o" . consult-line)
+           ("s-t" . consult-buffer)
+           ("C-y" . consult-yank)
+           ("M-y" . consult-yank-pop)
+           ("<help> a" . consult-apropos))
+
+    ;; The :init configuration is always executed (Not lazy!)
+    :init
+
+    ;; Replace functions (consult-multi-occur is a drop-in replacement)
+    (fset 'multi-occur #'consult-multi-occur)
+
+    ;; Optionally enable richer annotations during completion.
+    ;; Must be in the :init section of use-package such that the mode gets
+    ;; enabled right away. Note that this forces loading the package.
+    (consult-annotate-mode)
+
+    ;; Configure other variables in the :config section, after lazily loading the package
+    :config
+
+    ;; Enable richer annotations for M-x.
+    ;; Only keybindings are shown by default, in order to reduce noise for this very common command.
+    ;; * consult-annotate-symbol: Annotate with the documentation string
+    ;; * consult-annotate-command-binding (default): Annotate only with the keybinding
+    ;; * consult-annotate-command-full: Annotate with the keybinding and the documentation string
+    (setf (alist-get 'execute-extended-command consult-annotate-alist) #'consult-annotate-command-full)
+
+    ;; Enable richer annotations for other functions.
+    ;; (push '(my-fancy-command . consult-annotate-symbol) consult-annotate-alist)
+    )
+#+end_src
+
 
 ** Mini frame
 

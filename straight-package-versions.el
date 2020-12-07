@@ -7,6 +7,7 @@
  ("company-mode" . "dd925936f7c0bf00319c81e8caea1b3db63bb8b5")
  ("company-quickhelp" . "5a86731de461142db3b7ca26b4681756edb4b773")
  ("cython" . "c3121126b041d4e7e2aaa590693689ae828f3ce8")
+ ("consult" . "ff6e5da23868c30bfb73956a4ccb2b35e1418be4")
  ("dash.el" . "0f238a9a466879ee96e5db0482019453718f342d")
  ("deft" . "fca9ea05ef4fdac825e2ad3921baa7042f6b82c8")
  ("diff-hl" . "2281a89a3ddc6616073da6f190dda08d23b18ba6")
