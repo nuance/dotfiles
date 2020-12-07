@@ -516,39 +516,21 @@ Default to dark theme, but make it easy to switch.
 #+begin_src emacs-lisp
   (use-package consult
     :straight (consult :type git :host github :repo "minad/consult")
-    ;; Replace bindings. Lazily loaded due to use-package.
     :bind (("s-o" . consult-line)
            ("s-t" . consult-buffer)
-           ("C-y" . consult-yank)
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
-
-    ;; The :init configuration is always executed (Not lazy!)
     :init
-
-    ;; Replace functions (consult-multi-occur is a drop-in replacement)
-    (fset 'multi-occur #'consult-multi-occur)
-
-    ;; Optionally enable richer annotations during completion.
-    ;; Must be in the :init section of use-package such that the mode gets
-    ;; enabled right away. Note that this forces loading the package.
-    (consult-annotate-mode)
-
-    ;; Configure other variables in the :config section, after lazily loading the package
-    :config
-
-    ;; Enable richer annotations for M-x.
-    ;; Only keybindings are shown by default, in order to reduce noise for this very common command.
-    ;; * consult-annotate-symbol: Annotate with the documentation string
-    ;; * consult-annotate-command-binding (default): Annotate only with the keybinding
-    ;; * consult-annotate-command-full: Annotate with the keybinding and the documentation string
-    (setf (alist-get 'execute-extended-command consult-annotate-alist) #'consult-annotate-command-full)
-
-    ;; Enable richer annotations for other functions.
-    ;; (push '(my-fancy-command . consult-annotate-symbol) consult-annotate-alist)
-    )
+    (fset 'multi-occur #'consult-multi-occur))
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :straight (marginalia :type git :host github :repo "minad/marginalia" :branch "main")
+    :config
+    (marginalia-mode)
+    (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
+#+end_src
 
 ** Mini frame
 
