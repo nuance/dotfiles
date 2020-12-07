@@ -477,6 +477,14 @@ Default to dark theme, but make it easy to switch.
       (ns-auto-titlebar-mode)))
 #+END_SRC
 
+** Balanced windows
+
+#+begin_src emacs-lisp
+  (use-package balanced-windows
+    :straight t
+    :config (balanced-windows-mode))
+#+end_src
+
 * UI Interaction
 ** Selectrum
 

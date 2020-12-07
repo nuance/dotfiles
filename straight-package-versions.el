@@ -17,6 +17,7 @@
  ("eldoc-box" . "c1a1b77ec0c7fff9ecf7122d10dcd16eebcd3829")
  ("elisp-refs" . "b3634a4567c655a1cda51b217629849cba0ac6a7")
  ("emacs-async" . "14f48de586b0977e3470f053b810d77b07ea427a")
+ ("emacs-balanced-windows" . "1da5354ad8a9235d13928e2ee0863f3642ccdd13")
  ("emacs-bazel-mode" . "2cf143b616df3de4b199538341d674c58386719e")
  ("emacs-deferred" . "2239671d94b38d92e9b28d4e12fd79814cfb9c16")
  ("emacs-doom-themes" . "e55d9a2ead88cf7039afdf944ba8e4be3165395a")
