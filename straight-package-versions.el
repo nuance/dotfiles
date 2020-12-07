@@ -43,6 +43,7 @@
  ("jsonrpc" . "76c3c20803762259f22431e72eb489838a94dfc1")
  ("let-alist" . "b299c78897cc307f9d5521927376fbd06a26f123")
  ("magit" . "9e9f7cb3d260bd14e15307831a2820112c9a77ac")
+ ("marginalia" . "376ccc548f56c2a9d086814231337b5a7198bea3")
  ("markdown-mode" . "dcad5572a30fce51b97963d3c869cce227c223a1")
  ("melpa" . "51cc7ea77a8f782ff5f1fb2415c337abb805e410")
  ("multiple-cursors.el" . "83abb0533a9d9635bc86d6d52a4e7641b0eaaf63")
