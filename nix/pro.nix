@@ -12,7 +12,7 @@ in
     (
       import (
         builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/2f4d6ecfe1a2050583e09ffa0326e44cbbd652b4.tar.gz;
+          url = https://github.com/nix-community/emacs-overlay/archive/18a89a8278ef33d4ec5b878d731ed6bf3b0fc978.tar.gz;
         }
       )
     )
