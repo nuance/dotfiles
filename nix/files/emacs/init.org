@@ -787,8 +787,8 @@ Auto-revert to new tags file
     (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
           (click (elt (event-modifiers (elt (kbd "<mouse-1>") 0)) 0)))
       (and (eq (length key) 1)
-           (seq-contains (event-modifiers (elt key 0)) super)
-           (not (seq-contains (event-modifiers (elt key 0)) click)))))
+           (seq-contains-p (event-modifiers (elt key 0)) super)
+           (not (seq-contains-p (event-modifiers (elt key 0)) click)))))
 
   (defun binding-without-super (key)
     (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
@@ -1076,7 +1076,7 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     (delq nil (mapcar #'buffer-file-name (org-buffer-list 'files t))))
 
   (setq
-   org-agenda-files (seq-filter #'file-exists-p '("~/org" "~/org/journal" "~/org/snippets" "~/dotfiles/emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes"))
+   org-agenda-files (seq-filter #'file-exists-p '("~/org" "~/org/journal" "~/org/snippets" "~/dotfiles/nix/files/emacs/init.org" "~/.emacs.d/private.org" "~/.notes"))
    org-log-done t
    org-enforce-todo-dependencies t
    ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
