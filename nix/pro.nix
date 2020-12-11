@@ -1,10 +1,6 @@
 { config, pkgs, ... }:
 let
-  emacs = pkgs.emacsGcc.overrideAttrs (old: {
-    postInstall = old.postInstall or "" + ''
-      ln -snf $out/lib/emacs/28.0.50/native-lisp $out/Applications/Emacs.app/Contents/native-lisp
-    '';
-  });
+  emacs = pkgs.emacsGcc;
 in
 {
 
@@ -12,7 +8,7 @@ in
     (
       import (
         builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/18a89a8278ef33d4ec5b878d731ed6bf3b0fc978.tar.gz;
+          url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
         }
       )
     )
