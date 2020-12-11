@@ -4,6 +4,8 @@ let
 in
 {
 
+  imports = [ ./git.nix ];
+
   nixpkgs.overlays = [
     (
       import (
@@ -44,7 +46,7 @@ in
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
     ".emacs.d/straight/versions/default.el" = {
-      source = ../straight-package-versions.el;
+      source = ../emacs.d/straight-package-versions.el;
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
 
