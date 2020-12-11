@@ -1076,7 +1076,7 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     (delq nil (mapcar #'buffer-file-name (org-buffer-list 'files t))))
 
   (setq
-   org-agenda-files '("~/org" "~/org/journal" "~/org/snippets" "~/dotfiles/emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes")
+   org-agenda-files (seq-filter #'file-exists-p '("~/org" "~/org/journal" "~/org/snippets" "~/dotfiles/emacs.d/init.org" "~/.emacs.d/private.org" "~/.notes"))
    org-log-done t
    org-enforce-todo-dependencies t
    ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
