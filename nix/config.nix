@@ -1,10 +1,6 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 let
-  emacs = pkgs.emacsGcc.overrideAttrs (old: {
-    postInstall = old.postInstall or "" + ''
-      ln -snf $out/lib/emacs/28.0.50/native-lisp $out/Applications/Emacs.app/Contents/native-lisp
-    '';
-  });
+  emacs = pkgs.emacsGcc;
 in
 {
 
@@ -80,19 +76,4 @@ in
       onChange = "/usr/bin/env bash ~/.home-manager-trigger-config";
     };
   };
-
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "matt";
-  home.homeDirectory = "/Users/matt";
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "21.03";
 }
