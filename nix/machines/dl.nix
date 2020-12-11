@@ -1,11 +1,6 @@
-{ ... }:
+{ config, pkgs, ... }:
 {
-  imports = [ ./config.nix ];
-
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "matt";
-  home.homeDirectory = "/Users/matt";
+  imports = [ ../config.nix ];
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -15,5 +10,5 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "21.03";
+  home.stateVersion = "20.03";
 }
