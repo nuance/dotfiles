@@ -7,6 +7,7 @@
       BASH_SILENCE_DEPRECATION_WARNING = 1;
       PYTHONIOENCODING = "UTF-8";
       EDITOR = "~/bin/editor";
+      CLICOLOR = 1;
     };
 
     initExtra = ''
