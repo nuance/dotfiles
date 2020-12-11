@@ -1484,10 +1484,10 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
     (emacs-bazel-mode
      :host github
      :repo "bazelbuild/emacs-bazel-mode")
-    :mode ("'BUILD'" "'WORKSPACE'" "\\.bzl\\'")
-    :custom (
-             (bazel-mode-buildifier-before-save t)
-             (bazel-mode-buildifier-command "~/go/bin/buildifier"))
+    :mode ("'BUILD'" "'WORKSPACE'" "\\.bzl\\'" "'TARGETS'")
+    :custom
+    ((bazel-mode-buildifier-before-save t)
+     (bazel-mode-buildifier-command "~/go/bin/buildifier"))
     )
 #+END_SRC
 
