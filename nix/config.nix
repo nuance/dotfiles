@@ -10,15 +10,9 @@
     ./programs/tmux.nix
   ];
 
-  programs.go.enable = true;
-
   home.packages = with pkgs; [
     curl
     tree
     watch
   ];
-
-  home.file = {
-    "bin/editor".source = ./files/editor;
-  };
 }
