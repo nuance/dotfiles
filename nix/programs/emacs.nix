@@ -7,7 +7,7 @@ in
     (
       import (
         builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/599552323f738e6dd21622d132a694c93c9fa63a.tar.gz;
+          url = https://github.com/nix-community/emacs-overlay/archive/d2245bfc7c35042c04f69c67df166a02be853b32.tar.gz;
         }
       )
     )
