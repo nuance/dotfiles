@@ -27,11 +27,11 @@ in
     "bin/emacsclient".source = "${emacs}/bin/emacsclient";
 
     ".emacs.d/init.org" = {
-      source = ../files/emacs/init.org;
+      source = ./emacs/init.org;
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
     ".emacs.d/straight/versions/default.el" = {
-      source = ../files/emacs/straight-package-versions.el;
+      source = ./emacs/straight-package-versions.el;
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
     };
   };

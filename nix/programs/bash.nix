@@ -6,7 +6,7 @@
     sessionVariables = {
       BASH_SILENCE_DEPRECATION_WARNING = 1;
       PYTHONIOENCODING = "UTF-8";
-      EDITOR = "${../files/editor}";
+      EDITOR = "${./bash/editor}";
       CLICOLOR = 1;
     };
 
