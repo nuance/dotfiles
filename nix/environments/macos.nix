@@ -9,7 +9,7 @@ in
   ];
 
   home.file = {
-    "Library/KeyBindings/DefaultKeyBinding.dict".source = ../files/EmacsKeyBinding.dict;
+    "Library/KeyBindings/DefaultKeyBinding.dict".source = ./macos/EmacsKeyBinding.dict;
 
     ".home-manager-trigger-config" = {
       text = ''
