@@ -521,7 +521,7 @@ Default to dark theme, but make it easy to switch.
 
 #+begin_src emacs-lisp
   (use-package consult
-    :straight (consult :type git :host github :repo "minad/consult")
+    :straight (consult :type git :host github :repo "minad/consult" :branch "main")
     :bind (("s-o" . consult-line)
            ("s-t" . consult-buffer)
            ("M-y" . consult-yank-pop)
