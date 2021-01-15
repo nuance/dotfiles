@@ -23,7 +23,6 @@ in
   ];
 
   home.file = {
-    "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
     "bin/emacsclient".source = "${emacs}/bin/emacsclient";
 
     ".emacs.d/init.org" = {
