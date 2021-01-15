@@ -16,4 +16,4 @@ There are three interesting configuration options:
 
 `-urlRegexes [path]` - pass a path to a file containing one regex per line. For every ical entry, the first regex to find a substring in the description will be pulled out. I use this to find zoom or bluejeans links inside descriptions, which will then be shown in the diary entry for quick launching.
 
-`-extraRegexes [path]` - pass a path to a file containing one regex per line. Every regex will be run on the description of each event, and the results will be concatenated into the resulting diary description. I use these to pull out zoom meeeting codes or other useful structured-ish metadata that shows up in my events.
+`-extraRegexes [path]` - pass a path to a file containing one regex per line. Every regex will be run on the description of each event, and the results will be concatenated into the resulting diary description. I use these to pull out zoom meeting codes or other useful structured-ish metadata that shows up in my events.
