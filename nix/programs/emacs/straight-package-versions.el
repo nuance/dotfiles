@@ -46,6 +46,7 @@
  ("markdown-mode" . "3e380572a5177d0fa527c15efd15e340f53a923b")
  ("melpa" . "783ac844937e8ae0fbf879ad005c07947ad4bd69")
  ("multiple-cursors.el" . "a9d7764f80b241978f3d4e76bc981ef10bab5d70")
+ ("nix-mode" . "e8e5211f6e083cf0ba9aac52acb6657818a32972")
  ("ns-auto-titlebar" . "60273e764bf8d95abc40dd2fdc23af87ea9ee33b")
  ("org" . "edda21e9312be2af5566286bcd9042fbbec56725")
  ("org-bullets" . "767f55feb58b840a5a04eabfc3fbbf0d257c4792")
