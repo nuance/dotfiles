@@ -1,17 +1,18 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   emacs = pkgs.emacsGcc;
 in
 {
-  nixpkgs.overlays = [
-    (
-      import (
-        builtins.fetchTarball {
-          url = https://github.com/nix-community/emacs-overlay/archive/44f5e74dd30846be17c213f5eb7519d41534e177.tar.gz;
-        }
+  nixpkgs.overlays = let emacs_version = lib.importJSON ./emacs/version.json; in
+    [
+      (
+        import (
+          builtins.fetchTarball {
+            url = "https://github.com/nix-community/emacs-overlay/archive/${emacs_version.git_sha}.tar.gz";
+          }
+        )
       )
-    )
-  ];
+    ];
 
   home.packages = with pkgs; [
     emacs
