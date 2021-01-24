@@ -28,11 +28,11 @@ in
 
     ".emacs.d/init.org" = {
       source = ./emacs/init.org;
-      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(progn (straight-thaw-versions)  (while (or comp-files-queue (> (comp-async-runnings))) (sleep-for 1)))\";";
     };
     ".emacs.d/straight/versions/default.el" = {
       source = ./emacs/straight-package-versions.el;
-      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(straight-thaw-versions)\";";
+      onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\" ; ${emacs}/bin/emacs --batch --load init.el --eval \"(progn (straight-thaw-versions) (while (or comp-files-queue (> (comp-async-runnings))) (sleep-for 1)))\";";
     };
   };
 }
