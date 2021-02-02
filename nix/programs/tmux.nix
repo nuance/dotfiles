@@ -10,6 +10,7 @@
       unbind C-b
       set -g prefix C-o
       bind C-o send-prefix
+      bind-key C-o last-window
     '';
   };
 }
