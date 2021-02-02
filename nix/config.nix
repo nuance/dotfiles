@@ -14,5 +14,6 @@
     curl
     tree
     watch
+    mosh
   ];
 }
