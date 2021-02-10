@@ -15,5 +15,6 @@
     tree
     watch
     mosh
+    pv
   ];
 }
