@@ -328,6 +328,18 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
     :hook (compilation-mode . so-long-minor-mode))
 #+end_src
 
+** Confirm exit
+
+#+begin_src emacs-lisp
+  (setq confirm-kill-emacs 'yes-or-no-p)
+#+end_src
+
+** FFAP
+
+#+begin_src emacs-lisp
+  (ffap-bindings)
+#+end_src
+
 * UI Appearance
 ** UI Interaction
 
