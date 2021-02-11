@@ -1571,12 +1571,19 @@ exists after the init-file has loaded.
       (load-file private-file)))
 #+END_SRC
 
+* Server
+
+#+BEGIN_SRC emacs-lisp
+  (let ((server-file (concat user-emacs-directory "server.el")))
+    (when (file-exists-p server-file)
+      (load-file server-file)))
+#+END_SRC
+
+
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
 
 #+BEGIN_SRC emacs-lisp
-  (setq server-port 40000)
-  (setq server-use-tcp t)
   (server-start)
   (org-agenda nil "d")
   (delete-other-windows)
