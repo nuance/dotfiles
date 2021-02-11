@@ -3,21 +3,16 @@
 EDIT="vi"
 
 if [[ $(command -v emacsclient) ]]; then
-    EDIT="emacsclient -ta '' --server-file $HOME/.emacs.d/server/server"
+    if [ ! -z "$SSH_TTY" ]; then
+        EDIT="emacsclient -a '' --server-file $HOME/.emacs.d/server/server -T/ssh:$(hostname):";
+    else
+        EDIT="emacsclient -a '' --server-file $HOME/.emacs.d/server/server";
+    fi
 elif [[ $(command -v emacs) ]]; then
     EDIT="emacs"
 elif [[ $(command -v vim) ]]; then
     EDIT="vim"
 fi
-
-case "$TERM" in
-eterm-color)
-    EDIT="emacsclient --server-file $HOME/.emacs.d/server/remote -T/ssh:$(hostname):"
-    ;;
-dumb)
-    EDIT="emacsclient"
-    ;;
-esac
 
 # this will override the previous setting (so a local emacs will take priority)
 case "$INSIDE_EMACS" in
