@@ -1575,6 +1575,7 @@ exists after the init-file has loaded.
 Launch a server if not currently running, default to showing org daily agenda
 
 #+BEGIN_SRC emacs-lisp
+  (setq server-port 40000)
   (setq server-use-tcp t)
   (server-start)
   (org-agenda nil "d")
