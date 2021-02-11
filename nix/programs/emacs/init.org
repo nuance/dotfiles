@@ -1227,7 +1227,8 @@ Don't mess up the window layout when editing code blocks.
 #+begin_src emacs-lisp
   (use-package deft
     :straight t
-    :bind (("s-i" . 'deft))
+    :bind (("s-i" . 'deft-find-file)
+           ("s-I" . 'deft))
     :custom ((deft-directory "~/org")
              (deft-recursive t)
              (deft-extensions '("org" "md"))
