@@ -1,7 +1,11 @@
 { lib, pkgs, targets, ... }:
+let ical-to-diary = (import ../../ical-to-diary/default.nix {
+  inherit pkgs;
+}); in
 {
   home.packages = with pkgs; [
     pinentry_mac
+    ical-to-diary
   ];
 
   targets.darwin.keybindings = {
