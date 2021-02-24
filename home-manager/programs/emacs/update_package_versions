@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-
-mv ~/.emacs.d/straight/versions/default.el ~/.emacs.d/straight/versions/default.el.backup
-emacs --batch --load ~/.emacs.d/init.el --execute "(progn (straight-pull-all) (straight-freeze-versions t))"
-mv ~/.emacs.d/straight/versions/default.el ~/dotfiles/nix/programs/emacs/straight-package-versions.el
