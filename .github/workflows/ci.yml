@@ -41,6 +41,7 @@ jobs:
       uses: cachix/cachix-action@v8
       with:
         name: nuance
+        extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
     - name: If scheduled, update inputs
@@ -55,7 +56,12 @@ jobs:
         nix-env --set-flag priority 1 cachix
         # Build m1-pro config
         cd home-manager
-        nix build .#m1-pro
+        nix build .#github-macos-ci
+
+    - name: Activate home-manager environment
+      run: |
+        cd home-manager
+        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
 
     - name: If scheduled, push commit with updated inputs
       if: ${{ github.event_name == 'schedule' && success() }}

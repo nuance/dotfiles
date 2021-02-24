@@ -1,11 +1,11 @@
 { ... }:
 {
-  imports = [ ../config.nix ../environments/macos.nix ../programs/emacs-server.nix ];
+  imports = [ ../config.nix ../environments/macos.nix ];
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  home.username = "matt";
-  home.homeDirectory = "/Users/matt";
+  home.username = "runner";
+  home.homeDirectory = "/Users/runner";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
