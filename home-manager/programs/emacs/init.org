@@ -118,7 +118,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   (advice-add #'x-apply-session-resources :override #'ignore)
 
   (setq comp-deferred-compilation nil)
-  (setq package-enable-at-startup nil)
+  (setq package-enable-at-startup t)
 #+end_src
 
 * Performance optimizations
@@ -795,7 +795,7 @@ Auto-revert to new tags file
 
 ** Map Super-* to C-c * + smartrep
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (defun is-super-binding-p (key)
     (let ((super (elt (event-modifiers (elt (kbd "s-t") 0)) 0))
           (click (elt (event-modifiers (elt (kbd "<mouse-1>") 0)) 0)))
@@ -829,15 +829,14 @@ Auto-revert to new tags file
        keymap)
       bindings))
 
-  (use-package smartrep
-    )
+  (use-package smartrep)
 
   (add-hook
    'after-init-hook
    (lambda ()
      (smartrep-define-key
-         global-map "C-c"
-       (gather-bindings global-map "C-c"))))
+      global-map "C-c"
+      (gather-bindings global-map "C-c"))))
 #+END_SRC
 
 ** Ansi-term improvements
@@ -1088,7 +1087,7 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     (delq nil (mapcar #'buffer-file-name (org-buffer-list 'files t))))
 
   (setq
-   org-agenda-files (seq-filter #'file-exists-p '("~/org" "~/org/journal" "~/org/snippets" "~/dotfiles/nix/programs/emacs/init.org" "~/.emacs.d/private.org" "~/.notes"))
+   org-agenda-files (seq-filter #'file-exists-p '("~/org" "~/org/journal" "~/org/snippets" "~/dotfiles/home-manager/programs/emacs/init.org" "~/.emacs.d/private.org" "~/.notes"))
    org-log-done t
    org-enforce-todo-dependencies t
    ;; refile-related configs from https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
