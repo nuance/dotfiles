@@ -1,6 +1,6 @@
 { ... }:
 {
-  imports = [ ../config.nix ../environments/macos.nix ];
+  imports = [ ../config.nix ../environments/macos.nix ../programs/emacs-server.nix ];
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
