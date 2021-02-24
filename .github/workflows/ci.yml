@@ -49,7 +49,7 @@ jobs:
         cd home-manager
         nix flake update --recreate-lock-file
 
-    - name: Build and switch to nix-darwin env
+    - name: Build home-manager config
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix

@@ -24,7 +24,11 @@
         m1-pro = inputs.home-manager.lib.homeManagerConfiguration {
           configuration = { pkgs, config, ... }:
             {
-              xdg.configFile."nix/nix.conf".text = ''experimental-features = nix-command flakes'';
+              xdg.configFile."nix/nix.conf".text = ''
+                experimental-features = nix-command flakes
+                substituters = https://cache.nixos.org https://nuance.cachix.org
+                trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nuance.cachix.org-1:dAmExyWto63NWNdWaXvVLwmwewO+e/bXs4uAv9uf1No=
+              '';
               nixpkgs.overlays = overlays;
               imports = [
                 ./machines/m1-pro.nix
