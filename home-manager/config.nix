@@ -18,5 +18,6 @@
     mosh
     pv
     ibm-plex
+    cachix
   ];
 }
