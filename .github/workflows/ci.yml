@@ -56,7 +56,11 @@ jobs:
         # Build m1-pro config
         cd home-manager
         nix build .#m1-pro
-        ./result/activate
+
+    - name: Activate home-manager environment
+      run: |
+        cd home-manager
+        ./result/activate -b backup
 
     - name: If scheduled, push commit with updated inputs
       if: ${{ github.event_name == 'schedule' && success() }}
