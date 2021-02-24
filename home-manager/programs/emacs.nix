@@ -15,8 +15,6 @@ in
 
   home.file = {
     "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
-    ".emacs.d/server/server".source = ./emacs/secrets/server;
-    ".emacs.d/server.el".source = ./emacs/secrets/server.el;
 
     ".emacs.d/init.org" = {
       source = ./emacs/init.org;
