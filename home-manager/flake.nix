@@ -1,7 +1,7 @@
 {
   description = "Example home-manager from non-nixos system";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs?rev=2f6523f96bbf62b3d18a6c24556199f986ad4a59";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
   inputs.emacs-overlay = {
     url = "github:nix-community/emacs-overlay";
