@@ -55,7 +55,7 @@ jobs:
         nix-env --set-flag priority 1 cachix
         # Build m1-pro config
         cd home-manager
-        nix build .#m1-pro
+        nix build .#github-macos-ci
 
     - name: Activate home-manager environment
       run: |
