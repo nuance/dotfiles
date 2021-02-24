@@ -60,7 +60,7 @@ jobs:
     - name: Activate home-manager environment
       run: |
         cd home-manager
-        ./result/activate -b backup
+        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
 
     - name: If scheduled, push commit with updated inputs
       if: ${{ github.event_name == 'schedule' && success() }}
