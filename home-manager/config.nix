@@ -17,5 +17,6 @@
     watch
     mosh
     pv
+    ibm-plex
   ];
 }

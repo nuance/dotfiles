@@ -1580,7 +1580,6 @@ exists after the init-file has loaded.
       (load-file server-file)))
 #+END_SRC
 
-
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
 
