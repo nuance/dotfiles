@@ -29,6 +29,8 @@
               imports = [
                 ./machines/m1-pro.nix
               ];
+
+              programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${./rebuild.sh} m1-pro)";
             };
 
           system = "x86_64-darwin";
@@ -45,6 +47,8 @@
               imports = [
                 ./machines/air.nix
               ];
+
+              programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${./rebuild.sh} air)";
             };
 
           system = "x86_64-darwin";
@@ -61,6 +65,8 @@
               imports = [
                 ./machines/dl.nix
               ];
+
+              programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${./rebuild.sh} dl)";
             };
 
           system = "x86_64-linux";
