@@ -1,11 +1,7 @@
 { lib, pkgs, targets, ... }:
-let
-  ical-to-diary = import ../../ical-to-diary/default.nix;
-in
 {
   home.packages = with pkgs; [
     pinentry_mac
-    ical-to-diary
   ];
 
   targets.darwin.keybindings = {
@@ -88,24 +84,5 @@ in
   home.activation.configureTerminal = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $VERBOSE_ECHO "Importing terminal configuration"
     $DRY_RUN_CMD defaults import com.apple.Terminal ${./macos/Terminal.plist}
-  '';
-
-  home.activation.installFonts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    $VERBOSE_ECHO "Installing missing fonts"
-
-    $VERBOSE_ECHO "Checking for IBM Plex"
-    if [ ! -d ~/Library/Fonts/OpenType ]; then
-        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -L https://github.com/IBM/plex/releases/download/v5.1.3/OpenType.zip -o /tmp/plex.zip
-        $DRY_RUN_CMD cd ~/Library/Fonts
-        $DRY_RUN_CMD unzip /tmp/plex.zip
-    fi
-
-    $VERBOSE_ECHO "Checking for icon fonts"
-    if [ ! -d ~/Library/Fonts/Icons ]; then
-        $DRY_RUN_CMD mkdir ~/Library/Fonts/Icons
-        for font in all-the-icons file-icons fontawesome material-design-icons octicons weathericons; do
-           $DRY_RUN_CMD ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/domtronn/all-the-icons.el/2f5ea7259ed104a0ef8727f640ee2525108038d5/fonts/$font.ttf -o ~/Library/Fonts/Icons/$font.ttf
-        done
-    fi
   '';
 }
