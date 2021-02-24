@@ -117,6 +117,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   ;; cursor color is concerned).
   (advice-add #'x-apply-session-resources :override #'ignore)
 
+  (setq comp-deferred-compilation nil)
   (setq package-enable-at-startup nil)
 #+end_src
 
@@ -181,7 +182,7 @@ Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org
 
 ** Bootstrap straight.el
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (defvar bootstrap-version)
   (let ((bootstrap-file
          (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -291,7 +292,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+BEGIN_SRC emacs-lisp
   (use-package exec-path-from-shell
-    :straight t
+
     :config
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize)))
@@ -302,15 +303,15 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 #+BEGIN_SRC emacs-lisp
   ;; functional helpers
   (use-package dash
-    :straight t)
+    )
 
   ;; string manipulation
   (use-package s
-    :straight t)
+    )
 
   ;; filepath manipulation
   (use-package f
-    :straight t)
+    )
 #+END_SRC
 
 ** Encrypted authinfo
@@ -408,7 +409,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
-    :straight t
+
     :hook (after-init . doom-modeline-mode)
     :config
     (line-number-mode 1)
@@ -441,7 +442,7 @@ I'd like to toggle between light & dark themes.
 *** Dark: doom-gruvbox
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
-    :straight t
+
     :init
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
@@ -456,7 +457,7 @@ I'd like to toggle between light & dark themes.
 *** Light: Gruvbox-light-hard
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
-    :straight t)
+    )
 
   (defvar light-theme 'doom-acario-light)
 #+END_SRC
@@ -490,7 +491,7 @@ Default to dark theme, but make it easy to switch.
 #+BEGIN_SRC emacs-lisp
   (when (eq system-type 'darwin)
     (use-package ns-auto-titlebar
-      :straight t
+
       :config
       (ns-auto-titlebar-mode)))
 #+END_SRC
@@ -499,7 +500,7 @@ Default to dark theme, but make it easy to switch.
 
 #+begin_src emacs-lisp
   (use-package balanced-windows
-    :straight t
+
     :config (balanced-windows-mode))
 #+end_src
 
@@ -508,7 +509,7 @@ Default to dark theme, but make it easy to switch.
 
 #+begin_src emacs-lisp
   (use-package selectrum
-    :straight t
+
     :bind (:map selectrum-minibuffer-map
                 ;; sorta mimic helm bindings I'm used to
                 ("C-j" . 'selectrum-insert-current-candidate)
@@ -519,13 +520,13 @@ Default to dark theme, but make it easy to switch.
     (selectrum-mode 1))
 
   (use-package prescient
-    :straight t
+
     :config
     (setq prescient-filter-method '(literal initialism regexp fuzzy))
     (prescient-persist-mode t))
 
   (use-package selectrum-prescient
-    :straight t
+
     :config (selectrum-prescient-mode 1))
 #+end_src
 
@@ -533,7 +534,7 @@ Default to dark theme, but make it easy to switch.
 
 #+begin_src emacs-lisp
   (use-package consult
-    :straight (consult :type git :host github :repo "minad/consult" :branch "main")
+
     :bind (("s-o" . consult-line)
            ("s-t" . consult-buffer)
            ("M-y" . consult-yank-pop)
@@ -544,7 +545,7 @@ Default to dark theme, but make it easy to switch.
 
 #+begin_src emacs-lisp
   (use-package marginalia
-    :straight (marginalia :type git :host github :repo "minad/marginalia" :branch "main")
+
     :config
     (marginalia-mode)
     (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
@@ -554,7 +555,7 @@ Default to dark theme, but make it easy to switch.
 
 #+begin_src emacs-lisp
   (use-package mini-frame
-    :straight t
+
     :custom
     ((mini-frame-ignore-commands '(eval-expression "edebug-eval-expression" debugger-eval-expression "^phi-"))
      (mini-frame-show-parameters '((top . 10) (width . 0.7) (left . 0.5) (height . 25))))
@@ -578,7 +579,7 @@ Default to dark theme, but make it easy to switch.
 ** Company
 #+BEGIN_SRC emacs-lisp
   (use-package company
-    :straight t
+
     :custom
     ((company-idle-delay 0.1)
      (company-minimum-prefix-length 3)
@@ -589,12 +590,12 @@ Default to dark theme, but make it easy to switch.
     (global-company-mode))
 
   (use-package company-quickhelp
-    :straight t
+
     :init (setq company-quickhelp-delay 0.1)
     :config (company-quickhelp-mode))
 
   (use-package company-box
-    :straight t
+
     :hook (company-mode . company-box-mode)
     :config
     (defun company-box-icons--lsp (candidate)
@@ -632,7 +633,7 @@ Default to dark theme, but make it easy to switch.
 *** Expand region
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
-    :straight t
+
     :bind (("s-f" . 'er/expand-region)
            ("s-F" . 'er/contract-region)))
 #+END_SRC
@@ -640,7 +641,7 @@ Default to dark theme, but make it easy to switch.
 *** Multiple cursors
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
-    :straight t
+
     :config
     (defun select-symbol (arg)
       "Sets the region to the symbol under the point"
@@ -666,7 +667,7 @@ Incremental search thats multiple-cursors-friendly.
 
 #+BEGIN_SRC emacs-lisp
   (use-package phi-search
-    :straight t
+
     :bind (([remap isearch-forward] . phi-search)
            ([remap isearch-backward] . phi-search-backward)))
 
@@ -726,7 +727,7 @@ Incremental search thats multiple-cursors-friendly.
 *** Guess indentation settings
 #+BEGIN_SRC emacs-lisp
   (use-package dtrt-indent
-    :straight t
+
     :config
     (dtrt-indent-mode 1)
     )
@@ -738,7 +739,7 @@ Incremental search thats multiple-cursors-friendly.
   (global-set-key (kbd "M-k") 'other-window)
 
   (use-package ace-window
-    :straight t
+
     :demand t
     :config
     (defun switch-to-nth-window (window-num)
@@ -829,7 +830,7 @@ Auto-revert to new tags file
       bindings))
 
   (use-package smartrep
-    :straight t)
+    )
 
   (add-hook
    'after-init-hook
@@ -1002,7 +1003,7 @@ between both flymake & flycheck errors.
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :straight t
+
     :commands magit-status magit-blame-addition
     :custom ((magit-branch-arguments nil)
              ;; don't put "origin-" in front of new branch names by default
@@ -1016,7 +1017,7 @@ between both flymake & flycheck errors.
 ** Diff Highlight
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
-    :straight t
+
     :config
     (global-diff-hl-mode)
     (diff-hl-margin-mode)
@@ -1026,20 +1027,20 @@ between both flymake & flycheck errors.
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-    :straight t
+
     :hook ('prog-mode . #'flycheck-mode))
 #+END_SRC
 
 ** Snippets
 
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet-snippets :straight t :defer 1 :config (yas-global-mode))
+  (use-package yasnippet-snippets  :defer 1 :config (yas-global-mode))
 #+END_SRC
 
 ** LSP
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
-    :straight t
+
     :config
     (setq-default
      eglot-workspace-configuration '((:gopls . (:usePlaceholders t))))
@@ -1050,7 +1051,7 @@ between both flymake & flycheck errors.
 Bugs crop up in this file, so pull in some code to help bisect them.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package bug-hunter :straight t)
+  (use-package bug-hunter )
 #+END_SRC
 
 Use this by invoking `M-x bug-hunter-init-file` and following instructions.
@@ -1059,7 +1060,6 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
 *** Installation
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :straight org-plus-contrib
     :config
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -1178,7 +1178,7 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
                               '(("^ *\\([-]\\) "
                                  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
       (use-package org-bullets
-        :straight t
+
         :config
         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
       (add-hook 'emacs-startup-hook (lambda () (adapt-theme-org-colors))
@@ -1208,7 +1208,7 @@ Don't mess up the window layout when editing code blocks.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
-    :straight t
+
     :init
     (defun skip-version (orig-fun &rest args) nil)
     (advice-add 'version< :around #'skip-version)
@@ -1226,7 +1226,7 @@ Don't mess up the window layout when editing code blocks.
 
 #+begin_src emacs-lisp
   (use-package deft
-    :straight t
+
     :bind (("s-i" . 'deft-find-file)
            ("s-I" . 'deft))
     :custom ((deft-directory "~/org")
@@ -1256,14 +1256,14 @@ Don't mess up the window layout when editing code blocks.
 Optimize GC usage
 
 #+BEGIN_SRC emacs-lisp
-  (use-package gcmh :straight t)
+  (use-package gcmh )
 #+END_SRC
 
 ** ElDoc
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
-  (use-package eldoc-box :straight t :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
+  (use-package eldoc-box  :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
 ** Formatter
@@ -1271,7 +1271,7 @@ Optimize GC usage
 Generic tramp-friendly helper for formatters that read from stdin / write to stdout
 
 #+BEGIN_SRC emacs-lisp
-  (use-package async :straight t)
+  (use-package async )
 
   (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
 
@@ -1351,7 +1351,7 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
 ** ESUP
 
 #+begin_src emacs-lisp
-  (use-package esup :straight t :custom ((esup-depth 0)))
+  (use-package esup  :custom ((esup-depth 0)))
 #+end_src
 
 Note that ESUP is broken with package.el, so you'll need to do the following:
@@ -1368,20 +1368,11 @@ Create a script in ~/fix-path.sh:
   find ~/.emacs.d/straight/build -iname "*-autoloads.el" -exec ~/fix-path.sh {} \;
 #+end_src
 
-** Explain pause
-
-#+begin_src emacs-lisp :tangle no
-  (use-package explain-pause-mode
-    :defer 2
-    :straight (explain-pause-mode :type git :host github :repo "lastquestion/explain-pause-mode")
-    :config (explain-pause-mode))
-#+end_src
-
 ** Helpful
 
 #+begin_src emacs-lisp
   (use-package helpful
-    :straight t
+
     :bind (
            ([remap describe-funtion] . 'helpful-callable)
            ([remap describe-variable] . 'helpful-variable)
@@ -1396,8 +1387,8 @@ Create a script in ~/fix-path.sh:
 Manually pull in packages used in private elisp so we can freeze / thaw versions.
 
 #+begin_src emacs-lisp
-  (use-package deferred :straight t :defer 2)
-  (use-package button-lock :straight t :defer 2)
+  (use-package deferred  :defer 2)
+  (use-package button-lock  :defer 2)
 #+end_src
 
 * File-type support
@@ -1422,7 +1413,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 
 #+BEGIN_SRC emacs-lisp
   (use-package json-mode
-    :straight t
+
     :defer 2
     :mode "\\.json\\'")
 #+END_SRC
@@ -1430,7 +1421,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 ** YAML
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
-    :straight t
+
     :defer 2
     :mode "\\.yml\\'")
 #+END_SRC
@@ -1439,7 +1430,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package thrift-mode
     :defer 2
-    :straight t)
+    )
 #+END_SRC
 
 ** Protobuf
@@ -1447,7 +1438,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package protobuf-mode
     :defer 2
-    :straight t)
+    )
 #+END_SRC
 
 ** C++
@@ -1469,7 +1460,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package cython-mode
     :defer 2
-    :straight t)
+    )
 #+END_SRC
 
 ** Rust
@@ -1477,7 +1468,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode
     :defer 2
-    :straight t)
+    )
 #+END_SRC
 
 ** Go
@@ -1485,7 +1476,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
     :defer 2
-    :straight t)
+    )
 #+END_SRC
 
 ** Bazel
@@ -1493,10 +1484,6 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package bazel-mode
     :defer 2
-    :straight
-    (emacs-bazel-mode
-     :host github
-     :repo "bazelbuild/emacs-bazel-mode")
     :mode ("'BUILD'" "'WORKSPACE'" "\\.bzl\\'" "'TARGETS'")
     :custom
     ((bazel-mode-buildifier-before-save t)
@@ -1509,7 +1496,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
     :defer 2
-    :straight t
+
     :commands (markdown-mode gfm-mode)
     :mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
@@ -1530,7 +1517,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 #+BEGIN_SRC emacs-lisp
   (use-package nix-mode
     :defer 2
-    :straight t
+
     :mode ("\\.nix\\'" "\\.nix.in\\'"))
 
   (use-package nix-drv-mode
