@@ -41,6 +41,7 @@ jobs:
       uses: cachix/cachix-action@v8
       with:
         name: nuance
+        extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
     - name: If scheduled, update inputs
