@@ -24,11 +24,6 @@
         m1-pro = inputs.home-manager.lib.homeManagerConfiguration {
           configuration = { pkgs, config, ... }:
             {
-              xdg.configFile."nix/nix.conf".text = ''
-                experimental-features = nix-command flakes
-                substituters = https://cache.nixos.org https://nuance.cachix.org https://nix-community.cachix.org
-                trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nuance.cachix.org-1:dAmExyWto63NWNdWaXvVLwmwewO+e/bXs4uAv9uf1No= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-              '';
               nixpkgs.overlays = overlays;
               imports = [
                 ./machines/m1-pro.nix
@@ -46,11 +41,6 @@
         github-macos-ci = inputs.home-manager.lib.homeManagerConfiguration {
           configuration = { pkgs, config, ... }:
             {
-              xdg.configFile."nix/nix.conf".text = ''
-                experimental-features = nix-command flakes
-                substituters = https://cache.nixos.org https://nuance.cachix.org https://nix-community.cachix.org
-                trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nuance.cachix.org-1:dAmExyWto63NWNdWaXvVLwmwewO+e/bXs4uAv9uf1No= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-              '';
               nixpkgs.overlays = overlays;
               imports = [
                 ./machines/github-macos-ci.nix
@@ -68,11 +58,6 @@
         air = inputs.home-manager.lib.homeManagerConfiguration {
           configuration = { pkgs, config, ... }:
             {
-              xdg.configFile."nix/nix.conf".text = ''
-                experimental-features = nix-command flakes
-                substituters = https://cache.nixos.org https://nuance.cachix.org https://nix-community.cachix.org
-                trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nuance.cachix.org-1:dAmExyWto63NWNdWaXvVLwmwewO+e/bXs4uAv9uf1No= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-              '';
               nixpkgs.overlays = overlays;
               imports = [
                 ./machines/air.nix
@@ -90,11 +75,6 @@
         dl = inputs.home-manager.lib.homeManagerConfiguration {
           configuration = { pkgs, config, ... }:
             {
-              xdg.configFile."nix/nix.conf".text = ''
-                experimental-features = nix-command flakes
-                substituters = https://cache.nixos.org https://nuance.cachix.org https://nix-community.cachix.org
-                trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nuance.cachix.org-1:dAmExyWto63NWNdWaXvVLwmwewO+e/bXs4uAv9uf1No= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-              '';
               nixpkgs.overlays = overlays;
               imports = [
                 ./machines/dl.nix
