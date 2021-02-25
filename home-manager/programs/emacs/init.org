@@ -996,7 +996,8 @@ between both flymake & flycheck errors.
 
     :config
     (setq-default
-     eglot-workspace-configuration '((:gopls . (:usePlaceholders t))))
+     eglot-workspace-configuration '((:gopls . ((:usePlaceholders t) (staticcheck . t)
+                                                (matcher . "CaseSensitive")))))
     :hook ((python-mode c++-mode c-mode go-mode rust-mode) . 'eglot-ensure))
 #+END_SRC
 
@@ -1431,6 +1432,33 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
     :defer 2
     )
 #+END_SRC
+
+*** Eglot Module Support
+
+#+begin_src emacs-lisp
+  (require 'project)
+
+  (defun project-find-go-module (dir)
+    (when-let ((root (locate-dominating-file dir "go.mod")))
+      (cons 'go-module root)))
+
+  (cl-defmethod project-root ((project (head go-module)))
+    (cdr project))
+
+  (add-hook 'project-find-functions #'project-find-go-module)
+#+end_src
+
+*** Eglot format on save
+
+#+begin_src emacs-lisp
+  ;; Optional: install eglot-format-buffer as a save hook.
+  ;; The depth of -10 places this before eglot's willSave notification,
+  ;; so that that notification reports the actual contents that will be saved.
+  (defun eglot-format-buffer-on-save ()
+    (add-hook 'before-save-hook #'eglot-format-buffer -10 t))
+  (add-hook 'go-mode-hook #'eglot-format-buffer-on-save)
+#+end_src
+
 
 ** Bazel
 
