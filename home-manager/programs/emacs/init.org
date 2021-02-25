@@ -952,6 +952,18 @@ between both flymake & flycheck errors.
   (bind-key (kbd "M-p") 'nuance/previous-error)
 #+end_src
 
+** Project Navigation
+
+#+begin_src emacs-lisp
+  (use-package project
+    :config
+    (defun nuance/find-in-dotfiles ()
+      (interactive)
+      (let ((default-directory "~/dotfiles")) (project-find-file)))
+    :bind (("s-p" . project-find-file)
+           ("s-P" . nuance/find-in-dotfiles)))
+#+end_src
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
