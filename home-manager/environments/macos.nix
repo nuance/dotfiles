@@ -1,4 +1,4 @@
-{ lib, pkgs, targets, ... }:
+{ config, lib, pkgs, targets, ... }:
 let ical-to-diary = (import ../../ical-to-diary/default.nix {
   inherit pkgs;
 }); in
@@ -89,4 +89,25 @@ let ical-to-diary = (import ../../ical-to-diary/default.nix {
     $VERBOSE_ECHO "Importing terminal configuration"
     $DRY_RUN_CMD defaults import com.apple.Terminal ${./macos/Terminal.plist}
   '';
+
+  home.activation.copyApplications =
+    let
+      apps = pkgs.buildEnv {
+        name = "home-manager-applications";
+        paths = config.home.packages;
+        pathsToLink = "/Applications";
+      };
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      baseDir="$HOME/Applications/Home Manager"
+      if [ -d "$baseDir" ]; then
+        $DRY_RUN_CMD rm -rf "$baseDir"
+      fi
+      mkdir -p "$baseDir"
+      for appFile in ${apps}/Applications/*; do
+        target="$baseDir/$(basename "$appFile")"
+        $DRY_RUN_CMD cp ''${VERBOSE_ARG:+-v} -fHRL "$appFile" "$baseDir"
+        $DRY_RUN_CMD chmod ''${VERBOSE_ARG:+-v} -R +w "$target"
+      done
+    '';
 }
