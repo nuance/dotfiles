@@ -173,30 +173,10 @@ Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org
   (setq comp-async-jobs-number 8)
 #+end_src
 
-* straight.el
 ** Cache SSL lookups
 
 #+BEGIN_SRC emacs-lisp
   (customize-set-variable 'nsm-settings-file (concat user-emacs-directory "network-security.data"))
-#+END_SRC
-
-** Bootstrap straight.el
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-
-  (straight-use-package 'use-package)
 #+END_SRC
 
 * Disable nswin keybindings
@@ -1335,6 +1315,8 @@ Create a script in ~/fix-path.sh:
   FILE="$PWD/$1"
   sed -i.bak -e "s|^\(.*\)#\$\(.*\)$|;;\1#$\2\n\1\"$FILE\"\2|" "$1"
 #+end_src
+
+The following is probably not necessary now that I switched to nix and dropped straight:
 
 #+begin_src bash :tangle no
   find ~/.emacs.d/straight/build -iname "*-autoloads.el" -exec ~/fix-path.sh {} \;
