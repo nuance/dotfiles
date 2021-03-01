@@ -5,11 +5,13 @@ let ical-to-diary = (import ../../ical-to-diary/default.nix {
 {
   imports = [
     ../programs/secretive.nix
+    ./terminal.nix
   ];
 
   home.packages = with pkgs; [
     pinentry_mac
     ical-to-diary
+    ibm-plex
   ];
 
   targets.darwin.keybindings = {
