@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  imports = [ ../config.nix ../programs/emacs-client.nix ];
+  imports = [ ../config.nix ];
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
