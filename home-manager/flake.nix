@@ -38,6 +38,21 @@
           username = "matt";
         };
 
+        macos-bootstrap = inputs.home-manager.lib.homeManagerConfiguration {
+          configuration = { pkgs, config, ... }:
+            {
+              nixpkgs.overlays = overlays;
+              imports = [
+                ./machines/macos-bootstrap.nix
+              ];
+            };
+
+          system = "x86_64-darwin";
+
+          homeDirectory = "/Users/matt";
+          username = "matt";
+        };
+
         github-macos-ci = inputs.home-manager.lib.homeManagerConfiguration {
           configuration = { pkgs, config, ... }:
             {
@@ -92,6 +107,7 @@
       };
 
       m1-pro = self.homeConfigurations.m1-pro.activationPackage;
+      macos-bootstrap = self.homeConfigurations.macos-bootstrap.activationPackage;
       github-macos-ci = self.homeConfigurations.github-macos-ci.activationPackage;
       air = self.homeConfigurations.air.activationPackage;
       dl = self.homeConfigurations.dl.activationPackage;
