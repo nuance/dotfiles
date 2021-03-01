@@ -5,10 +5,8 @@
 
   imports = [
     ./programs/bash.nix
-    ./programs/emacs.nix
     ./programs/git.nix
     ./programs/nix.nix
-    ./programs/ssh.nix
     ./programs/tmux.nix
   ];
 
@@ -18,7 +16,6 @@
     watch
     mosh
     pv
-    ibm-plex
     cachix
   ];
 }
