@@ -21,6 +21,13 @@ sudo "cat ../.config/nix/nix.conf >> /etc/nix/nix.conf"
 sudo "echo \"trusted-users = $(whoami)\" >> /etc/nix/nix.conf"
 ```
 
+Restart the nix daemon to pick up the new config
+
+```
+sudo launchctl stop org.nixos.nix-daemon
+sudo launchctl start org.nixos.nix-daemon
+```
+
 Run the full profile to build home
 
 ```
