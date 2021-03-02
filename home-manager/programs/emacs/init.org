@@ -523,6 +523,8 @@ Default to dark theme, but make it easy to switch.
     (fset 'multi-occur #'consult-multi-occur))
 #+end_src
 
+*** Marginalia
+
 #+begin_src emacs-lisp
   (use-package marginalia
 
@@ -531,11 +533,30 @@ Default to dark theme, but make it easy to switch.
     (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
 #+end_src
 
+*** Embark
+
+#+begin_src emacs-lisp
+  (use-package embark
+    :config (setq embark-prompter 'embark-completing-read-prompter)
+    :bind
+    ("s-;" . embark-act))
+
+  (use-package embark-consult
+    :after (embark consult)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode . embark-consult-preview-minor-mode))
+#+end_src
+
+
 ** Mini frame
 
 #+begin_src emacs-lisp
   (use-package mini-frame
 
+    :when window-system
     :custom
     ((mini-frame-ignore-commands '(eval-expression "edebug-eval-expression" debugger-eval-expression "^phi-"))
      (mini-frame-show-parameters '((top . 10) (width . 0.7) (left . 0.5) (height . 25))))
