@@ -679,6 +679,7 @@ Incremental search thats multiple-cursors-friendly.
            ([remap isearch-backward] . phi-search-backward)))
 
   (use-package phi-replace
+    :ensure nil
     :after phi-search
     :bind (([remap query-replace] . phi-replace-query)))
 #+END_SRC
@@ -705,10 +706,12 @@ Incremental search thats multiple-cursors-friendly.
 *** Compilation mode tweaks
 #+BEGIN_SRC emacs-lisp
   (use-package compile
+    :ensure nil
     :bind (("s-B" . compile) ("s-b" . recompile))
     :custom ((compilation-scroll-output 'first-error)))
 
   (use-package ansi-color
+    :ensure nil
     :config
     (defun colorize-compilation-buffer ()
       (read-only-mode)
@@ -804,7 +807,8 @@ Auto-revert to new tags file
 From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
 
 #+BEGIN_SRC emacs-lisp
-  (use-package term)
+  (use-package term
+    :ensure nil)
 #+END_SRC
 
 *** Close terminal windows when shell exits
@@ -888,6 +892,7 @@ From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
 
 #+begin_src emacs-lisp
   (use-package eshell
+    :ensure nil
     :bind ("s-e" . eshell)
     :config
     (defun toggle-eshell-company ()
@@ -1381,6 +1386,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
     (if (buffer-narrowed-p) (widen) (if (region-active-p) (narrow-to-region beg end) (narrow-to-defun))))
 
   (use-package prog-mode
+    :ensure nil
     :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun-or-region)))
 #+END_SRC
 
@@ -1403,9 +1409,8 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 
 ** Thrift
 #+BEGIN_SRC emacs-lisp
-  (use-package thrift-mode
-    :defer 2
-    )
+  (use-package thrift
+    :defer 2)
 #+END_SRC
 
 ** Protobuf
@@ -1420,6 +1425,7 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
 
 #+BEGIN_SRC emacs-lisp
   (use-package cc-mode
+    :ensure nil
     :mode ("\\.h|\\.cpp" . c++-mode))
 #+END_SRC
 
@@ -1523,14 +1529,17 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
     :mode ("\\.nix\\'" "\\.nix.in\\'"))
 
   (use-package nix-drv-mode
+    :ensure nil
     :defer 2
     :mode "\\.drv\\'")
 
   (use-package nix-shell
+    :ensure nil
     :defer 2
     :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
 
   (use-package nix-repl
+    :ensure nil
     :defer 2
     :commands (nix-repl))
 #+END_SRC
