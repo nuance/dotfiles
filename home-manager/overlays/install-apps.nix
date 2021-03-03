@@ -52,4 +52,16 @@ self: super: {
     description = "Rectangle";
     homepage = https://rectangleapp.com;
   };
+
+  Secretive = self.installApplication rec {
+    name = "Secretive";
+    version = "2.1.0";
+    sourceRoot = "Secretive.app";
+    src = super.fetchurl {
+      url = https://github.com/maxgoedjen/secretive/releases/download/v2.1.0/Secretive.zip;
+      sha256 = "15fw249r4yamczii8qs32fy48k5hnln1db4xfiflz7mcab2dh8ar";
+    };
+    description = "Secretive";
+    homepage = https://github.com/maxgoedjen/secretive;
+  };
 }

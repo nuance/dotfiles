@@ -14,6 +14,7 @@ let ical-to-diary = (import ../../ical-to-diary/default.nix {
     ibm-plex
     Alfred
     Rectangle
+    Secretive
   ];
 
   targets.darwin.keybindings = {
