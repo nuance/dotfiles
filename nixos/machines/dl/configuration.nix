@@ -20,7 +20,6 @@
   fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 
   nixpkgs.config.allowUnfree = true;
-  boot.kernelPackages = pkgs.linuxPackages_5_4;
   boot.kernelParams = [ "nordrand" ];
 
   # Use the systemd-boot EFI boot loader.
