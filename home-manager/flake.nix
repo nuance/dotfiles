@@ -17,6 +17,7 @@
     let
       overlays = [
         inputs.emacs-overlay.overlay
+        (import ./overlays/install-apps.nix)
       ];
     in
     {

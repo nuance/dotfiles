@@ -12,6 +12,8 @@ let ical-to-diary = (import ../../ical-to-diary/default.nix {
     pinentry_mac
     ical-to-diary
     ibm-plex
+    Alfred
+    Rectangle
   ];
 
   targets.darwin.keybindings = {
