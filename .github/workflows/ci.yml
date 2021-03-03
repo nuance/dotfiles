@@ -67,7 +67,8 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git commit -am "Update inputs"
+        git commit -am "Update home-manager inputs"
+        git pull --rebase origin/master
         git push
 
   build-macos-bootstrap-env:
@@ -195,5 +196,6 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout -- nixos/machines/dl/secrets
-        git commit -am "Update inputs"
+        git commit -am "Update nixos inputs"
+        git pull --rebase origin/master
         git push
