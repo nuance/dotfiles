@@ -188,6 +188,7 @@ jobs:
         nix-env --set-flag priority 1 cachix
         cd nixos
         echo '{...}: {}' > machines/dl/secrets/wifi.nix
+        echo '{...}: {}' > machines/dl/cuda.nix
         nix build .#nixosConfigurations.dl.config.system.build.toplevel
 
     - name: If scheduled, push commit with updated inputs
@@ -196,6 +197,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout -- nixos/machines/dl/secrets
+        git checkout -- nixos/machines/dl/cuda.nix
         git commit -am "Update nixos inputs"
         git pull --rebase origin/master
         git push
