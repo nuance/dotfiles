@@ -21,7 +21,6 @@ in
     ];
 
   home.file = {
-    "Applications/Emacs.app".source = "${emacs}/Applications/Emacs.app";
     ".emacs.d/init.org" = {
       source = ./emacs/init.org;
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\"";
