@@ -186,6 +186,7 @@ jobs:
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         cd nixos
+        echo '{...}: {}' > machines/dl/secrets/wifi.nix
         nix build .#nixosConfigurations.dl.config.system.build.toplevel
 
     - name: If scheduled, push commit with updated inputs
@@ -193,5 +194,6 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
+        git checkout -- nixos/machines/dl/secrets
         git commit -am "Update inputs"
         git push
