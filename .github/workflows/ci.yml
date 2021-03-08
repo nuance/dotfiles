@@ -72,7 +72,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git commit -am "Update home-manager inputs"
-        git pull --rebase refs/remotes/origin/master
+        git pull --rebase
         git push
 
   build-macos-bootstrap-env:
@@ -203,5 +203,5 @@ jobs:
         git checkout -- nixos/machines/dl/secrets
         git checkout -- nixos/machines/dl/cuda.nix
         git commit -am "Update nixos inputs"
-        git pull --rebase refs/remotes/origin/master
+        git pull --rebase
         git push
