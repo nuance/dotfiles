@@ -45,7 +45,7 @@ jobs:
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
     - name: If scheduled, update inputs
-      if: ${{ github.event_name == 'schedule' && success() }}
+      if: ${{ (github.event_name == 'worklow_dispatch' || github.event_name == 'schedule') && success() }}
       run: |
         cd home-manager
         nix flake update --recreate-lock-file
@@ -63,12 +63,12 @@ jobs:
         HOME_MANAGER_BACKUP_EXT=backup ./result/activate
 
     - name: If scheduled, push commit with updated inputs
-      if: ${{ github.event_name == 'schedule' && success() }}
+      if: ${{ (github.event_name == 'worklow_dispatch' || github.event_name == 'schedule') && success() }}
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
         git commit -am "Update home-manager inputs"
-        git pull --rebase origin/master
+        git pull --rebase refs/remotes/origin/master
         git push
 
   build-macos-bootstrap-env:
@@ -177,7 +177,7 @@ jobs:
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
     - name: If scheduled, update inputs
-      if: ${{ github.event_name == 'schedule' && success() }}
+      if: ${{ (github.event_name == 'worklow_dispatch' || github.event_name == 'schedule') && success() }}
       run: |
         cd nixos
         nix flake update --recreate-lock-file
@@ -192,12 +192,12 @@ jobs:
         nix build .#nixosConfigurations.dl.config.system.build.toplevel
 
     - name: If scheduled, push commit with updated inputs
-      if: ${{ github.event_name == 'schedule' && success() }}
+      if: ${{ (github.event_name == 'worklow_dispatch' || github.event_name == 'schedule') && success() }}
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout -- nixos/machines/dl/secrets
         git checkout -- nixos/machines/dl/cuda.nix
         git commit -am "Update nixos inputs"
-        git pull --rebase origin/master
+        git pull --rebase refs/remotes/origin/master
         git push
