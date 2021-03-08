@@ -973,7 +973,8 @@ between both flymake & flycheck errors.
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
     :bind (("s-p" . project-find-file)
-           ("s-P" . nuance/find-in-dotfiles)))
+           ("s-P" . nuance/find-in-dotfiles)
+           ("s-," . (lambda () (interactive) (find-file "~/dotfiles/home-manager/programs/emacs/init.org")))))
 #+end_src
 
 * Packages
