@@ -15,116 +15,18 @@
 
   outputs = { self, ... }@inputs:
     let
+      lib = inputs.nixpkgs.lib;
+      importDir = dir: attrs: lib.mapAttrs' (name: _: lib.nameValuePair (lib.removeSuffix ".nix" name) (import (dir + "/${name}") attrs))
+        (lib.filterAttrs (name: _: lib.hasSuffix ".nix" name)
+          (builtins.readDir dir));
       overlays = [
         inputs.emacs-overlay.overlay
         (import ./overlays/install-apps.nix)
       ];
     in
     {
-      homeConfigurations = {
-        m1-pro = inputs.home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, config, ... }:
-            {
-              nixpkgs.overlays = overlays;
-              imports = [
-                ./machines/m1-pro.nix
-              ];
-
-              programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${./rebuild.sh} m1-pro)";
-            };
-
-          system = "x86_64-darwin";
-
-          homeDirectory = "/Users/matt";
-          username = "matt";
-        };
-
-        macos-bootstrap = inputs.home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, config, ... }:
-            {
-              nixpkgs.overlays = overlays;
-              imports = [
-                ./machines/macos-bootstrap.nix
-              ];
-            };
-
-          system = "x86_64-darwin";
-
-          homeDirectory = "/Users/matt";
-          username = "matt";
-        };
-
-        github-macos-ci = inputs.home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, config, ... }:
-            {
-              nixpkgs.overlays = overlays;
-              imports = [
-                ./machines/github-macos-ci.nix
-              ];
-            };
-
-          system = "x86_64-darwin";
-
-          homeDirectory = "/Users/runner";
-          username = "runner";
-        };
-
-        github-linux-ci = inputs.home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, config, ... }:
-            {
-              nixpkgs.overlays = overlays;
-              imports = [
-                ./machines/github-linux-ci.nix
-              ];
-            };
-
-          system = "x86_64-linux";
-
-          homeDirectory = "/home/runner";
-          username = "runner";
-        };
-
-        air = inputs.home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, config, ... }:
-            {
-              nixpkgs.overlays = overlays;
-              imports = [
-                ./machines/air.nix
-              ];
-
-              programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${./rebuild.sh} air)";
-            };
-
-          system = "x86_64-darwin";
-
-          homeDirectory = "/Users/matt";
-          username = "matt";
-        };
-
-        dl = inputs.home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, config, ... }:
-            {
-              nixpkgs.overlays = overlays;
-              imports = [
-                ./machines/dl.nix
-              ];
-
-              programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${./rebuild.sh} dl)";
-            };
-
-          system = "x86_64-linux";
-
-          homeDirectory = "/home/matt";
-          username = "matt";
-        };
-
-      };
-
-      m1-pro = self.homeConfigurations.m1-pro.activationPackage;
-      macos-bootstrap = self.homeConfigurations.macos-bootstrap.activationPackage;
-      github-macos-ci = self.homeConfigurations.github-macos-ci.activationPackage;
-      github-linux-ci = self.homeConfigurations.github-linux-ci.activationPackage;
-      air = self.homeConfigurations.air.activationPackage;
-      dl = self.homeConfigurations.dl.activationPackage;
+      homeConfigurations = lib.mapAttrs
+        (_: value: inputs.home-manager.lib.homeManagerConfiguration value)
+        (importDir ./machines { inherit overlays; });
     };
 }
