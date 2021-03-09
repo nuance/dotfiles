@@ -448,13 +448,23 @@ Default to dark theme, but make it easy to switch.
 #+BEGIN_SRC emacs-lisp
   (defvar dark-mode t)
 
+  (defun update-theme ()
+    (progn
+      (dolist (i custom-enabled-themes) (disable-theme i))
+      (load-theme (if dark-mode dark-theme light-theme) t)
+      (adapt-theme-org-colors)
+      (doom-themes-org-config)
+      (doom-themes-visual-bell-config)))
+
+  (defun update-ui-appearance (name)
+    (setq dark-mode (string= name "dark"))
+    (update-theme))
+
   (defun toggle-theme ()
     (interactive)
     (progn
-      (disable-theme (if dark-mode dark-theme light-theme))
-      (load-theme (if dark-mode light-theme dark-theme) t)
       (setq dark-mode (not dark-mode))
-      (adapt-theme-org-colors)))
+      (update-theme)))
 #+END_SRC
 
 ** Fixed-width font
