@@ -15,7 +15,7 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Every Sunday at midnight UTC
   workflow_dispatch:
-    inputs: 
+    inputs:
       tags:
         description: 'Test scenario tags'
 
@@ -59,12 +59,14 @@ jobs:
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         cd home-manager
-        nix build .#github-macos-ci
+        nix build .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
+        nix build .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
     - name: Activate home-manager environment
       run: |
         cd home-manager
-        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
+        HOME_MANAGER_BACKUP_EXT=backup ./github-macos-ci/activate
+        HOME_MANAGER_BACKUP_EXT=backup ./macos-bootstrap/activate
 
     - name: If scheduled, push commit with updated inputs
       if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && success() }}
@@ -74,45 +76,6 @@ jobs:
         git commit -am "Update home-manager inputs"
         git pull --rebase
         git push
-
-  build-macos-bootstrap-env:
-    name: Build/cache macOS bootstrap env
-    runs-on: macos-latest
-
-    steps:
-
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
-
-    - name: Install Nix
-      uses: cachix/install-nix-action@v12
-      with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-
-    - name: Setup Cachix
-      uses: cachix/cachix-action@v8
-      with:
-        name: nuance
-        extraPullNames: nix-community
-        signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
-
-    - name: Build home-manager config
-      run: |
-        # Prevent conflict between Cachix installed by workflow and the one installed in the config
-        nix-env --set-flag priority 1 cachix
-        cd home-manager
-        nix build .#macos-bootstrap
-
-    - name: Activate home-manager environment
-      run: |
-        cd home-manager
-        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
 
   build-linux-env:
     name: Build/cache linux Nix env
@@ -146,7 +109,7 @@ jobs:
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         cd home-manager
-        nix build .#github-linux-ci
+        nix build .#homeConfigurations.github-linux-ci.activationPackage
 
     - name: Activate home-manager environment
       run: |
