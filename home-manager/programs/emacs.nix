@@ -18,6 +18,7 @@ in
       python37Packages.flake8
       emacs-all-the-icons-fonts
       ibm-plex
+      graphviz-nox
     ];
 
   home.file = {
