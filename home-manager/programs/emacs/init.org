@@ -429,7 +429,14 @@ I'd like to toggle between light & dark themes.
     :config
     (load-theme 'doom-sourcerer t)
     (doom-themes-org-config)
-    (doom-themes-visual-bell-config))
+    (doom-themes-visual-bell-config)
+
+    (defun sync-active-theme ()
+      (interactive)
+      (update-ui-appearance (car (split-string (with-temp-buffer
+                                                 (insert-file-contents "~/.theme")
+                                                 (buffer-string))))))
+    :hook (after-init . sync-active-theme))
 
   (defvar dark-theme 'doom-sourcerer)
 #+END_SRC
