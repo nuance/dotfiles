@@ -1,7 +1,4 @@
 { config, lib, pkgs, targets, ... }:
-let ical-to-diary = (import ../../ical-to-diary/default.nix {
-  inherit pkgs;
-}); in
 {
   imports = [
     ../programs/secretive.nix
@@ -10,7 +7,6 @@ let ical-to-diary = (import ../../ical-to-diary/default.nix {
 
   home.packages = with pkgs; [
     pinentry_mac
-    ical-to-diary
     ibm-plex
     Alfred
     Rectangle

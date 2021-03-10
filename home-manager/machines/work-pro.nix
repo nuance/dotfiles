@@ -16,6 +16,7 @@
         ../environments/macos.nix
         ../environments/terminal.nix
         ../programs/emacs-server.nix
+        ../environments/macos-launch-agents.nix
         ./secrets/work-pro.nix
       ];
 

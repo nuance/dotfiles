@@ -19,8 +19,8 @@ import (
 var (
 	calendarPath = flag.String("calendars", "Library/Calendars", "Path prefix for ical files")
 	diaryOutput  = flag.String("diary", ".emacs.d/diary", "Emacs diary path")
-	urlRegexes   = flag.String("regexes", "dotfiles/ical-to-diary/urls.txt", "file containing url extraction regexes, one per line")
-	extraRegexes = flag.String("extra", "dotfiles/ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
+	urlRegexes   = flag.String("regexes", ".ical-to-diary/urls.txt", "file containing url extraction regexes, one per line")
+	extraRegexes = flag.String("extra", ".ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
 	timezone = flag.String("timezone", "America/New_York", "time zone to load")
 )
 

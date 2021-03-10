@@ -436,8 +436,7 @@ I'd like to toggle between light & dark themes.
 
 *** Light: Gruvbox-light-hard
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
-    )
+  (use-package doom-themes)
 
   (defvar light-theme 'doom-acario-light)
 #+END_SRC
