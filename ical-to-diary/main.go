@@ -22,6 +22,8 @@ var (
 	urlRegexes   = flag.String("regexes", ".ical-to-diary/urls.txt", "file containing url extraction regexes, one per line")
 	extraRegexes = flag.String("extra", ".ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
 	timezone = flag.String("timezone", "America/New_York", "time zone to load")
+	dateRange = flag.Duration("daterange", 30 * 24 * time.Hour, "period to filter on")
+	debug = flag.Bool("debug", false, "write debug information to the console")
 )
 
 type entry struct {
@@ -88,6 +90,9 @@ func main() {
 		log.Fatalf("couldn't load local timezone: %s", err)
 	}
 
+	startCutoff := time.Now().In(loc).Add(- *dateRange)
+	endCutoff := time.Now().In(loc).Add(*dateRange)
+
 	var diary []entry
 	seen := map[string]bool{}
 
@@ -98,6 +103,10 @@ func main() {
 
 		if !strings.HasSuffix(path, "ics") {
 			return nil
+		}
+
+		if *debug {
+			log.Printf("Reading from %s", path)
 		}
 
 		f, err := os.Open(path)
@@ -111,7 +120,15 @@ func main() {
 		c.Parse()
 
 		for _, ev := range c.Events {
+			if *debug {
+				log.Println("Processing", ev)
+			}
+
 			if ev.Start == nil || ev.End == nil {
+				return nil
+			}
+
+			if ev.Start.In(loc).Before(startCutoff) || ev.End.In(loc).After(endCutoff) {
 				return nil
 			}
 
