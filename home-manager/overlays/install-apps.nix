@@ -64,4 +64,16 @@ self: super: {
     description = "Secretive";
     homepage = https://github.com/maxgoedjen/secretive;
   };
+
+  Itsycal = self.installApplication rec {
+    name = "Itsycal";
+    version = "0.12.6";
+    sourceRoot = "Itsycal.app";
+    src = super.fetchurl {
+      url = https://itsycal.s3.amazonaws.com/Itsycal-0.12.6.zip;
+      sha256 = "1dlzsfi9nwqmvvn54yn7yibzhnvj6jlyy7swp0kwqgc1cyfj37zz";
+    };
+    description = "Itsycal";
+    homepage = https://www.mowglii.com/itsycal/;
+  };
 }
