@@ -19,6 +19,7 @@ in
       emacs-all-the-icons-fonts
       ibm-plex
       graphviz-nox
+      fd
     ];
 
   home.file = {
