@@ -11,6 +11,7 @@
     Alfred
     Rectangle
     Secretive
+    Itsycal
   ];
 
   targets.darwin.keybindings = {
