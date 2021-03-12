@@ -398,7 +398,8 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
     (setq
      doom-modeline-minor-modes nil
      doom-modeline-buffer-encoding nil
-     doom-modeline-height 1)
+     doom-modeline-height 1
+     doom-modeline-env-version nil)
     (set-face-attribute 'mode-line nil :height 110)
     (set-face-attribute 'mode-line-inactive nil :height 110))
 #+END_SRC
@@ -565,7 +566,6 @@ Default to dark theme, but make it easy to switch.
     :hook
     (embark-collect-mode . embark-consult-preview-minor-mode))
 #+end_src
-
 
 ** Mini frame
 
@@ -1039,14 +1039,23 @@ between both flymake & flycheck errors.
     :config
     (global-diff-hl-mode)
     (diff-hl-margin-mode)
-    (diff-hl-flydiff-mode))
+    (diff-hl-flydiff-mode)
+
+    ;; re-arrange the order of checks to test file-remote-p earlier
+    (defun diff-hl-flydiff-update ()
+      (unless (or
+               (not diff-hl-mode)
+               (eq diff-hl-flydiff-modified-tick (buffer-chars-modified-tick))
+               (file-remote-p default-directory)
+               (not buffer-file-name)
+               (not (file-exists-p buffer-file-name)))
+        (diff-hl-update))))
 #+END_SRC
 
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-
-    :hook ('prog-mode . #'flycheck-mode))
+    :hook ('prog-mode . (lambda () (unless (file-remote-p default-directory) (flycheck-mode)))))
 #+END_SRC
 
 ** Snippets
@@ -1063,7 +1072,9 @@ between both flymake & flycheck errors.
     (setq-default
      eglot-workspace-configuration '((:gopls . ((:usePlaceholders t) (staticcheck . t)
                                                 (matcher . "CaseSensitive")))))
-    :hook ((python-mode c++-mode c-mode go-mode rust-mode) . 'eglot-ensure))
+    :hook
+    ((python-mode c++-mode c-mode go-mode rust-mode)
+     . (lambda () (unless (file-remote-p default-directory) (eglot-ensure)))))
 #+END_SRC
 
 ** Bug hunter
@@ -1268,8 +1279,13 @@ Don't mess up the window layout when editing code blocks.
     :config
     (setq
      tramp-auto-save-directory "/tmp"
-     tramp-ssh-controlmaster-options ""
-     tramp-inline-compress-start-size (* 64 1024)))
+     tramp-use-ssh-controlmaster-options nil
+     tramp-inline-compress-start-size (* 64 1024))
+    (setq vc-ignore-dir-regexp
+          (format "\\(%s\\)\\|\\(%s\\)"
+                  vc-ignore-dir-regexp
+                  tramp-file-name-regexp))
+    (add-to-list 'tramp-remote-path "/home/matt/bin"))
 #+END_SRC
 
 ** GC Magic Hack
@@ -1509,8 +1525,9 @@ Manually pull in packages used in private elisp so we can freeze / thaw versions
   (require 'project)
 
   (defun project-find-go-module (dir)
-    (when-let ((root (locate-dominating-file dir "go.mod")))
-      (cons 'go-module root)))
+    (unless (file-remote-p dir)
+      (when-let ((root (locate-dominating-file dir "go.mod")))
+        (cons 'go-module root))))
 
   (cl-defmethod project-root ((project (head go-module)))
     (cdr project))
