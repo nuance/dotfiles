@@ -985,6 +985,30 @@ between both flymake & flycheck errors.
 #+begin_src emacs-lisp
   (use-package project
     :config
+
+    (defun project-find-git-dir (dir)
+      (when-let ((root (locate-dominating-file dir ".git")))
+        (cons 'git-dir root)))
+
+    (cl-defmethod project-root ((project (head git-dir)))
+      (cdr project))
+
+    (add-hook 'project-find-functions #'project-find-git-dir)
+
+    (defun project-find-file-in (filename dirs project)
+      "Complete FILENAME in DIRS in PROJECT and visit the result."
+      (let* ((pr (project-root project))
+             (remote (file-remote-p pr)))
+        (find-file
+         (selectrum--read
+          (format "%s: " (file-name-base (directory-file-name (file-local-name pr))))
+          (lambda (q)
+            (mapcar (lambda (p) (concat remote p))
+                    (split-string
+                     (shell-command-to-string
+                      (format "fd --color=never --max-results=%d \"%s\" %s" selectrum-num-candidates-displayed q (file-local-name pr)))
+                     "\n" t)))))))
+
     (defun nuance/find-in-dotfiles ()
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
