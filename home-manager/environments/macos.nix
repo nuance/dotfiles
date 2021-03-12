@@ -1,7 +1,6 @@
 { config, lib, pkgs, targets, ... }:
 {
   imports = [
-    ../programs/secretive.nix
     ./terminal.nix
   ];
 
