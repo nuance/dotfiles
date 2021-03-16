@@ -4,10 +4,29 @@
     function setup-remote-host () {
       hostname=$1; shift;
 
+      scp -q ~/.config/git/config $hostname:.gitconfig
       scp -q ${./setup-remote-host/remote-profile} $hostname:.remote-profile
       scp -q ${./setup-remote-host/secrets/remote-editor} $hostname:.remote-editor
       scp -q ${./emacs/secrets/server} $hostname:.remote-emacs-server
-      ssh $hostname "echo -n 'Adding .remote-profile to .bash_profile... ' ; [[ \$(grep REMOTE-EDITOR ~/.bash_profile) ]] || echo \"# start REMOTE-EDITOR\n[[-f ~/.remote-profile]] && . ~/.remote-profile\n# end REMOTE-EDITOR\n\" >> .bash_profile && echo ok"
+      ssh $hostname "
+        [[ -e .bash_profile ]] || ( echo -n 'Creating .bash_profile'; cat > .bash_profile <<EOF && echo ok )
+# -*- mode: sh -*-
+
+# include .profile if it exists
+[[ -f ~/.profile ]] && . ~/.profile
+
+# include .bashrc if it exists
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+EOF
+"
+      ssh $hostname "
+        echo -n 'Adding .remote-profile to .bash_profile... ';
+        [[ \$(grep REMOTE-EDITOR ~/.bash_profile) ]] || ( cat >> .bash_profile <<EOF && echo ok )
+# start REMOTE-EDITOR
+[[ -f ~/.remote-profile ]] && . ~/.remote-profile
+# end REMOTE-EDITOR
+EOF
+"
     }
   '';
 }
