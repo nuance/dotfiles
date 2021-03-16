@@ -995,24 +995,53 @@ between both flymake & flycheck errors.
 
     (add-hook 'project-find-functions #'project-find-git-dir)
 
+    (defun nuance/project-name (project)
+      "Return a nice version of the project name"
+      (file-name-base (directory-file-name (file-local-name (project-root project)))))
+
     (defun project-find-file-in (filename dirs project)
       "Complete FILENAME in DIRS in PROJECT and visit the result."
       (let* ((pr (project-root project))
-             (remote (file-remote-p pr)))
-        (find-file
-         (selectrum--read
-          (format "%s: " (file-name-base (directory-file-name (file-local-name pr))))
-          (lambda (q)
-            (mapcar (lambda (p) (concat remote p))
-                    (split-string
-                     (shell-command-to-string
-                      (format "fd --color=never --max-results=%d \"%s\" %s" selectrum-num-candidates-displayed q (file-local-name pr)))
-                     "\n" t)))))))
+             (default-directory pr)
+             (selection (selectrum--read
+                         (format "find %s: " (nuance/project-name project))
+                         (lambda (q)
+                           (let ((pattern (s-join ".*" (split-string q " " t))))
+                             (split-string
+                              (shell-command-to-string
+                               (format "fd --color=never --max-results=%d --full-path \"%s\" %s" selectrum-num-candidates-displayed pattern (file-local-name pr)))
+                              "\n" t)))))
+             (path (concat (file-remote-p pr) selection)))
+        (find-file path)))
+
+    (defun nuance/project-git-grep ()
+      "Call git grep in current project"
+      (interactive)
+      (let* ((project (project-current))
+             (pr (project-root project))
+             (default-directory pr)
+             (selection (selectrum--read
+                         (format "grep %s: " (nuance/project-name project))
+                         (lambda (q)
+                           (let* ((tokens (split-string q " " t))
+                                  (queries (mapcar (lambda (p) (concat "-e " p)) tokens))
+                                  (pattern (s-join " --and " queries)))
+                             (split-string
+                              (shell-command-to-string
+                               (format "git grep --line-number --color=never -I %s | head -n %d" pattern selectrum-num-candidates-displayed))
+                              "\n" t)))
+                         :initial-input (thing-at-point 'symbol)))
+             (parts (split-string selection ":"))
+             (path (concat default-directory (car parts)))
+             (lineno (string-to-number (cadr parts))))
+        (find-file path)
+        (goto-line lineno)))
 
     (defun nuance/find-in-dotfiles ()
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
     :bind (("s-p" . project-find-file)
+           ("s-F" . nuance/project-git-grep)
            ("s-P" . nuance/find-in-dotfiles)
            ("s-," . (lambda () (interactive) (find-file "~/dotfiles/home-manager/programs/emacs/init.org")))))
 #+end_src
