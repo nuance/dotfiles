@@ -1118,7 +1118,7 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
 ** Org
 *** Installation
 #+BEGIN_SRC emacs-lisp
-  (use-package org
+  (use-package org-plus-contrib
     :config
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -1135,6 +1135,7 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
      ("C-c a" . (lambda () (interactive) (org-agenda nil "d")))
      :map org-mode-map
      ("C-c g" . org-mac-grab-link)
+     ("C-c G" . org-mac-chrome-insert-frontmost-url)
      ("s-b" . org-babel-execute-src-block)
      ("s-B" . org-babel-execute-buffer)
      ("s-." . org-toggle-narrow-to-subtree)))
