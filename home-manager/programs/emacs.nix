@@ -26,6 +26,7 @@ in
       ibm-plex
       graphviz-nox
       fd
+      ripgrep
     ];
 
   home.file = {
