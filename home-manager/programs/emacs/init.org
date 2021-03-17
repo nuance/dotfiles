@@ -537,7 +537,10 @@ Default to dark theme, but make it easy to switch.
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
     :init
-    (fset 'multi-occur #'consult-multi-occur))
+    (fset 'multi-occur #'consult-multi-occur)
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref))
 #+end_src
 
 *** Marginalia
@@ -1033,13 +1036,13 @@ between both flymake & flycheck errors.
                          :initial-input (thing-at-point 'symbol)))
              (parts (split-string selection ":"))
              (path (concat default-directory (car parts)))
-             (lineno (string-to-number (cadr parts)))
-             (charno (string-to-number (caddr parts))))
+             (line (string-to-number (cadr parts)))
+             (column (string-to-number (caddr parts))))
         (xref-push-marker-stack)
         (find-file path)
         (goto-char (point-min))
-        (forward-line (1- lineno))
-        (forward-char (1- charno))))
+        (forward-line (1- line))
+        (forward-char (1- column))))
 
     (defun nuance/find-in-dotfiles ()
       (interactive)
@@ -1048,6 +1051,86 @@ between both flymake & flycheck errors.
            ("s-F" . nuance/project-git-grep)
            ("s-P" . nuance/find-in-dotfiles)
            ("s-," . (lambda () (interactive) (find-file "~/dotfiles/home-manager/programs/emacs/init.org")))))
+#+end_src
+
+** Custom xref definition
+
+A simple xref backend using rg. Inspired by the gxref implementation.
+
+#+begin_src emacs-lisp
+  (require 'cl-lib)
+  (require 'xref)
+
+  (defun nuance/rg-xref--find-regexp (pattern)
+    (message (format "request for pattern '%s'" pattern))
+    (let* ((project (project-current))
+           (pr (project-root project))
+           (default-directory pr)
+           (matches (split-string
+                     (shell-command-to-string (format "rg --vimgrep --color=never '%s' | head -n %d" pattern (* 5 selectrum-num-candidates-displayed))) "\n" t)))
+      (mapcar
+       (lambda (m)
+         (let* ((parts (split-string m ":"))
+                (path (concat default-directory (car parts)))
+                (line (string-to-number (cadr parts)))
+                (column (string-to-number (caddr parts))))
+           (xref-make m (xref-make-file-location path line column)))) matches)))
+
+  (defun nuance/rg-xref-backend ()
+    "My ripgrep + project.el xref backend"
+    (when (project-current)
+      'nuance/rg-xref))
+
+  (cl-defmethod xref-backend-identifier-at-point ((_backend (eql nuance/rg-xref)))
+    "Return the relevant identifier at point.
+
+        The return value must be a string, or nil meaning no identifier
+        at point found.
+
+        If it's hard to determine the identifier precisely (e.g., because
+        it's a method call on unknown type), the implementation can
+        return a simple string (such as symbol at point) marked with a
+        special text property which e.g. `xref-backend-definitions' would
+        recognize and then delegate the work to an external process."
+    (let ((current-symbol (symbol-at-point)))
+      (when current-symbol
+        (symbol-name current-symbol))))
+
+  (defun nuance/rg-xref-definition-regexp (pattern)
+    (format "(((def|class)\\s*%s[(:])|(\\s+%s[^a-zA-Z0-9].*\\s+(in|=)))" pattern pattern))
+
+  (cl-defmethod xref-backend-definitions ((_backend (eql nuance/rg-xref)) ident)
+    "Find definitions of IDENTIFIER.
+
+            The result must be a list of xref objects.  If IDENTIFIER
+            contains sufficient information to determine a unique definition,
+            return only that definition. If there are multiple possible
+            definitions, return all of them.  If no definitions can be found,
+            return nil."
+    (nuance/rg-xref--find-regexp (nuance/rg-xref-definition-regexp ident)))
+
+  (cl-defmethod xref-backend-references ((_backend (eql nuance/rg-xref)) ident)
+    "Find references of IDENTIFIER.
+              The result must be a list of xref objects.  If no references can
+              be found, return nil."
+    (nuance/rg-xref--find-regexp (format "[^a-zA-Z0-9]%s[^a-zA-Z0-9]" ident)))
+
+  (cl-defmethod xref-backend-apropos ((_backend (eql nuance/rg-xref)) pattern)
+    "Find all symbols that match PATTERN string.
+          The second argument has the same meaning as in `apropos'.
+
+          If BACKEND is implemented in Lisp, it can use
+          `xref-apropos-regexp' to convert the pattern to regexp."
+    (nuance/rg-xref--find-regexp (nuance/rg-xref-definition-regexp pattern)))
+
+  (cl-defmethod
+    xref-backend-identifier-completion-table ((_backend (eql nuance/rg-xref)))
+    "Return the completion table for identifiers.
+
+                I haven't used this method directly before (it seems to only serve as an aid for prompts when there's no symbol at point), so this is a no-op for now."
+    '())
+
+  (add-to-list 'xref-backend-functions 'nuance/rg-xref-backend)
 #+end_src
 
 * Packages
