@@ -1062,18 +1062,18 @@ A simple xref backend using rg. Inspired by the gxref implementation.
   (require 'xref)
 
   (defun nuance/rg-xref--find-regexp (pattern)
-    (message (format "request for pattern '%s'" pattern))
+    ;; (message (format "request for pattern '%s'" pattern))
     (let* ((project (project-current))
            (pr (project-root project))
            (default-directory pr)
            (matches (split-string
-                     (shell-command-to-string (format "rg --vimgrep --color=never '%s' | head -n %d" pattern (* 5 selectrum-num-candidates-displayed))) "\n" t)))
+                     (shell-command-to-string (format "rg --vimgrep --color=never -e '%s' | head -n %d" pattern (* 5 selectrum-num-candidates-displayed))) "\n" t)))
       (mapcar
        (lambda (m)
          (let* ((parts (split-string m ":"))
                 (path (concat default-directory (car parts)))
                 (line (string-to-number (cadr parts)))
-                (column (string-to-number (caddr parts))))
+                (column (1- (string-to-number (caddr parts)))))
            (xref-make m (xref-make-file-location path line column)))) matches)))
 
   (defun nuance/rg-xref-backend ()
@@ -1097,7 +1097,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
         (symbol-name current-symbol))))
 
   (defun nuance/rg-xref-definition-regexp (pattern)
-    (format "(((def|class)\\s*%s[(:])|(\\s+%s[^a-zA-Z0-9].*\\s+(in|=)))" pattern pattern))
+    (format "(((def|class)\\s+%s[(:])|(\\b%s\\b.*\\s+(in|=)))" pattern pattern))
 
   (cl-defmethod xref-backend-definitions ((_backend (eql nuance/rg-xref)) ident)
     "Find definitions of IDENTIFIER.
