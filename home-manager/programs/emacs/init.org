@@ -365,6 +365,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (if (boundp 'scroll-bar-mode) (scroll-bar-mode 0))
   (if (boundp 'tool-bar-mode) (tool-bar-mode 0))
   (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
+  (set-frame-parameter nil 'internal-border-width 0)
 #+END_SRC
 
 ** Native fullscreen for emacs-mac
