@@ -1031,7 +1031,7 @@ between both flymake & flycheck errors.
                                   (pattern (s-join ".*" tokens)))
                              (split-string
                               (shell-command-to-string
-                               (format "rg --vimgrep --color=never '%s' | head -n %d" pattern selectrum-num-candidates-displayed))
+                               (format "rg --vimgrep --max-columns %d --color=never '%s' | head -n %d" (frame-width) pattern selectrum-num-candidates-displayed))
                               "\n" t)))
                          :initial-input (thing-at-point 'symbol)))
              (parts (split-string selection ":"))
@@ -1067,7 +1067,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
            (pr (project-root project))
            (default-directory pr)
            (matches (split-string
-                     (shell-command-to-string (format "rg --vimgrep --color=never -e '%s' | head -n %d" pattern (* 5 selectrum-num-candidates-displayed))) "\n" t)))
+                     (shell-command-to-string (format "rg --vimgrep --max-columns %d --color=never -e '%s' | head -n %d" (frame-width) pattern (* 5 selectrum-num-candidates-displayed))) "\n" t)))
       (mapcar
        (lambda (m)
          (let* ((parts (split-string m ":"))
