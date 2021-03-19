@@ -4,12 +4,6 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = pkgs.emacs;
-  });
-  emacsGcc = (pkgs.emacsWithPackagesFromUsePackage {
-    config = ./emacs/init.org;
-    alwaysEnsure = true;
-    alwaysTangle = true;
     package = pkgs.emacsGcc;
   });
 in
