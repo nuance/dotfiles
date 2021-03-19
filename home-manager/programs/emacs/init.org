@@ -422,15 +422,35 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 ** Light / Dark theme toggle
 I'd like to toggle between light & dark themes.
 
-*** Dark: doom-gruvbox
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
-
     :init
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
     :config
-    (load-theme 'doom-sourcerer t)
+    (defvar light-theme 'doom-acario-light)
+    (defvar dark-theme 'doom-sourcerer)
+
+    (defvar dark-mode t)
+
+    (defun update-theme ()
+      (progn
+        (dolist (i custom-enabled-themes) (disable-theme i))
+        (load-theme (if dark-mode dark-theme light-theme) t)
+        (adapt-theme-org-colors)
+        (doom-themes-org-config)
+        (doom-themes-visual-bell-config)))
+
+    (defun update-ui-appearance (name)
+      (setq dark-mode (string= name "dark"))
+      (update-theme))
+
+    (defun toggle-theme ()
+      (interactive)
+      (progn
+        (setq dark-mode (not dark-mode))
+        (update-theme)))
+
     (doom-themes-org-config)
     (doom-themes-visual-bell-config)
 
@@ -440,40 +460,6 @@ I'd like to toggle between light & dark themes.
                                                  (insert-file-contents "~/.theme")
                                                  (buffer-string))))))
     :hook (after-init . sync-active-theme))
-
-  (defvar dark-theme 'doom-sourcerer)
-#+END_SRC
-
-*** Light: Gruvbox-light-hard
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-themes)
-
-  (defvar light-theme 'doom-acario-light)
-#+END_SRC
-
-*** Toggle
-Default to dark theme, but make it easy to switch.
-
-#+BEGIN_SRC emacs-lisp
-  (defvar dark-mode t)
-
-  (defun update-theme ()
-    (progn
-      (dolist (i custom-enabled-themes) (disable-theme i))
-      (load-theme (if dark-mode dark-theme light-theme) t)
-      (adapt-theme-org-colors)
-      (doom-themes-org-config)
-      (doom-themes-visual-bell-config)))
-
-  (defun update-ui-appearance (name)
-    (setq dark-mode (string= name "dark"))
-    (update-theme))
-
-  (defun toggle-theme ()
-    (interactive)
-    (progn
-      (setq dark-mode (not dark-mode))
-      (update-theme)))
 #+END_SRC
 
 ** Fixed-width font
@@ -1321,6 +1307,9 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
      '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
      '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))
      '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
   (when window-system
     (progn
       (setq org-hide-emphasis-markers t)
@@ -1328,11 +1317,8 @@ Adapted from https://zzamboni.org/post/beautifying-org-mode-in-emacs/
                               '(("^ *\\([-]\\) "
                                  (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
       (use-package org-bullets
-
-        :config
-        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-      (add-hook 'emacs-startup-hook (lambda () (adapt-theme-org-colors))
-                )))
+        :hook (org-mode . (lambda () (org-bullets-mode 1)))))
+    (add-hook 'emacs-startup-hook (lambda () (adapt-theme-org-colors))))
 #+END_SRC
 
 *** Auto indent
