@@ -408,6 +408,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+begin_src emacs-lisp
   (use-package emacs
+    :ensure nil
     :custom ((display-line-numbers-width t))
     :hook ('prog-mode . #'display-line-numbers-mode))
 #+end_src
@@ -987,6 +988,7 @@ between both flymake & flycheck errors.
 
 #+begin_src emacs-lisp
   (use-package project
+    :ensure nil
     :config
 
     (defun project-find-git-dir (dir)
@@ -1388,11 +1390,11 @@ Don't mess up the window layout when editing code blocks.
            (("C-c n I" . org-roam-insert-immediate))))
 #+end_src
 
-
 ** Tramp
 
 #+BEGIN_SRC emacs-lisp
   (use-package tramp
+    :ensure nil
     :config
     (setq
      tramp-auto-save-directory "/tmp"
