@@ -25,8 +25,8 @@
     /* Meta shortcuts */
     "~f" = "moveWordForward:"; /* M-f          Move forward word */
     "~b" = "moveWordBackward:"; /* M-b          Move backward word */
-    "~<" = "moveToBeginningOfDocument:"; /* M-<          Move to beginning of document */
-    "~>" = "moveToEndOfDocument:"; /* M->          Move to end of document */
+    "~&lt;" = "moveToBeginningOfDocument:"; /* M-<          Move to beginning of document */
+    "~&gt;" = "moveToEndOfDocument:"; /* M->          Move to end of document */
     "~v" = "pageUp:"; /* M-v          Page Up */
     "~/" = "complete:"; /* M-/          Complete */
     "~c" =
