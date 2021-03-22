@@ -804,6 +804,13 @@ Incremental search thats multiple-cursors-friendly.
   (global-set-key (kbd "s-w") 'kill-this-buffer)
 #+END_SRC
 
+*** s-N is make-frame, s-W is delete-frame
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "s-N") 'make-frame)
+  (global-set-key (kbd "s-W") 'delete-frame)
+#+end_src
+
 ** CTags
 Auto-revert to new tags file
 #+BEGIN_SRC emacs-lisp
@@ -814,9 +821,10 @@ Auto-revert to new tags file
 From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
 
 #+BEGIN_SRC emacs-lisp
-  (use-package term
-    :ensure nil)
+  (use-package vterm)
 #+END_SRC
+
+
 
 *** Close terminal windows when shell exits
 
@@ -1204,7 +1212,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     :hook
     ((org-mode . variable-pitch-mode)
      (org-mode . visual-line-mode)
-     (org-mode . org-indent-mode))
+     (org-mode . org-indent-mode)
+     (org-mode . (lambda () (org-content 2))))
     :bind
     (("C-c c" . org-capture)
      ("C-c l" . org-store-link)
