@@ -821,87 +821,17 @@ Auto-revert to new tags file
 From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
 
 #+BEGIN_SRC emacs-lisp
-  (use-package vterm)
+  (use-package vterm
+    :hook (vterm-mode . goto-address-mode)
+    :config
+    (add-to-list 'vterm-eval-cmds '("alert" alert))
+    (defun nuance-toggle-term ()
+      (interactive)
+      (if (get-buffer "*vterm*")
+          (pop-to-buffer "*vterm*" 'display-buffer-reuse-window)
+        (vterm)))
+    :bind ( "s-T" . nuance-toggle-term))
 #+END_SRC
-
-
-
-*** Close terminal windows when shell exits
-
-#+BEGIN_SRC emacs-lisp
-  (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
-    (if (memq (process-status proc) '(signal exit))
-        (let ((buffer (process-buffer proc)))
-          ad-do-it
-          (kill-buffer buffer))
-      ad-do-it))
-  (ad-activate 'term-sentinel)
-#+END_SRC
-
-*** Default to /bin/bash
-
-#+BEGIN_SRC emacs-lisp
-  (setq shell-command-switch "-lc")
-  (defvar my-term-shell "/bin/bash")
-  (defadvice ansi-term (before force-bash)
-    (interactive (list my-term-shell)))
-  (ad-activate 'ansi-term)
-#+END_SRC
-
-*** Use utf8
-
-#+BEGIN_SRC emacs-lisp
-  (defun my-term-use-utf8 ()
-    (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
-  (add-hook 'term-exec-hook 'my-term-use-utf8)
-#+END_SRC
-
-*** Make URLs clickable
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'term-mode-hook (lambda () (goto-address-mode)))
-#+END_SRC
-
-*** Handle C-y
-
-#+BEGIN_SRC emacs-lisp
-  (defun my-term-paste (&optional string)
-    (interactive)
-    (process-send-string
-     (get-buffer-process (current-buffer))
-     (if string string (current-kill 0))))
-
-  (add-hook 'term-mode-hook (lambda () (define-key term-raw-map "\C-y" 'my-term-paste)))
-#+END_SRC
-
-*** Switch to terminal
-
-#+BEGIN_SRC emacs-lisp
-  (defun nuance-toggle-term ()
-    (interactive)
-    (if (get-buffer "*ansi-term*")
-        (pop-to-buffer "*ansi-term*" 'display-buffer-reuse-window)
-      (ansi-term "/bin/bash")))
-
-  (global-set-key (kbd "s-T") 'nuance-toggle-term)
-#+END_SRC
-
-*** Line / Char mode toggle
-
-#+begin_src emacs-lisp
-  (defun jnm/term-toggle-mode ()
-    "Toggles term between line mode and char mode"
-    (interactive)
-    (if (term-in-line-mode)
-        (term-char-mode)
-      (term-line-mode)))
-
-  (define-key term-mode-map (kbd "C-c C-j") 'jnm/term-toggle-mode)
-  (define-key term-mode-map (kbd "C-c C-k") 'jnm/term-toggle-mode)
-
-  (define-key term-raw-map (kbd "C-c C-j") 'jnm/term-toggle-mode)
-  (define-key term-raw-map (kbd "C-c C-k") 'jnm/term-toggle-mode)
-#+end_src
 
 ** EShell
 
@@ -1391,15 +1321,16 @@ Don't mess up the window layout when editing code blocks.
 #+BEGIN_SRC emacs-lisp
   (use-package tramp
     :ensure nil
+    :custom
+    ((tramp-auto-save-directory "/tmp")
+     (tramp-use-ssh-controlmaster-options nil)
+     (tramp-inline-compress-start-size (* 64 1024))
+     (tramp-default-method "ssh")
+     (vc-ignore-dir-regexp
+      (format "\\(%s\\)\\|\\(%s\\)"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp)))
     :config
-    (setq
-     tramp-auto-save-directory "/tmp"
-     tramp-use-ssh-controlmaster-options nil
-     tramp-inline-compress-start-size (* 64 1024))
-    (setq vc-ignore-dir-regexp
-          (format "\\(%s\\)\\|\\(%s\\)"
-                  vc-ignore-dir-regexp
-                  tramp-file-name-regexp))
     (add-to-list 'tramp-remote-path "/home/matt/bin"))
 #+END_SRC
 
@@ -1536,13 +1467,11 @@ The following is probably not necessary now that I switched to nix and dropped s
            ("C-h C" . 'helpful-command)))
 #+end_src
 
-** Misc packages
-
-Manually pull in packages used in private elisp so we can freeze / thaw versions.
+** Alert
 
 #+begin_src emacs-lisp
-  (use-package deferred  :defer 2)
-  (use-package button-lock  :defer 2)
+  (use-package alert
+    :custom ((alert-default-style 'osx-notifier)))
 #+end_src
 
 * File-type support
