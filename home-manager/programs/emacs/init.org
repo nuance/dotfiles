@@ -1538,7 +1538,8 @@ The following is probably not necessary now that I switched to nix and dropped s
           ("<S-right>". mu4e-headers-unfold-all)))
 
   (use-package mu4e-alert
-    :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\""))
+    :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\"")
+    :config (mu4e-alert-enable-mode-line-display))
 #+end_src
 
 ** diffusion
