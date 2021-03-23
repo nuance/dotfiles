@@ -28,6 +28,7 @@ in
       source = ./emacs/init.org;
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\"";
     };
+    ".emacs.d/site-lisp/mu4e-thread-folding.el".source = ./emacs/mu4e-thread-folding.el;
   };
 
   programs.bash.sessionVariables = {
