@@ -1541,6 +1541,24 @@ The following is probably not necessary now that I switched to nix and dropped s
     :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\""))
 #+end_src
 
+** diffusion
+
+#+begin_src emacs-lisp
+  (defun phabricator-url ()
+    "Capture a phabricator diffusion url for the current file or region."
+    (interactive)
+    (let*
+        ((url (cadr (split-string (shell-command-to-string (format "BROWSER=echo arc browse %s" (file-name-nondirectory (buffer-file-name)))) "\n" t)))
+         (begin (when (region-active-p) (line-number-at-pos (region-beginning))))
+         (end (when (region-active-p) (line-number-at-pos (1- (region-end)))))
+         (region-url (concat url (when (and begin end) (format "$%d-%d" begin end)))))
+      (unless (string-prefix-p "Usage Exception:" region-url)
+        (kill-new region-url)
+        (message region-url))))
+
+  (global-set-key (kbd "s-u") 'phabricator-url)
+#+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
