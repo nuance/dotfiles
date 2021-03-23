@@ -1474,6 +1474,73 @@ The following is probably not necessary now that I switched to nix and dropped s
     :custom ((alert-default-style 'osx-notifier)))
 #+end_src
 
+** mu4e
+
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :load-path "~/.nix-profile/share/emacs/site-lisp/mu4e"
+    :commands (mu4e)
+    :ensure nil
+    :config
+    (fset 'my-move-to-trash "mTrash")
+    :bind
+    (:map mu4e-headers-mode-map ("d" . my-move-to-trash)
+          :map mu4e-view-mode-map ("d" . my-move-to-trash))
+    :custom
+    ((mu4e-headers-skip-duplicates  t)
+     (mu4e-view-show-images t)
+     (mu4e-view-show-addresses t)
+     (mu4e-compose-format-flowed nil)
+     (mu4e-date-format "%y/%m/%d")
+     (mu4e-headers-date-format "%Y/%m/%d")
+     (mu4e-change-filenames-when-moving t)
+     (mu4e-attachments-dir "~/Downloads")
+     ;; top-level Maildir
+     (mu4e-maildir       "~/Maildir/gmail")
+     ;; note that these folders below must start with /
+     ;; the paths are relative to maildir root
+     (mu4e-refile-folder "/[Gmail]/Archive")
+     (mu4e-sent-folder   "/[Gmail]/Sent")
+     (mu4e-drafts-folder "/[Gmail]/Drafts")
+     (mu4e-trash-folder  "/[Gmail]/Trash")
+
+     ;; this setting allows to re-sync and re-index mail
+     ;; by pressing U
+     (mu4e-get-mail-command  "mbsync -a")
+     (mu4e-update-interval 60)))
+
+  (setq sendmail-program "/Users/matt/.nix-profile/bin/msmtp"
+        send-mail-function 'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function 'message-send-mail-with-sendmail)
+
+  (use-package mu4e-thread-folding
+    :load-path "~/.emacs.d/site-lisp/"
+    :config
+    (add-to-list 'mu4e-header-info-custom
+                 '(:empty . (:name "Empty"
+                                   :shortname ""
+                                   :function (lambda (msg) "  "))))
+    :custom
+    ((mu4e-headers-fields '((:empty         .    2)
+                            (:human-date    .   12)
+                            (:flags         .    6)
+                            (:mailing-list  .   10)
+                            (:from          .   22)
+                            (:subject       .   nil))))
+    :bind
+    (:map mu4e-headers-mode-map
+          ("<tab>"    . mu4e-headers-toggle-at-point)
+          ("<left>"   . mu4e-headers-fold-at-point)
+          ("<S-left>" . mu4e-headers-fold-all)
+          ("<right>"  . mu4e-headers-unfold-at-point)
+          ("<S-right>". mu4e-headers-unfold-all)))
+
+  (use-package mu4e-alert
+    :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\""))
+#+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
