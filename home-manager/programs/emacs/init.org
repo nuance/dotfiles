@@ -681,7 +681,7 @@ Incremental search thats multiple-cursors-friendly.
 
 #+BEGIN_SRC emacs-lisp
   (use-package phi-search
-
+    :custom ((phi-search-case-sensitive 'guess))
     :bind (([remap isearch-forward] . phi-search)
            ([remap isearch-backward] . phi-search-backward)))
 
