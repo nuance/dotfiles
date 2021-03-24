@@ -942,7 +942,7 @@ between both flymake & flycheck errors.
                            (let ((pattern (s-join ".*" (split-string q " " t))))
                              (split-string
                               (shell-command-to-string
-                               (format "fd --color=never --max-results=%d --full-path \"%s\" %s" selectrum-num-candidates-displayed pattern (file-local-name pr)))
+                               (format "fd --color=never --max-results=%d --full-path \"%s\" %s" (* 5 selectrum-num-candidates-displayed) pattern (file-local-name pr)))
                               "\n" t)))))
              (path (concat (file-remote-p pr) selection)))
         (xref-push-marker-stack)
@@ -961,7 +961,7 @@ between both flymake & flycheck errors.
                                   (pattern (s-join ".*" tokens)))
                              (split-string
                               (shell-command-to-string
-                               (format "rg --vimgrep --max-columns %d --color=never '%s' | head -n %d" (frame-width) pattern selectrum-num-candidates-displayed))
+                               (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 selectrum-num-candidates-displayed)))
                               "\n" t)))
                          :initial-input (thing-at-point 'symbol)))
              (parts (split-string selection ":"))
