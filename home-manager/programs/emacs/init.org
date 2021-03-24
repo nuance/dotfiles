@@ -1505,6 +1505,7 @@ The following is probably not necessary now that I switched to nix and dropped s
      (mu4e-update-interval 60)))
 
   (use-package mu4e-thread-folding
+    :ensure nil
     :load-path "~/.emacs.d/site-lisp/"
     :after mu4e
     :config
@@ -1526,6 +1527,33 @@ The following is probably not necessary now that I switched to nix and dropped s
   (use-package mu4e-alert
     :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\"")
     :config (mu4e-alert-enable-mode-line-display))
+#+end_src
+
+** org-mu4e
+
+#+begin_src emacs-lisp
+  (use-package org-mime)
+
+  (use-package org-mu4e
+    :ensure nil
+    :custom ((org-mu4e-link-query-in-headers-mode nil)
+             (org-capture-templates
+              '(("t" "todo" entry (file+headline "~/org/todo.org" "Tasks")
+                 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))))
+    :config
+    (defun mu4e-compose-org-mail ()
+      (interactive)
+      (mu4e-compose-new)
+      (org-mu4e-compose-org-mode))
+
+    (defun htmlize-and-send ()
+      "When in an org-mu4e-compose-org-mode message, htmlize and send it."
+      (interactive)
+      (when (member 'org~mu4e-mime-switch-headers-or-body post-command-hook)
+        (org-mime-htmlize)
+        (message-send-and-exit)))
+    :hook (org-ctrl-c-ctrl-c . (lambda () (htmlize-and-send)))
+    :bind (("C-x m" . mu4e-compose-org-mail)))
 #+end_src
 
 ** msmtp
