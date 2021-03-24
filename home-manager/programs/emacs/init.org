@@ -1063,6 +1063,20 @@ A simple xref backend using rg. Inspired by the gxref implementation.
   (add-to-list 'xref-backend-functions 'nuance/rg-xref-backend)
 #+end_src
 
+** Open links
+
+#+begin_src emacs-lisp
+  (use-package goto-addr
+    :hook ((compilation-mode . goto-address-mode)
+           (prog-mode . goto-address-prog-mode)
+           (eshell-mode . goto-address-mode)
+           (shell-mode . goto-address-mode))
+    :bind (:map goto-address-highlight-keymap
+                ("C-c C-o" . goto-address-at-point))
+    :commands (goto-address-prog-mode
+               goto-address-mode))
+#+end_src
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
