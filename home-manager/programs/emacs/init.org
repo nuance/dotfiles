@@ -1481,6 +1481,7 @@ The following is probably not necessary now that I switched to nix and dropped s
                  '( :name  "Inbox"
                     :query "maildir:\"/gmail/Inbox\""
                     :key   ?i))
+    (add-to-list 'mu4e-view-actions '("view in browser" . mu4e-action-view-in-browser))
     :bind
     (("s-m" . 'mu4e)
      :map mu4e-headers-mode-map ("d" . my-move-to-trash)
@@ -1489,6 +1490,8 @@ The following is probably not necessary now that I switched to nix and dropped s
     ((mu4e-headers-skip-duplicates  t)
      (mu4e-view-show-images t)
      (mu4e-view-show-addresses t)
+     (mu4e-sent-messages-behavior 'delete)
+     (mu4e-html2text-command "pandoc -f html -t plain")
      (mu4e-compose-format-flowed nil)
      (mu4e-date-format "%y/%m/%d")
      (mu4e-headers-date-format "%Y/%m/%d")
