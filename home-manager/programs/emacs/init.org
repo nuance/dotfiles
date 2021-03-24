@@ -1479,10 +1479,13 @@ The following is probably not necessary now that I switched to nix and dropped s
 #+begin_src emacs-lisp
   (use-package mu4e
     :load-path "~/.nix-profile/share/emacs/site-lisp/mu4e"
-    :commands (mu4e)
     :ensure nil
     :config
     (fset 'my-move-to-trash "mTrash")
+    (add-to-list 'mu4e-header-info-custom
+                 '(:empty . (:name "Empty"
+                                   :shortname ""
+                                   :function (lambda (msg) "  "))))
     :bind
     (:map mu4e-headers-mode-map ("d" . my-move-to-trash)
           :map mu4e-view-mode-map ("d" . my-move-to-trash))
@@ -1509,19 +1512,10 @@ The following is probably not necessary now that I switched to nix and dropped s
      (mu4e-get-mail-command  "mbsync -a")
      (mu4e-update-interval 60)))
 
-  (setq sendmail-program "/Users/matt/.nix-profile/bin/msmtp"
-        send-mail-function 'smtpmail-send-it
-        message-sendmail-f-is-evil t
-        message-sendmail-extra-arguments '("--read-envelope-from")
-        message-send-mail-function 'message-send-mail-with-sendmail)
-
   (use-package mu4e-thread-folding
     :load-path "~/.emacs.d/site-lisp/"
+    :after mu4e
     :config
-    (add-to-list 'mu4e-header-info-custom
-                 '(:empty . (:name "Empty"
-                                   :shortname ""
-                                   :function (lambda (msg) "  "))))
     :custom
     ((mu4e-headers-fields '((:empty         .    2)
                             (:human-date    .   12)
@@ -1540,6 +1534,16 @@ The following is probably not necessary now that I switched to nix and dropped s
   (use-package mu4e-alert
     :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\"")
     :config (mu4e-alert-enable-mode-line-display))
+#+end_src
+
+** msmtp
+
+#+begin_src emacs-lisp
+  (setq sendmail-program "/Users/matt/.nix-profile/bin/msmtp"
+        send-mail-function 'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function 'message-send-mail-with-sendmail)
 #+end_src
 
 ** diffusion
