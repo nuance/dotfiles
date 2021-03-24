@@ -798,17 +798,21 @@ Incremental search thats multiple-cursors-friendly.
   (global-auto-revert-mode t)
 #+END_SRC
 
-*** s-w is kill-buffer
+*** window management
+
+Mimic standard macos window / tab management commands
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-w") 'kill-this-buffer)
-#+END_SRC
-
-*** s-N is make-frame, s-W is delete-frame
-
-#+begin_src emacs-lisp
+  (global-set-key (kbd "s-w") 'delete-window)
+  (global-set-key (kbd "s-W") (lambda () (interactive) (kill-this-buffer) (delete-window)))
   (global-set-key (kbd "s-N") 'make-frame)
   (global-set-key (kbd "s-W") 'delete-frame)
+#+end_src
+
+*** scratch
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "s-n") (lambda () (interactive) (switch-to-buffer "*scratch*")))
 #+end_src
 
 ** CTags
