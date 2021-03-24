@@ -1477,6 +1477,10 @@ The following is probably not necessary now that I switched to nix and dropped s
                  '(:empty . (:name "Empty"
                                    :shortname ""
                                    :function (lambda (msg) "  "))))
+    (add-to-list 'mu4e-bookmarks
+                 '( :name  "Inbox"
+                    :query "maildir:\"/gmail/Inbox\""
+                    :key   ?i))
     :bind
     (("s-m" . 'mu4e)
      :map mu4e-headers-mode-map ("d" . my-move-to-trash)
@@ -1502,7 +1506,8 @@ The following is probably not necessary now that I switched to nix and dropped s
      ;; this setting allows to re-sync and re-index mail
      ;; by pressing U
      (mu4e-get-mail-command  "mbsync -a")
-     (mu4e-update-interval 60)))
+     (mu4e-update-interval 60)
+     (mail-user-agent 'mu4e-user-agent)))
 
   (use-package mu4e-thread-folding
     :ensure nil
@@ -1532,28 +1537,24 @@ The following is probably not necessary now that I switched to nix and dropped s
 ** org-mu4e
 
 #+begin_src emacs-lisp
-  (use-package org-mime)
-
   (use-package org-mu4e
     :ensure nil
     :custom ((org-mu4e-link-query-in-headers-mode nil)
              (org-capture-templates
               '(("t" "todo" entry (file+headline "~/org/todo.org" "Tasks")
-                 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))))
-    :config
-    (defun mu4e-compose-org-mail ()
-      (interactive)
-      (mu4e-compose-new)
-      (org-mu4e-compose-org-mode))
+                 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))))
+#+end_src
 
-    (defun htmlize-and-send ()
-      "When in an org-mu4e-compose-org-mode message, htmlize and send it."
-      (interactive)
-      (when (member 'org~mu4e-mime-switch-headers-or-body post-command-hook)
-        (org-mime-htmlize)
-        (message-send-and-exit)))
-    :hook (org-ctrl-c-ctrl-c . (lambda () (htmlize-and-send)))
-    :bind (("C-x m" . mu4e-compose-org-mail)))
+** org-msg
+
+#+begin_src emacs-lisp
+  (use-package org-msg
+    :config (org-msg-mode)
+    :custom
+    ((org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t")
+     (org-msg-startup "hidestars indent inlineimages")
+     (org-msg-default-alternatives '(text html))
+     (org-msg-convert-citation t)))
 #+end_src
 
 ** msmtp
