@@ -771,8 +771,7 @@ Incremental search thats multiple-cursors-friendly.
            ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
            ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
            ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
-           ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))
-           ("s-0" . (lambda () (interactive) (switch-to-nth-window 9)))))
+           ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))))
 #+END_SRC
 
 *** Go to line
@@ -1207,6 +1206,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
            ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
            ((org-agenda-compact-blocks t)
             (org-agenda-include-inactive-timestamps 't)))))
+
+  (global-set-key (kbd "s-0") (lambda () (interactive) (org-agenda nil "d")))
 #+END_SRC
 
 *** Prettier org mode
