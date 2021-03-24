@@ -1491,8 +1491,9 @@ The following is probably not necessary now that I switched to nix and dropped s
                                    :shortname ""
                                    :function (lambda (msg) "  "))))
     :bind
-    (:map mu4e-headers-mode-map ("d" . my-move-to-trash)
-          :map mu4e-view-mode-map ("d" . my-move-to-trash))
+    (("s-m" . 'mu4e)
+     :map mu4e-headers-mode-map ("d" . my-move-to-trash)
+     :map mu4e-view-mode-map ("d" . my-move-to-trash))
     :custom
     ((mu4e-headers-skip-duplicates  t)
      (mu4e-view-show-images t)
@@ -1780,6 +1781,7 @@ Launch a server if not currently running, default to showing org daily agenda
 
 #+BEGIN_SRC emacs-lisp
   (server-start)
+  (mu4e t)
   (org-agenda nil "d")
   (delete-other-windows)
 #+END_SRC
