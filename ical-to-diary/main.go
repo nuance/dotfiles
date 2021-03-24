@@ -132,13 +132,13 @@ func main() {
 				return nil
 			}
 
-			var people []string
+			people := map[string]bool{}
 			if ev.Organizer != nil {
-				people = append(people, ev.Organizer.Cn)
+				people[ev.Organizer.Cn] = true
 			}
 
 			for _, at := range ev.Attendees {
-				people = append(people, at.Cn)
+				people[at.Cn] = true
 			}
 
 			url, err := bestURL(ev.Description)
