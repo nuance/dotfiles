@@ -1585,7 +1585,7 @@ The following is probably not necessary now that I switched to nix and dropped s
         (kill-new region-url)
         (message region-url))))
 
-  (global-set-key (kbd "s-u") 'phabricator-url)
+  (define-key prog-mode-map (kbd "s-u") 'phabricator-url)
 #+end_src
 
 * File-type support
