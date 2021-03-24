@@ -1287,37 +1287,23 @@ Don't mess up the window layout when editing code blocks.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
-
-    :init
-    (defun skip-version (orig-fun &rest args) nil)
-    (advice-add 'version< :around #'skip-version)
-    :config
-    (advice-remove 'version< #'skip-version)
     :custom ((org-journal-dir "~/org/journal")
              (org-journal-file-type 'monthly)
              (org-journal-date-format "%A <%Y-%m-%d>")
              (org-journal-file-format "journal.%Y%m%d.org")
              (org-journal-carryover-items ""))
-    :bind (("C-c j" . org-journal-new-entry)))
+    :bind
+    (("s-j" . org-journal-open-current-journal-file)
+     ("C-x j" . org-journal-new-entry)))
 #+END_SRC
 
-*** Roam
+*** Org file navigation
+
+I used to use org roam, but, practically, i just want jumping to a heading and grep'ing org files
 
 #+begin_src emacs-lisp
-  (use-package org-roam
-    :hook
-    (after-init . org-roam-mode)
-    :custom
-    (org-roam-directory "~/org")
-    :bind (("s-i" . org-roam-find-file)
-           ("s-I" . org-roam)
-           :map org-roam-mode-map
-           (("C-c n l" . org-roam)
-            ("C-c n f" . org-roam-find-file)
-            ("C-c n g" . org-roam-graph))
-           :map org-mode-map
-           (("C-c n i" . org-roam-insert))
-           (("C-c n I" . org-roam-insert-immediate))))
+  (global-set-key (kbd "s-i") (lambda () (interactive) (let ((default-directory "~/org")) (project-find-file))))
+  (global-set-key (kbd "s-I") (lambda () (interactive) (let ((default-directory "~/org")) (nuance/project-git-grep))))
 #+end_src
 
 ** Tramp
