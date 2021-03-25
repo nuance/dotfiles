@@ -975,7 +975,9 @@ between both flymake & flycheck errors.
         (find-file path)
         (goto-char (point-min))
         (forward-line (1- line))
-        (forward-char (1- column))))
+        (forward-char (1- column))
+        ;; expose the current node if we're in a (potentially folded) outline / org file
+        (when (derived-mode-p 'outline-mode) (outline-show-entry))))
 
     (defun nuance/find-in-dotfiles ()
       (interactive)
