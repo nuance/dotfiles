@@ -34,14 +34,6 @@ if [[ $- == *i* ]]; then
     fi
   }
 
-  vterm_prompt_end(){
-    vterm_printf "51;A$(hostname):$(pwd)"
-  }
-
-  if [[ ! $TERM == "dumb" ]]; then
-    PS1=$PS1'\[$(vterm_prompt_end)\]'
-  fi
-
   vterm_cmd() {
     local vterm_elisp
     vterm_elisp=""
@@ -52,7 +44,19 @@ if [[ $- == *i* ]]; then
     vterm_printf "51;E$vterm_elisp"
   }
 
+  vterm_prompt_end(){
+    vterm_cmd update-pwd "/ssh:$(hostname):$(pwd)/"
+  }
+
+  if [[ ! $TERM == "dumb" ]]; then
+    PS1=$PS1'\[$(vterm_prompt_end)\]'
+  fi
+
+  message() {
+    vterm_cmd message "$(hostname): %s" "$*"
+  }
+
   notify() {
-    vterm_cmd message "%s" "$*"
+    vterm_cmd alert "$(hostname): $*"
   }
 fi
