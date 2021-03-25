@@ -119,6 +119,9 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 
   (setq comp-deferred-compilation nil)
   (setq package-enable-at-startup t)
+
+  (setq use-package-verbose t)
+  (setq use-package-compute-statistics t)
 #+end_src
 
 * Performance optimizations
@@ -802,7 +805,7 @@ Incremental search thats multiple-cursors-friendly.
 Mimic standard macos window / tab management commands
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-w") 'delete-window)
+  (global-set-key (kbd "s-w") 'kill-this-buffer)
   (global-set-key (kbd "s-W") (lambda () (interactive) (kill-this-buffer) (delete-window)))
   (global-set-key (kbd "s-N") 'make-frame)
   (global-set-key (kbd "s-W") 'delete-frame)
@@ -1067,6 +1070,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
 #+begin_src emacs-lisp
   (use-package goto-addr
+    :ensure nil
     :hook ((compilation-mode . goto-address-mode)
            (prog-mode . goto-address-prog-mode)
            (eshell-mode . goto-address-mode)
@@ -1075,6 +1079,34 @@ A simple xref backend using rg. Inspired by the gxref implementation.
                 ("C-c C-o" . goto-address-at-point))
     :commands (goto-address-prog-mode
                goto-address-mode))
+#+end_src
+
+** Track window configuration changes.
+
+#+begin_src emacs-lisp
+  (winner-mode 1)
+#+end_src
+
+** Operate on lines if no region set
+
+#+begin_src emacs-lisp
+  (use-package whole-line-or-region
+    :config (whole-line-or-region-global-mode))
+#+end_src
+
+** Eval / replace last expression with prefix arg
+
+#+begin_src emacs-lisp
+  ;; From Lars Tveito: https://github.com/larstvei/dot-emacs/blob/master/init.org
+  (defadvice eval-last-sexp (around replace-sexp (arg) activate)
+    "Evaluate and replace when called with a prefix argument."
+    (if arg
+        (let ((pos (point)))
+          ad-do-it
+          (goto-char pos)
+          (backward-kill-sexp)
+          (forward-sexp))
+      ad-do-it))
 #+end_src
 
 * Packages
@@ -1464,11 +1496,10 @@ The following is probably not necessary now that I switched to nix and dropped s
   (use-package helpful
 
     :bind (
-           ([remap describe-funtion] . 'helpful-callable)
+           ([remap describe-function] . 'helpful-callable)
            ([remap describe-variable] . 'helpful-variable)
            ([remap describe-key] . 'helpful-key)
            ("C-c C-d" . 'helpful-at-point)
-           ("C-h F" . 'helpful-function)
            ("C-h C" . 'helpful-command)))
 #+end_src
 
