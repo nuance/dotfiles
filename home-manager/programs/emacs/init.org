@@ -1192,17 +1192,19 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     ((org-mode . variable-pitch-mode)
      (org-mode . visual-line-mode)
      (org-mode . org-indent-mode)
-     (org-mode . (lambda () (org-content 2))))
+     (org-mode . (lambda () (org-content 2)))
+     (org-mode . (lambda ()
+                   (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)
+                   (define-key org-mode-map (kbd "C-c G") 'org-mac-chrome-insert-frontmost-url)
+                   (define-key org-mode-map (kbd "s-b") 'org-babel-execute-src-block)
+                   (define-key org-mode-map (kbd "s-B") 'org-babel-execute-buffer)
+                   (define-key org-mode-map (kbd "s-o") 'consult-outline)
+                   (define-key org-mode-map (kbd "s-.") 'org-toggle-narrow-to-subtree)
+                   )))
     :bind
     (("C-c c" . org-capture)
      ("C-c l" . org-store-link)
-     ("C-c a" . (lambda () (interactive) (org-agenda nil "d")))
-     :map org-mode-map
-     ("C-c g" . org-mac-grab-link)
-     ("C-c G" . org-mac-chrome-insert-frontmost-url)
-     ("s-b" . org-babel-execute-src-block)
-     ("s-B" . org-babel-execute-buffer)
-     ("s-." . org-toggle-narrow-to-subtree)))
+     ("C-c a" . (lambda () (interactive) (org-agenda nil "d")))))
 #+END_SRC
 
 *** Agenda
