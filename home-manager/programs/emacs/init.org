@@ -1550,10 +1550,10 @@ The following is probably not necessary now that I switched to nix and dropped s
      (mu4e-maildir       "~/Maildir/gmail")
      ;; note that these folders below must start with /
      ;; the paths are relative to maildir root
-     (mu4e-refile-folder "/[Gmail]/Archive")
-     (mu4e-sent-folder   "/[Gmail]/Sent")
-     (mu4e-drafts-folder "/[Gmail]/Drafts")
-     (mu4e-trash-folder  "/[Gmail]/Trash")
+     (mu4e-refile-folder "/gmail/[Gmail]/Archive")
+     (mu4e-sent-folder   "/gmail/[Gmail]/Sent Mail")
+     (mu4e-drafts-folder "/gmail/[Gmail]/Drafts")
+     (mu4e-trash-folder  "/gmail/[Gmail]/Trash")
 
      ;; this setting allows to re-sync and re-index mail
      ;; by pressing U
