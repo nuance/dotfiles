@@ -951,7 +951,7 @@ between both flymake & flycheck errors.
         (xref-push-marker-stack)
         (find-file path)))
 
-    (defun nuance/project-git-grep ()
+    (defun nuance/project-grep ()
       "Call git grep in current project"
       (interactive)
       (let* ((project (project-current))
@@ -983,7 +983,7 @@ between both flymake & flycheck errors.
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
     :bind (("s-p" . project-find-file)
-           ("s-F" . nuance/project-git-grep)
+           ("s-F" . nuance/project-grep)
            ("s-P" . nuance/find-in-dotfiles)
            ("s-," . (lambda () (interactive) (find-file "~/dotfiles/home-manager/programs/emacs/init.org")))))
 #+end_src
@@ -1354,7 +1354,7 @@ I used to use org roam, but, practically, i just want jumping to a heading and g
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "s-i") (lambda () (interactive) (let ((default-directory "~/org")) (project-find-file))))
-  (global-set-key (kbd "s-I") (lambda () (interactive) (let ((default-directory "~/org")) (nuance/project-git-grep))))
+  (global-set-key (kbd "s-I") (lambda () (interactive) (let ((default-directory "~/org")) (nuance/project-grep))))
 #+end_src
 
 ** Tramp
