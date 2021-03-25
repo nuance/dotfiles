@@ -49,7 +49,6 @@
       ];
     "~d" = "deleteWordForward:"; /* M-d          Delete word forward */
     "^~h" = "deleteWordBackward:"; /* M-C-h        Delete word backward */
-    "~\U007F" = "deleteWordBackward:"; /* M-Bksp       Delete word backward */
     "~t" = "transposeWords:"; /* M-t          Transpose words */
     "~\@" =
       [
