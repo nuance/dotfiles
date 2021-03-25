@@ -1537,6 +1537,8 @@ The following is probably not necessary now that I switched to nix and dropped s
     ((mu4e-headers-skip-duplicates  t)
      (mu4e-view-show-images t)
      (mu4e-view-show-addresses t)
+     (mu4e-use-fancy-chars t)
+     (mu4e-completing-read-function 'completing-read)
      (mu4e-sent-messages-behavior 'delete)
      (mu4e-html2text-command "pandoc -f html -t plain")
      (mu4e-compose-format-flowed nil)
