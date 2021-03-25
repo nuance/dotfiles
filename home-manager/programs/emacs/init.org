@@ -823,14 +823,14 @@ Auto-revert to new tags file
   (setq tags-revert-without-query 1)
 #+END_SRC
 
-** Ansi-term improvements
-From https://echosa.github.io/blog/2012/06/06/improving-ansi-term/
+** vterm
 
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
     :hook (vterm-mode . goto-address-mode)
     :config
     (add-to-list 'vterm-eval-cmds '("alert" alert))
+    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
     (defun nuance-toggle-term ()
       (interactive)
       (if (get-buffer "*vterm*")
