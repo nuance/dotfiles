@@ -828,6 +828,7 @@ Auto-revert to new tags file
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
     :hook (vterm-mode . goto-address-mode)
+    :custom (vterm-max-scrollback 20000)
     :config
     (add-to-list 'vterm-eval-cmds '("alert" alert))
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
