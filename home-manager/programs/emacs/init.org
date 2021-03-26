@@ -1533,9 +1533,10 @@ The following is probably not necessary now that I switched to nix and dropped s
     (add-to-list 'mu4e-view-actions '("browser" . mu4e-action-view-in-browser))
     (add-to-list 'mu4e-view-actions '("a webkit" . mu4e-action-view-with-xwidget) t)
     :bind
-    (("s-m" . 'mu4e)
+    (("s-m" . 'mu4e~headers-jump-to-maildir)
      :map mu4e-headers-mode-map ("d" . my-move-to-trash)
-     :map mu4e-view-mode-map ("d" . my-move-to-trash))
+     :map mu4e-view-mode-map ("d" . my-move-to-trash)
+     :map mu4e-view-mode-map ("w" . (lambda () (interactive) (mu4e-action-view-with-xwidget (mu4e-message-at-point)))))
     :custom
     ((mu4e-headers-skip-duplicates  t)
      (mu4e-view-show-images t)
