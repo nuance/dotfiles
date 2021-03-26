@@ -4,7 +4,12 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = pkgs.emacsGcc;
+    package = (pkgs.emacsGcc.override {
+      withXwidgets = true;
+    }).overrideAttrs
+      (oa: {
+        buildInputs = oa.buildInputs ++ [ pkgs.darwin.apple_sdk.frameworks.WebKit ];
+      });
   });
 in
 {
