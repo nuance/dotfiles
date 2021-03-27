@@ -14,6 +14,7 @@
         ../config.nix
         ../environments/macos.nix
         ../environments/terminal.nix
+        ../environments/macos-launch-agents.nix
         ../programs/emacs-server.nix
         ../programs/secretive.nix
       ];

@@ -29,6 +29,8 @@ in
       pandoc
     ];
 
+  programs.mu.enable = true;
+
   home.file = {
     ".emacs.d/init.org" = {
       source = ./emacs/init.org;
