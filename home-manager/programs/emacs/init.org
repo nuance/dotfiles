@@ -998,7 +998,6 @@ A simple xref backend using rg. Inspired by the gxref implementation.
   (require 'xref)
 
   (defun nuance/rg-xref--find-regexp (pattern)
-    ;; (message (format "request for pattern '%s'" pattern))
     (let* ((project (project-current))
            (pr (project-root project))
            (default-directory pr)
@@ -1074,14 +1073,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 #+begin_src emacs-lisp
   (use-package goto-addr
     :ensure nil
-    :hook ((compilation-mode . goto-address-mode)
-           (prog-mode . goto-address-prog-mode)
-           (eshell-mode . goto-address-mode)
-           (shell-mode . goto-address-mode))
-    :bind (:map goto-address-highlight-keymap
-                ("C-c C-o" . goto-address-at-point))
-    :commands (goto-address-prog-mode
-               goto-address-mode))
+    :bind ("C-c C-o" . goto-address-at-point))
 #+end_src
 
 ** Track window configuration changes.
@@ -1110,6 +1102,12 @@ A simple xref backend using rg. Inspired by the gxref implementation.
           (backward-kill-sexp)
           (forward-sexp))
       ad-do-it))
+#+end_src
+
+** Reload files
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "s-r") 'revert-buffer)
 #+end_src
 
 * Packages
@@ -1367,11 +1365,7 @@ I used to use org roam, but, practically, i just want jumping to a heading and g
     ((tramp-auto-save-directory "/tmp")
      (tramp-use-ssh-controlmaster-options nil)
      (tramp-inline-compress-start-size (* 64 1024))
-     (tramp-default-method "ssh")
-     (vc-ignore-dir-regexp
-      (format "\\(%s\\)\\|\\(%s\\)"
-              vc-ignore-dir-regexp
-              tramp-file-name-regexp)))
+     (tramp-default-method "ssh"))
     :config
     (add-to-list 'tramp-remote-path "/home/matt/bin"))
 #+END_SRC
