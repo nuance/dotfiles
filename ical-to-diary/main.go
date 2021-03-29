@@ -21,9 +21,9 @@ var (
 	diaryOutput  = flag.String("diary", ".emacs.d/diary", "Emacs diary path")
 	urlRegexes   = flag.String("regexes", ".ical-to-diary/urls.txt", "file containing url extraction regexes, one per line")
 	extraRegexes = flag.String("extra", ".ical-to-diary/extra.txt", "file containing extra extraction regexes, one per line")
-	timezone = flag.String("timezone", "America/New_York", "time zone to load")
-	dateRange = flag.Duration("daterange", 30 * 24 * time.Hour, "period to filter on")
-	debug = flag.Bool("debug", false, "write debug information to the console")
+	timezone     = flag.String("timezone", "America/New_York", "time zone to load")
+	dateRange    = flag.Duration("daterange", 30*24*time.Hour, "period to filter on")
+	debug        = flag.Bool("debug", false, "write debug information to the console")
 )
 
 type entry struct {
@@ -32,6 +32,7 @@ type entry struct {
 	URL         *url.URL
 	People      int
 	Extra       string
+	Details     string
 }
 
 func (e *entry) String() string {
@@ -44,7 +45,7 @@ func (e *entry) String() string {
 	return b.String()
 }
 
-var diaryTemplate = template.Must(template.New("diary").Parse(`{{.Start.Format "01/02/06 15:04"}}-{{.End.Format "15:04"}} {{.Description}}{{if lt .People 2}}{{else if eq .People 2}} (1:1){{else if lt .People 10}} ({{.People}} attendees){{else if gt .People 9}} (10+ attendees){{end}}{{if .URL}} - {{.URL}}{{end}}{{ if .Extra }} - {{.Extra}}{{ end }}
+var diaryTemplate = template.Must(template.New("diary").Parse(`{{.Start.Format "01/02/06 15:04"}}-{{.End.Format "15:04"}} {{.Description}}{{if lt .People 2}}{{else if eq .People 2}} (1:1){{else if lt .People 10}} ({{.People}} attendees){{else if gt .People 9}} (10+ attendees){{end}}{{if .URL}} - {{.URL}}{{end}}{{ if .Extra }} - {{.Extra}}{{ end }}{{.Details}}
 `))
 
 var (
@@ -90,7 +91,7 @@ func main() {
 		log.Fatalf("couldn't load local timezone: %s", err)
 	}
 
-	startCutoff := time.Now().In(loc).Add(- *dateRange)
+	startCutoff := time.Now().In(loc).Add(-*dateRange)
 	endCutoff := time.Now().In(loc).Add(*dateRange)
 
 	var diary []entry
@@ -153,6 +154,19 @@ func main() {
 				}
 			}
 
+			splitDetails := strings.ReplaceAll(strings.ReplaceAll(ev.Description, "\\n", "\n"), "<br>", "\n")
+
+			details := []string{"\n"}
+			for _, s := range strings.Split(splitDetails, "\n") {
+				details = append(details, "# "+s)
+			}
+
+			if len(details) > 1 {
+				details = append(details, "\n")
+			} else {
+				details = nil
+			}
+
 			ent := entry{
 				Start:       ev.Start.In(loc),
 				End:         ev.End.In(loc),
@@ -160,6 +174,7 @@ func main() {
 				People:      len(people),
 				URL:         url,
 				Extra:       strings.Join(extraParts, " / "),
+				Details:     strings.Join(details, "\n"),
 			}
 
 			if seen[ev.Uid+ev.RecurrenceID] || seen[ent.String()] {
