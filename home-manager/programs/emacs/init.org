@@ -368,7 +368,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (if (boundp 'scroll-bar-mode) (scroll-bar-mode 0))
   (if (boundp 'tool-bar-mode) (tool-bar-mode 0))
   (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
-  (set-frame-parameter nil 'internal-border-width 0)
+  (modify-all-frames-parameters '((internal-border-width . 0)))
 #+END_SRC
 
 ** Native fullscreen for emacs-mac
@@ -755,12 +755,11 @@ Incremental search thats multiple-cursors-friendly.
 
 *** Window navigation
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-j") 'previous-multiframe-window)
+  (global-set-key (kbd "M-j") 'previous-window)
   (global-set-key (kbd "M-k") 'other-window)
 
   (use-package ace-window
-
-    :demand t
+    :custom (aw-scope 'frame)
     :config
     (defun switch-to-nth-window (window-num)
       (let ((window (nth window-num (aw-window-list))))
@@ -831,13 +830,9 @@ Auto-revert to new tags file
     :custom (vterm-max-scrollback 20000)
     :config
     (add-to-list 'vterm-eval-cmds '("alert" alert))
-    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
-    (defun nuance-toggle-term ()
-      (interactive)
-      (if (get-buffer "*vterm*")
-          (pop-to-buffer "*vterm*" 'display-buffer-reuse-window)
-        (vterm)))
-    :bind ( "s-T" . nuance-toggle-term))
+    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
+
+  (use-package vterm-toggle :bind ("s-T" . vterm-toggle))
 #+END_SRC
 
 ** EShell
