@@ -1183,7 +1183,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
      'org-babel-load-languages
      '((python . t)
        (emacs-lisp . t)))
-    (setq org-babel-python-command "python3")
+    (setq org-babel-python-command "python3"
+          org-capture-templates '())
     :hook
     ((org-mode . variable-pitch-mode)
      (org-mode . visual-line-mode)
@@ -1337,6 +1338,18 @@ Don't mess up the window layout when editing code blocks.
              (org-journal-date-format "%A <%Y-%m-%d>")
              (org-journal-file-format "journal.%Y%m%d.org")
              (org-journal-carryover-items ""))
+    :config
+    (defun org-journal-find-location ()
+      ;; Open today's journal, but specify a non-nil prefix argument in order to
+      ;; inhibit inserting the heading; org-capture will insert the heading.
+      (org-journal-new-entry t)
+      (unless (eq org-journal-file-type 'daily)
+        (org-narrow-to-subtree))
+      (goto-char (point-max)))
+
+    (add-to-list 'org-capture-templates '("j" "Journal entry" plain (function org-journal-find-location)
+                                          "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+                                          :jump-to-captured t :immediate-finish t))
     :bind
     (("s-j" . org-journal-open-current-journal-file)
      ("C-x j" . org-journal-new-entry)))
@@ -1585,10 +1598,12 @@ The following is probably not necessary now that I switched to nix and dropped s
 #+begin_src emacs-lisp
   (use-package org-mu4e
     :ensure nil
-    :custom ((org-mu4e-link-query-in-headers-mode nil)
-             (org-capture-templates
-              '(("t" "todo" entry (file+headline "~/org/todo.org" "Tasks")
-                 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))))
+    :after org-plus-contrib
+    :custom ((org-mu4e-link-query-in-headers-mode nil))
+    :config
+    (add-to-list 'org-capture-templates
+                 '("t" "todo" entry (file+headline "~/org/todo.org" "Tasks")
+                   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
 #+end_src
 
 ** org-msg
