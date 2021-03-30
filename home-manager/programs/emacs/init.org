@@ -324,6 +324,61 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (ffap-bindings)
 #+end_src
 
+** URL Handler
+
+Handle emacs:// urls, forwarded by a script application:
+
+#+begin_src applescript :tangle no
+on open location URL
+	do shell script "/Users/matt/.nix-profile/bin/emacsclient --eval '(nuance/handle-url \"" & URL & "\")"
+end open location
+#+end_src
+
+With the following added to the Info.plist:
+
+#+begin_src xml :tangle no
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>EmacsClientCapture</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>org-protocol</string>
+      </array>
+    </dict>
+  </array>
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq nuance/url-handlers nil)
+  (defun nuance/handle-url (url)
+    (let* ((parsed (url-generic-parse-url url))
+           (method (url-host parsed))
+           (args (url-parse-query-string (cdr (url-path-and-query parsed))))
+           (handler (alist-get method nuance/url-handlers nil nil 'equal)))
+      (if handler
+          (funcall handler args)
+        (warn "unknown url handler: %s" method))))
+#+end_src
+
+Add a handler like:
+
+#+begin_src emacs-lisp
+  (add-to-list
+   'nuance/url-handlers
+   (cons "find-file"
+         (lambda (parts)
+           (find-file (car (alist-get "path" parts nil nil 'equal))))))
+#+end_src
+
+And test it like:
+
+#+begin_src bash :tangle no
+  open "emacs://find-file?path=/tmp/foobar"
+#+end_src
+
+
 * UI Appearance
 ** UI Interaction
 
@@ -1881,61 +1936,6 @@ exists after the init-file has loaded.
     (when (file-exists-p server-file)
       (load-file server-file)))
 #+END_SRC
-
-** URL Handler
-
-Handle emacs:// urls, forwarded by a script application:
-
-#+begin_src applescript :tangle no
-on open location URL
-	do shell script "/Users/matt/.nix-profile/bin/emacsclient --eval '(nuance/handle-url \"" & URL & "\")"
-end open location
-#+end_src
-
-With the following added to the Info.plist:
-
-#+begin_src xml :tangle no
-  <key>CFBundleURLTypes</key>
-  <array>
-    <dict>
-      <key>CFBundleURLName</key>
-      <string>EmacsClientCapture</string>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>org-protocol</string>
-      </array>
-    </dict>
-  </array>
-#+end_src
-
-#+begin_src emacs-lisp
-  (setq nuance/url-handlers nil)
-  (defun nuance/handle-url (url)
-    (let* ((parsed (url-generic-parse-url url))
-           (method (url-host parsed))
-           (args (url-parse-query-string (cdr (url-path-and-query parsed))))
-           (handler (alist-get method nuance/url-handlers nil nil 'equal)))
-      (if handler
-          (funcall handler args)
-        (warn "unknown url handler: %s" method))))
-#+end_src
-
-Add a handler like:
-
-#+begin_src emacs-lisp
-  (add-to-list
-   'nuance/url-handlers
-   (cons "find-file"
-         (lambda (parts)
-           (find-file (car (alist-get "path" parts nil nil 'equal))))))
-#+end_src
-
-And test it like:
-
-#+begin_src bash :tangle no
-  open "emacs://find-file?path=/tmp/foobar"
-#+end_src
-
 
 * Startup
 Launch a server if not currently running, default to showing org daily agenda
