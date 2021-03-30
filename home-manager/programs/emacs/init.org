@@ -1593,6 +1593,28 @@ The following is probably not necessary now that I switched to nix and dropped s
     :config (mu4e-alert-enable-mode-line-display))
 #+end_src
 
+I sometimes want access to my mu4e-generated contacts list, so provide a helper for that.
+
+#+begin_src emacs-lisp
+  (defun nuance/mu4e-contacts ()
+    "Construct a list of cons-cells of (name . email)"
+    (mapcar
+     (lambda (c)
+       (let* ((split (mapcar #'string-trim (split-string c "<")))
+              (name (car split))
+              (email (string-trim-right (if (= (length split) 1) (car split) (cadr split)) "[>]")))
+         (cons name email)))
+     (hash-table-keys mu4e~contacts)))
+
+  (defun nuance/mu4e-usernames (domain)
+    "Construct a list of usernames"
+    (mapcar
+     (lambda (email) (car (split-string email "@")))
+     (seq-filter
+      (lambda (email) (string-suffix-p domain email))
+      (mapcar #'cdr (nuance/mu4e-contacts)))))
+#+end_src
+
 ** org-mu4e
 
 #+begin_src emacs-lisp
