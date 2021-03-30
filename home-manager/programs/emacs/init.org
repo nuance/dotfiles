@@ -1835,6 +1835,13 @@ The following is probably not necessary now that I switched to nix and dropped s
   (add-hook 'before-save-hook 'nixpkgs-fmt--save-hook)
 #+END_SRC
 
+** Docker
+
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode
+    :mode "Dockerfile")
+#+end_src
+
 * Private.el
 I'd like to keep a few settings private, so we load a =private.el= if it
 exists after the init-file has loaded.
