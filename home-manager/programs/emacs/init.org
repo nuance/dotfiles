@@ -466,7 +466,7 @@ And test it like:
 ** Line numbering
 
 #+begin_src emacs-lisp
-  (use-package emacs
+  (use-package prog-mode
     :ensure nil
     :custom ((display-line-numbers-width t))
     :hook ('prog-mode . #'display-line-numbers-mode))
@@ -579,6 +579,8 @@ I'd like to toggle between light & dark themes.
   (use-package consult
 
     :bind (("s-o" . consult-line)
+           ("s-O" . consult-project-imenu)
+           ("s-l" . consult-goto-line)
            ("s-t" . consult-buffer)
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
@@ -829,11 +831,6 @@ Incremental search thats multiple-cursors-friendly.
            ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
            ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
            ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))))
-#+END_SRC
-
-*** Go to line
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-l") 'goto-line)
 #+END_SRC
 
 *** Upcase / downcase
@@ -1232,7 +1229,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
 ** Org
 *** Installation
 #+BEGIN_SRC emacs-lisp
-  (use-package org-plus-contrib
+  (use-package org
+    :ensure org-plus-contrib
     :config
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -1388,6 +1386,7 @@ Don't mess up the window layout when editing code blocks.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
+    :after org
     :custom ((org-journal-dir "~/org/journal")
              (org-journal-file-type 'monthly)
              (org-journal-date-format "%A <%Y-%m-%d>")
@@ -1675,7 +1674,7 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 #+begin_src emacs-lisp
   (use-package org-mu4e
     :ensure nil
-    :after org-plus-contrib
+    :after org
     :custom ((org-mu4e-link-query-in-headers-mode nil))
     :config
     (add-to-list 'org-capture-templates
