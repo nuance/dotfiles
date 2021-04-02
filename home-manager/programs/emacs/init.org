@@ -686,6 +686,13 @@ I'd like to toggle between light & dark themes.
         (alist-get kind-num company-box-icons--lsp-alist))))
 #+END_SRC
 
+** Default to regexp search
+#+BEGIN_SRC emacs-lisp
+  (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
+  (global-set-key [remap isearch-backward] 'isearch-backward-regexp)
+  (global-set-key [remap query-replace] 'query-replace-regexp)
+#+END_SRC
+
 ** Sublime-like
 *** Don't create random files
 
@@ -753,14 +760,12 @@ Incremental search thats multiple-cursors-friendly.
 
 #+BEGIN_SRC emacs-lisp
   (use-package phi-search
-    :custom ((phi-search-case-sensitive 'guess))
-    :bind (([remap isearch-forward] . phi-search)
-           ([remap isearch-backward] . phi-search-backward)))
+    :custom ((phi-search-case-sensitive 'guess)))
 
   (use-package phi-replace
     :ensure nil
     :after phi-search
-    :bind (([remap query-replace] . phi-replace-query)))
+    :bind (:map mc/keymap ([remap query-replace] . phi-replace-query)))
 #+END_SRC
 
 *** Comment line / region
