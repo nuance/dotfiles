@@ -378,6 +378,18 @@ And test it like:
   open "emacs://find-file?path=/tmp/foobar"
 #+end_src
 
+** Restore state between relaunches
+
+#+begin_src emacs-lisp
+  (desktop-save-mode 1)
+  (setq savehist-save-minibuffer-history nil
+        desktop-files-not-to-save "^$")
+  (savehist-mode 1)
+  (add-to-list 'savehist-additional-variables 'kill-ring)
+  (add-to-list 'savehist-additional-variables 'compile-command)
+  (add-to-list 'savehist-additional-variables 'search-ring)
+  (add-to-list 'savehist-additional-variables 'regexp-search-ring)
+#+end_src
 
 * UI Appearance
 ** UI Interaction
@@ -1937,13 +1949,11 @@ exists after the init-file has loaded.
 #+END_SRC
 
 * Startup
-Launch a server if not currently running, default to showing org daily agenda
+Launch a server if not currently running and kick off mu4e.
 
 #+BEGIN_SRC emacs-lisp
   (server-start)
   (mu4e t)
-  (org-agenda nil "d")
-  (delete-other-windows)
 #+END_SRC
 
 * License
