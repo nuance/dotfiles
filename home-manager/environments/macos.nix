@@ -2,6 +2,7 @@
 {
   imports = [
     ./terminal.nix
+    ../programs/xbar.nix
   ];
 
   home.packages = with pkgs; [
