@@ -1178,14 +1178,14 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-
     :commands magit-status magit-blame-addition
     :custom ((magit-branch-arguments nil)
              ;; don't put "origin-" in front of new branch names by default
              (magit-default-tracking-name-function 'magit-default-tracking-name-branch-only)
              (magit-push-always-verify nil)
              ;; Get rid of the previous advice to go into fullscreen
-             (magit-restore-window-configuration t))
+             (magit-restore-window-configuration t)
+             (git-commit-fill-column 120))
     :bind ("C-x g" . magit-status))
 #+END_SRC
 
