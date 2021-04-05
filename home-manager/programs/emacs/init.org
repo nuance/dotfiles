@@ -1657,6 +1657,11 @@ The following is probably not necessary now that I switched to nix and dropped s
   (use-package mu4e-alert
     :custom (mu4e-alert-interesting-mail-query "flag:unread AND maildir:\"/gmail/Inbox\"")
     :config (mu4e-alert-enable-mode-line-display))
+
+  (add-to-list
+   'nuance/url-handlers
+   (cons "mu" (lambda (parts) (mu4e~headers-jump-to-maildir "/gmail/Inbox"))))
+
 #+end_src
 
 I sometimes want access to my mu4e-generated contacts list, so provide a helper for that.
