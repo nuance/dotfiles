@@ -792,7 +792,7 @@ Incremental search thats multiple-cursors-friendly.
   (use-package compile
     :ensure nil
     :bind (("s-B" . compile) ("s-b" . recompile))
-    :custom ((compilation-scroll-output 'first-error)))
+    :custom ((compilation-scroll-output t)))
 
   (use-package ansi-color
     :ensure nil
