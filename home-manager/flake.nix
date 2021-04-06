@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
   inputs.emacs-overlay = {
-    url = "github:nix-community/emacs-overlay";
+    url = "github:nuance/emacs-overlay-test-action";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
