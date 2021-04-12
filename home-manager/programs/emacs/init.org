@@ -1734,6 +1734,14 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
   (define-key prog-mode-map (kbd "s-u") 'phabricator-url)
 #+end_src
 
+** dash
+
+#+begin_src emacs-lisp
+  (use-package dash-at-point
+    :bind (("C-c d" . dash-at-point))
+    :config (add-to-list 'dash-at-point-mode-alist '(python-mode . "")))
+#+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
