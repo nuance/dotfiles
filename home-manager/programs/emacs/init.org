@@ -389,6 +389,7 @@ And test it like:
   (add-to-list 'savehist-additional-variables 'compile-command)
   (add-to-list 'savehist-additional-variables 'search-ring)
   (add-to-list 'savehist-additional-variables 'regexp-search-ring)
+  (add-to-list 'savehist-additional-variables 'xref--marker-ring)
 #+end_src
 
 * UI Appearance
@@ -1292,7 +1293,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
    org-startup-folded t
    org-agenda-log-mode-items '(closed clock state)
    org-src-tab-acts-natively t
-   org-agenda-include-diary t)
+   org-agenda-include-diary t
+   org-agenda-window-setup 'current-window)
   ;; custom todo tags
   (setq org-todo-keywords
         '((sequence "PLAN()" "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
@@ -1302,16 +1304,11 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
             (tags ":today:" ((org-agenda-overriding-header "Today"))))
            ((org-agenda-compact-blocks t)))
           ("d" "Daily agenda and all TODOs"
-           ((agenda "" ((org-agenda-span 'day)
-                        (org-agenda-repeating-timestamp-show-all t)))
-            (todo "PLAN"
-                  ((org-agenda-overriding-header "Snippets:")))
-            (tags ":refile:"
-                  ((org-agenda-overriding-header "Refile:")))
-            (todo "IN-PROGRESS"
-                  ((org-agenda-overriding-header "Finish:")))
-            (todo "TODO"
-                  ((org-agenda-overriding-header "Next:"))))
+           ((agenda "" ((org-agenda-span 'day) (org-agenda-repeating-timestamp-show-all t)))
+            (todo "PLAN" ((org-agenda-overriding-header "Snippets:")))
+            (tags ":refile:" ((org-agenda-overriding-header "Refile:")))
+            (todo "IN-PROGRESS" ((org-agenda-overriding-header "Finish:")))
+            (todo "TODO" ((org-agenda-overriding-header "Next:"))))
            ((org-agenda-compact-blocks t)))
           ("p" "3-week context plan"
            ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
@@ -1321,8 +1318,6 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
            ((agenda "" ((org-agenda-start-day "-6m") (org-agenda-span 183))))
            ((org-agenda-compact-blocks t)
             (org-agenda-include-inactive-timestamps 't)))))
-
-  (global-set-key (kbd "s-0") (lambda () (interactive) (org-agenda nil "d")))
 #+END_SRC
 
 *** Prettier org mode
