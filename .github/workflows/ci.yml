@@ -15,9 +15,6 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Every Sunday at midnight UTC
   workflow_dispatch:
-    inputs:
-      tags:
-        description: 'Test scenario tags'
 
 jobs:
 
