@@ -32,6 +32,7 @@
     extraConfig = {
       merge = {
         summary = true;
+        conflictstyle = "diff3";
       };
 
       color = {
