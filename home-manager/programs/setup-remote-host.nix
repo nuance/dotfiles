@@ -12,6 +12,7 @@
       scp -q ${./setup-remote-host/emacsclient.x86_64-linux} $hostname:bin/emacsclient
       scp -q ${./setup-remote-host/fd.x86_64-linux} $hostname:bin/fd
       scp -q ${./setup-remote-host/rg.x86_64-linux} $hostname:bin/rg
+      scp -q ${./setup-remote-host/ropen-client.x86_64-linux} $hostname:bin/ropen-client
 
       ssh $hostname "
         [[ -e .bash_profile ]] || ( echo -n 'Creating .bash_profile... '; cat > .bash_profile <<EOF && echo ok )
