@@ -1197,6 +1197,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
 #+begin_src emacs-lisp
   (use-package smerge-mode
+    :ensure nil
     :requires hydra
     :config
     (defhydra unpackaged/smerge-hydra
