@@ -16,6 +16,11 @@ in
             host.address = "localhost";
             host.port = 40000;
           }
+          {
+            bind.port = 40001;
+            host.address = "localhost";
+            host.port = 40001;
+          }
         ];
       };
     };
