@@ -5,11 +5,15 @@ export PYTHONIOENCODING="UTF-8"
 
 # Commands that should be applied only for interactive shells.
 if [[ $- == *i* ]]; then
+  HISTCONTROL=ignoredups:ignorespace
   HISTFILESIZE=100000
+  HISTIGNORE=ls:cd:exit
   HISTSIZE=10000
 
   shopt -s histappend
   shopt -s checkwinsize
+
+  PROMPT_COMMAND="history -a"
 
   alias e='~/.remote-editor'
   if [[ $(command -v emacsclient) ]]; then
