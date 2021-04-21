@@ -10,6 +10,8 @@
     };
 
     initExtra = ''
+      PROMPT_COMMAND="history -a"
+
       # PS1 is "(directory) ([non-zero exit code])? $"
       export PS1="\[\033[0;32m\]\W\[\033[00m\] \$(exit_code="\$?"; ((\$exit_code)) && echo \"\[\033[0;31m\][\$exit_code] $\" || echo \"\[\033[0;32m\]$\" )\[\033[00m\] "
     '';
@@ -20,6 +22,9 @@
       onepage = "head -n $(echo \"$(tput lines) - 2\" | bc)";
       e = "$EDITOR";
     };
+
+    historyControl = [ "ignoredups" "ignorespace" ];
+    historyIgnore = [ "ls" "cd" "exit" ];
 
     shellOptions = [
       # Append to history file rather than replacing it.
