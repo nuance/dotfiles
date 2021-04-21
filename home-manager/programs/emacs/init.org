@@ -1017,12 +1017,12 @@ between both flymake & flycheck errors.
         (xref-push-marker-stack)
         (find-file path)))
 
-    (defun nuance/project-grep ()
-      "Call git grep in current project"
-      (interactive)
+    (defun nuance/project-grep (&optional arg)
+      "Call git grep in current project. With a universal argument, search one level up."
+      (interactive "P")
       (let* ((project (project-current))
              (pr (project-root project))
-             (default-directory pr)
+             (default-directory (if arg (file-name-directory (directory-file-name pr)) pr))
              (selection (selectrum--read
                          (format "grep %s: " (nuance/project-name project))
                          (lambda (q)
@@ -1048,6 +1048,7 @@ between both flymake & flycheck errors.
     (defun nuance/find-in-dotfiles ()
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
+
     :bind (("s-p" . project-find-file)
            ("s-F" . nuance/project-grep)
            ("s-P" . nuance/find-in-dotfiles)
@@ -1193,8 +1194,8 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 ** smerge-hydra
 
 #+begin_src emacs-lisp
-  (use-package hydra)
   (use-package smerge-mode
+    :requires hydra
     :config
     (defhydra unpackaged/smerge-hydra
       (:color pink :hint nil :post (smerge-auto-leave))
