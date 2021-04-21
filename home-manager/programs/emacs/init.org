@@ -750,10 +750,12 @@ I'd like to toggle between light & dark themes.
     (setq mc/always-run-for-all t)
     (setq mc/cmds-to-run-once '(mark-all-like-symbol select-symbol))
 
-    :bind (("s-L" . 'mc/edit-lines)
-           ("s-d" . 'select-symbol)
-           ("s-D" . 'mark-all-like-symbol)
-           ("s-<mouse-1>" . 'mc/add-cursor-on-click)))
+    (define-key mc/keymap (kbd "<return>") nil)
+
+    :bind (("s-L" . mc/edit-lines)
+           ("s-d" . select-symbol)
+           ("s-D" . mark-all-like-symbol)
+           ("s-<mouse-1>" . mc/add-cursor-on-click)))
 #+END_SRC
 
 **** Phi-search
