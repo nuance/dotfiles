@@ -31,11 +31,11 @@ self: super: {
 
   Alfred = self.installApplication rec {
     name = "Alfred";
-    version = "4.3.2";
+    version = "4.3.3";
     sourceRoot = "Alfred 4.app";
     src = super.fetchurl {
-      url = https://cachefly.alfredapp.com/Alfred_4.3.2_1221.dmg;
-      sha256 = "0zlnzrzg3kxxvh6nr7nyhcfk84k5xqnwrm3v6595mydg084f0rai";
+      url = https://cachefly.alfredapp.com/Alfred_4.3.3_1226.dmg;
+      sha256 = "06104d1r6qdz6szp078x6j55z3galm1jmld7w0byyzm62skxd8m3";
     };
     description = "Alfred";
     homepage = https://alfredapp.com;
@@ -88,4 +88,18 @@ self: super: {
     description = "xbar";
     homepage = https://www.xbarapp.com;
   };
+
+  MonitorControl = self.installApplication rec {
+    name = "MonitorControl";
+    version = "2.1.0";
+    sourceRoot = "MonitorControl.app";
+    src = super.fetchurl {
+      url = https://github.com/MonitorControl/MonitorControl/releases/download/v2.1.0/MonitorControl.2.1.0.dmg;
+      sha256 = "01pjmh94zvxk2zb73jdm4yi36qi2cvm28f9f0zqyk8q2l2b1lan0";
+    };
+    description = "MonitorControl";
+    homepage = https://github.com/MonitorControl/MonitorControl;
+  };
+
+
 }

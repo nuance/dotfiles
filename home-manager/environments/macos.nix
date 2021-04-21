@@ -12,6 +12,7 @@
     Rectangle
     Secretive
     Itsycal
+    MonitorControl
   ];
 
   targets.darwin.keybindings = {
