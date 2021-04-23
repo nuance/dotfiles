@@ -2,8 +2,11 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
+	"hash/crc64"
+	"io"
 	"log"
 	"net/url"
 	"os"
@@ -195,15 +198,44 @@ func main() {
 		return
 	}
 
+	outBuf := bytes.NewBuffer(nil)
+	for _, entry := range diary {
+		if err := diaryTemplate.Execute(outBuf, entry); err != nil {
+			log.Fatalln("error building diary entry", err)
+		}
+	}
+
+	crc := crc64.New(crc64.MakeTable(crc64.ISO))
+	if _, err := io.Copy(crc, bytes.NewReader(outBuf.Bytes())); err != nil {
+		log.Fatalln("error checksumming new output", err)
+	}
+	newChecksum := crc.Sum64()
+
+	existingChecksum := func() uint64 {
+		if f, err := os.Open(*diaryOutput); err == nil {
+			defer f.Close()
+
+			crc.Reset()
+			if _, err := io.Copy(crc, f); err != nil {
+				log.Fatalln("error checksumming new output", err)
+			}
+			return crc.Sum64()
+		}
+
+		return 0
+	}()
+
+	if newChecksum == existingChecksum {
+		return
+	}
+
 	df, err := os.Create(*diaryOutput)
 	if err != nil {
 		log.Fatalln("error creating diary output", err)
 	}
 	defer df.Close()
 
-	for _, entry := range diary {
-		if err := diaryTemplate.Execute(df, entry); err != nil {
-			log.Fatalln("error building diary entry", err)
-		}
+	if _, err := io.Copy(df, outBuf); err != nil {
+		log.Fatalln("error writing to diary", err)
 	}
 }

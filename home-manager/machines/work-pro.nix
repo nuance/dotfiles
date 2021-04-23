@@ -11,7 +11,7 @@
       nixpkgs.overlays = overlays;
       programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${../rebuild.sh} work-pro)";
 
-      home.packages = with pkgs; [ go gopls ];
+      home.packages = with pkgs; [ go gopls goimports ];
 
       imports = [
         ../config.nix
