@@ -4,8 +4,9 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = (pkgs.emacsGcc.override {
+    package = (pkgs.emacsGit.override {
       withXwidgets = true;
+      nativeComp = true;
     }).overrideAttrs
       (oa: {
         buildInputs = oa.buildInputs ++ [ pkgs.darwin.apple_sdk.frameworks.WebKit ];
