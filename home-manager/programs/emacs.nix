@@ -41,6 +41,6 @@ in
   };
 
   programs.bash.sessionVariables = {
-    EDITOR = "${emacs}/bin/emacsclient -f /Users/matt/.emacs.d/server/server";
+    EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
   };
 }

@@ -10,7 +10,7 @@
     {
       nixpkgs.overlays = overlays;
       programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${../rebuild.sh} github-linux-ci)";
-      imports = [ ../config.nix ];
+      imports = [ ../config.nix ../programs/emacs.nix ];
 
       # This value determines the Home Manager release that your
       # configuration is compatible with. This helps avoid breakage
