@@ -4,7 +4,7 @@ let
     nativeComp = true;
     withXwidgets = true;
   });
-  oaPackage = (if lib.stdenv.isLinux then rawPackage else (
+  oaPackage = (if pkgs.stdenv.isLinux then rawPackage else (
     rawPackage.overrideAttrs(
       oa: { buildInputs = oa.buildInputs ++ [ pkgs.darwin.apple_sdk.frameworks.WebKit ]; }
   ))); 
