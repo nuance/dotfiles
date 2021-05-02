@@ -1,12 +1,18 @@
 { pkgs, lib, ... }:
 let
+  rawPackage = (pkgs.emacsGit.override {
+    nativeComp = true;
+    withXwidgets = true;
+  });
+  oaPackage = (if lib.stdenv.isLinux then rawPackage else (
+    rawPackage.overrideAttrs(
+      oa: { buildInputs = oa.buildInputs ++ [ pkgs.darwin.apple_sdk.frameworks.WebKit ]; }
+  ))); 
   emacs = (pkgs.emacsWithPackagesFromUsePackage {
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = (pkgs.emacsGit.override {
-      nativeComp = true;
-    });
+    package = oaPackage;
   });
 in
 {
