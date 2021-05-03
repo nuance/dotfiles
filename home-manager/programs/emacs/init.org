@@ -1267,7 +1267,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 ** Snippets
 
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet-snippets  :defer 1 :config (yas-global-mode))
+  (use-package yasnippet-snippets :config (yas-global-mode))
 #+END_SRC
 
 ** LSP
@@ -1815,31 +1815,24 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 
 #+BEGIN_SRC emacs-lisp
   (use-package json-mode
-
-    :defer 2
     :mode "\\.json\\'")
 #+END_SRC
 
 ** YAML
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
-
-    :defer 2
     :mode "\\.yml\\'")
 #+END_SRC
 
 ** Thrift
 #+BEGIN_SRC emacs-lisp
-  (use-package thrift
-    :defer 2)
+  (use-package thrift)
 #+END_SRC
 
 ** Protobuf
 
 #+BEGIN_SRC emacs-lisp
-  (use-package protobuf-mode
-    :defer 2
-    )
+  (use-package protobuf-mode)
 #+END_SRC
 
 ** C++
@@ -1860,25 +1853,19 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 
 ** Cython
 #+BEGIN_SRC emacs-lisp
-  (use-package cython-mode
-    :defer 2
-    )
+  (use-package cython-mode)
 #+END_SRC
 
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
-  (use-package rust-mode
-    :defer 2
-    )
+  (use-package rust-mode)
 #+END_SRC
 
 ** Go
 
 #+BEGIN_SRC emacs-lisp
-  (use-package go-mode
-    :defer 2
-    )
+  (use-package go-mode)
 #+END_SRC
 
 *** Eglot Module Support
@@ -1912,7 +1899,6 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 
 #+BEGIN_SRC emacs-lisp
   (use-package bazel-mode
-    :defer 2
     :mode ("'BUILD'" "'WORKSPACE'" "\\.bzl\\'" "'TARGETS'")
     :custom
     ((bazel-mode-buildifier-before-save t)
@@ -1924,8 +1910,6 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
-    :defer 2
-
     :commands (markdown-mode gfm-mode)
     :mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
@@ -1945,23 +1929,18 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 
 #+BEGIN_SRC emacs-lisp
   (use-package nix-mode
-    :defer 2
-
     :mode ("\\.nix\\'" "\\.nix.in\\'"))
 
   (use-package nix-drv-mode
     :ensure nil
-    :defer 2
     :mode "\\.drv\\'")
 
   (use-package nix-shell
     :ensure nil
-    :defer 2
     :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
 
   (use-package nix-repl
     :ensure nil
-    :defer 2
     :commands (nix-repl))
 #+END_SRC
 
