@@ -31,11 +31,11 @@ self: super: {
 
   Alfred = self.installApplication rec {
     name = "Alfred";
-    version = "4.3.3";
+    version = "4.3.4";
     sourceRoot = "Alfred 4.app";
     src = super.fetchurl {
-      url = https://cachefly.alfredapp.com/Alfred_4.3.3_1226.dmg;
-      sha256 = "06104d1r6qdz6szp078x6j55z3galm1jmld7w0byyzm62skxd8m3";
+      url = https://cachefly.alfredapp.com/Alfred_4.3.4_1229.dmg;
+      sha256 = "1chsc4nabak3vwlb0jhlrph78k28an74hb5yb9vlviis3snimqbi";
     };
     description = "Alfred";
     homepage = https://alfredapp.com;
