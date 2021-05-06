@@ -1795,6 +1795,24 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
     :config (add-to-list 'dash-at-point-mode-alist '(python-mode . "")))
 #+end_src
 
+** XWidgets
+
+#+begin_src emacs-lisp
+  (use-package xwidget
+    :if window-system
+    :ensure nil
+    :config
+    (defun open-buffer-in-webkit ()
+      (interactive)
+      (xwidget-webkit-browse-url (concat "file://" buffer-file-name)))
+    :bind
+    (:map xwidget-webkit-mode-map
+          ("C-p" . xwidget-webkit-scroll-down)
+          ("C-n" . xwidget-webkit-scroll-up)
+          ("M-w" . xwidget-webkit-copy-selection-as-kill)
+          ("C-c" . xwidget-webkit-copy-selection-as-kill)))
+#+end_src
+
 * File-type support
 ** Generic prog-mode improvements
 *** Toggleable function narrowing
