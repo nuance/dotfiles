@@ -3,7 +3,6 @@
   programs.zsh = {
     enable = true;
 
-    enableAutosuggestions = true;
     defaultKeymap = "emacs";
 
     history.ignorePatterns = [ "ls" "cd" "exit" ];
