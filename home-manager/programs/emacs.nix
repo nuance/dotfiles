@@ -4,10 +4,11 @@ let
     nativeComp = true;
     withXwidgets = true;
   });
-  oaPackage = (if pkgs.stdenv.isLinux then rawPackage else (
-    rawPackage.overrideAttrs(
+  oaPackage = (if pkgs.stdenv.isLinux then rawPackage else
+  (
+    rawPackage.overrideAttrs (
       oa: { buildInputs = oa.buildInputs ++ [ pkgs.darwin.apple_sdk.frameworks.WebKit ]; }
-  ))); 
+    )));
   emacs = (pkgs.emacsWithPackagesFromUsePackage {
     config = ./emacs/init.org;
     alwaysEnsure = true;
@@ -42,7 +43,6 @@ in
     ".emacs.d/site-lisp/mu4e-thread-folding.el".source = ./emacs/mu4e-thread-folding.el;
   };
 
-  programs.bash.sessionVariables = {
-    EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
-  };
+  programs.bash.sessionVariables.EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
+  programs.zsh.sessionVariables.EDITOR = "${emacs}/bin/emacsclient";
 }
