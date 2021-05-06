@@ -5,6 +5,7 @@
 
   imports = [
     ./programs/bash.nix
+    ./programs/zsh.nix
     ./programs/git.nix
     ./programs/nix.nix
     ./programs/tmux.nix
