@@ -1,6 +1,5 @@
 { ... }:
-{
-  programs.bash.initExtra = ''
+let setup-function = ''
     function setup-remote-host () {
       hostname=$1; shift;
 
@@ -34,4 +33,7 @@ EOF
 "
     }
   '';
+in {
+  programs.bash.initExtra = setup-function;
+  programs.zsh.initExtra = setup-function;
 }
