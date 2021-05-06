@@ -49,8 +49,8 @@ jobs:
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         cd home-manager
-        nix build --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
-        nix build --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
+        nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
+        nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
     - name: Activate home-manager environment
       run: |
@@ -99,7 +99,7 @@ jobs:
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         cd home-manager
-        nix build --show-trace .#homeConfigurations.github-linux-ci.activationPackage
+        nix build --verbose --show-trace .#homeConfigurations.github-linux-ci.activationPackage
 
     - name: Activate home-manager environment
       run: |
@@ -146,7 +146,7 @@ jobs:
         cd nixos
         echo '{...}: {}' > machines/dl/secrets/wifi.nix
         echo '{...}: {}' > machines/dl/cuda.nix
-        nix build --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
+        nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
 
     - name: If scheduled, push commit with updated inputs
       if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && success() }}
