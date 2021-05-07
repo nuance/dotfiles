@@ -1276,7 +1276,9 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
     :config
     (setq-default
-     eglot-workspace-configuration '((:gopls . ((:usePlaceholders t) (staticcheck . t)
+     eglot-workspace-configuration '((:gopls . ((usePlaceholders . t)
+                                                (allExperiments . t)
+                                                (staticcheck . t)
                                                 (matcher . "CaseSensitive")))))
     :hook
     ((python-mode c++-mode c-mode go-mode rust-mode)
