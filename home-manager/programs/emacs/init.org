@@ -1681,7 +1681,6 @@ The following is probably not necessary now that I switched to nix and dropped s
      ;; this setting allows to re-sync and re-index mail
      ;; by pressing U
      (mu4e-get-mail-command  "mbsync -a")
-     (mu4e-update-interval 60)
      (mail-user-agent 'mu4e-user-agent)))
 
   (use-package mu4e-thread-folding
