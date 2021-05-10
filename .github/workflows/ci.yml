@@ -14,6 +14,7 @@ jobs:
   build-macos-env:
     name: Build/cache macOS Nix env
     runs-on: macos-latest
+    if: ${{ ! (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
 
     steps:
 
@@ -38,12 +39,6 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
-    - name: If scheduled, update inputs
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && success() }}
-      run: |
-        cd home-manager
-        nix flake update --recreate-lock-file
-
     - name: Build home-manager config
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
@@ -58,19 +53,10 @@ jobs:
         HOME_MANAGER_BACKUP_EXT=backup ./github-macos-ci/activate
         HOME_MANAGER_BACKUP_EXT=backup ./macos-bootstrap/activate
 
-    - name: If scheduled, push commit with updated inputs
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && success() }}
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git commit -am "Update home-manager inputs"
-        git pull --rebase
-        git push
-
   build-linux-env:
     name: Build/cache linux Nix env
     runs-on: ubuntu-latest
-    needs: build-macos-env
+    if: ${{ ! (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
 
     steps:
 
@@ -110,6 +96,7 @@ jobs:
   build-nixos-env:
     name: Build/cache linux nixos env
     runs-on: ubuntu-latest
+    if: ${{ ! (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
 
     steps:
 
@@ -134,12 +121,6 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
-    - name: If scheduled, update inputs
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && success() }}
-      run: |
-        cd nixos
-        nix flake update --recreate-lock-file
-
     - name: Build nixos configuration
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
@@ -149,13 +130,187 @@ jobs:
         echo '{...}: {}' > machines/dl/cuda.nix
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
 
-    - name: If scheduled, push commit with updated inputs
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && success() }}
+  stage-update:
+    name: Stage new version
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          # Nix Flakes doesn't work on shallow clones
+          fetch-depth: 0
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v13
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+    - name: Switch branches
+      run: |
+        cd home-manager
+        git checkout -B staged-update
+        git reset --hard origin/master
+
+    - name: Update inputs
+      run: |
+        cd home-manager
+        nix flake update --recreate-lock-file
+
+        cd ../nixos
+        nix flake update --recreate-lock-file
+
+    - name: Push staged update
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git checkout -- nixos/machines/dl/secrets
-        git checkout -- nixos/machines/dl/cuda.nix
-        git commit -am "Update nixos inputs"
-        git pull --rebase
-        git push
+        git commit -am "Update home-manager inputs"
+        git push -f origin staged-update
+
+  build-updated-macos-env:
+    name: Build/cache macOS Nix env
+    runs-on: macos-latest
+    needs: stage-update
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          # Nix Flakes doesn't work on shallow clones
+          fetch-depth: 0
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v13
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Cachix
+      uses: cachix/cachix-action@v10
+      with:
+        name: nuance
+        extraPullNames: nix-community
+        signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+    - name: Build home-manager config
+      run: |
+        git checkout origin/staged-update
+        # Prevent conflict between Cachix installed by workflow and the one installed in the config
+        nix-env --set-flag priority 1 cachix
+        cd home-manager
+        nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
+        nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
+
+    - name: Activate home-manager environment
+      run: |
+        cd home-manager
+        HOME_MANAGER_BACKUP_EXT=backup ./github-macos-ci/activate
+        HOME_MANAGER_BACKUP_EXT=backup ./macos-bootstrap/activate
+
+  build-updated-linux-env:
+    name: Build/cache linux Nix env
+    runs-on: ubuntu-latest
+    needs: stage-update
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          # Nix Flakes doesn't work on shallow clones
+          fetch-depth: 0
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v13
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Cachix
+      uses: cachix/cachix-action@v10
+      with:
+        name: nuance
+        extraPullNames: nix-community
+        signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+    - name: Build home-manager config
+      run: |
+        git checkout origin/staged-update
+        # Prevent conflict between Cachix installed by workflow and the one installed in the config
+        nix-env --set-flag priority 1 cachix
+        cd home-manager
+        nix build --verbose --show-trace .#homeConfigurations.github-linux-ci.activationPackage
+
+    - name: Activate home-manager environment
+      run: |
+        cd home-manager
+        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
+
+  build-updated-nixos-env:
+    name: Build/cache linux nixos env
+    runs-on: ubuntu-latest
+    needs: stage-update
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          # Nix Flakes doesn't work on shallow clones
+          fetch-depth: 0
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v13
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Cachix
+      uses: cachix/cachix-action@v10
+      with:
+        name: nuance
+        extraPullNames: nix-community
+        signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+    - name: Build nixos configuration
+      run: |
+        git checkout origin/staged-update
+        # Prevent conflict between Cachix installed by workflow and the one installed in the config
+        nix-env --set-flag priority 1 cachix
+        cd nixos
+        echo '{...}: {}' > machines/dl/secrets/wifi.nix
+        echo '{...}: {}' > machines/dl/cuda.nix
+        nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
+
+  commit-update:
+    name: Commit updated nix.lock
+    runs-on: ubuntu-latest
+    needs: [ build-updated-macos-env, build-updated-linux-env, build-updated-nixos-env ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          # Nix Flakes doesn't work on shallow clones
+          fetch-depth: 0
+
+    - name: Push commit with updated inputs
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git checkout master
+        git cherry-pick origin/staged-update
+        git push origin master
+        git push origin :staged-update
