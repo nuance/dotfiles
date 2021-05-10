@@ -11,6 +11,9 @@
     ./programs/tmux.nix
   ];
 
+  programs.direnv.enable = true;
+  programs.direnv.enableNixDirenvIntegration = true;
+
   home.packages = with pkgs; [
     curl
     tree
