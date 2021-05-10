@@ -20,17 +20,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Cachix
       uses: cachix/cachix-action@v10
@@ -62,17 +58,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Cachix
       uses: cachix/cachix-action@v10
@@ -102,17 +94,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Cachix
       uses: cachix/cachix-action@v10
@@ -139,17 +127,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Switch branches
       run: |
@@ -181,17 +165,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Cachix
       uses: cachix/cachix-action@v10
@@ -224,17 +204,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Cachix
       uses: cachix/cachix-action@v10
@@ -265,17 +241,13 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Install Nix
       uses: cachix/install-nix-action@v13
       with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210126_f15f0b8/install
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
         extra_nix_config: |
           experimental-features = nix-command flakes
-          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Cachix
       uses: cachix/cachix-action@v10
@@ -302,9 +274,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-          # Nix Flakes doesn't work on shallow clones
-          fetch-depth: 0
 
     - name: Push commit with updated inputs
       run: |
