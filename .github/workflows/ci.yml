@@ -144,10 +144,10 @@ jobs:
     - name: Update inputs
       run: |
         cd home-manager
-        nix flake update --recreate-lock-file
+        nix flake lock --recreate-lock-file
 
         cd ../nixos
-        nix flake update --recreate-lock-file
+        nix flake lock --recreate-lock-file
 
     - name: Push staged update
       run: |
