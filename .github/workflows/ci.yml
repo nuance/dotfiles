@@ -124,8 +124,7 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
 
     outputs:
-      home-manager-lock: ${{ steps.lock-files.outputs.home_manager_lock }}
-      nixos-lock: ${{ steps.lock-files.outputs.nixos_lock }}
+      patch: ${{ steps.lock-files.outputs.patch }}
 
     steps:
 
@@ -144,11 +143,11 @@ jobs:
       run: |
         cd home-manager
         nix flake lock --recreate-lock-file
-        echo "::set-output name=home_manager_lock::$(cat flake.lock | jq -cM .)"
-
         cd ../nixos
         nix flake lock --recreate-lock-file
-        echo "::set-output name=nixos_lock::$(cat flake.lock | jq -cM .)"
+        cd ..
+
+        echo "::set-output name=patch::$(git diff | base64 -w0)"
 
   build-updated-macos-env:
     name: Build/cache macOS Nix env
@@ -178,8 +177,9 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         cd home-manager
-        echo '${{ needs.stage-update.outputs.home-manager-lock }}' | jq -M . > flake.lock
 
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
@@ -218,8 +218,9 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         cd home-manager
-        echo '${{ needs.stage-update.outputs.home-manager-lock }}' | jq -M . > flake.lock
 
         nix build --verbose --show-trace .#homeConfigurations.github-linux-ci.activationPackage
 
@@ -256,8 +257,9 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         cd nixos
-        echo '${{ needs.stage-update.outputs.nixos-lock }}' | jq -M . > flake.lock
 
         echo '{...}: {}' > machines/dl/secrets/wifi.nix
         echo '{...}: {}' > machines/dl/cuda.nix
@@ -277,8 +279,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
 
-        echo '${{ needs.stage-update.outputs.home-manager-lock }}' | jq -M . > home-manager/flake.lock
-        echo '${{ needs.stage-update.outputs.nixos-lock }}' | jq -M . > nixos/flake.lock
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
         git add home-manager/flake.lock
         git add nixos/flake.lock
