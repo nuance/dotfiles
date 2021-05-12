@@ -21,5 +21,6 @@
     mosh
     pv
     cachix
+    jq
   ];
 }
