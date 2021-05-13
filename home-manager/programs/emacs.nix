@@ -31,6 +31,8 @@ in
       fd
       ripgrep
       pandoc
+      imagemagick
+      texlive.combined.scheme-medium
     ];
 
   programs.mu.enable = true;
