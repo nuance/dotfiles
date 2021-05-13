@@ -429,6 +429,12 @@ And test it like:
   (global-hl-line-mode +1)
 #+END_SRC
 
+** Line spacing
+
+#+begin_src emacs-lisp
+  (setq line-spacing 0.1)
+#+end_src
+
 ** Minimal UI
 
 #+BEGIN_SRC emacs-lisp

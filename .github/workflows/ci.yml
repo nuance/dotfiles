@@ -123,6 +123,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
 
+    outputs:
+      patch: ${{ steps.lock-files.outputs.patch }}
+
     steps:
 
     - name: Checkout repository
@@ -135,26 +138,16 @@ jobs:
         extra_nix_config: |
           experimental-features = nix-command flakes
 
-    - name: Switch branches
-      run: |
-        cd home-manager
-        git checkout -B staged-update
-        git reset --hard origin/master
-
     - name: Update inputs
+      id: lock-files
       run: |
         cd home-manager
         nix flake lock --recreate-lock-file
-
         cd ../nixos
         nix flake lock --recreate-lock-file
+        cd ..
 
-    - name: Push staged update
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git commit -am "Update home-manager inputs"
-        git push -f origin staged-update
+        echo "::set-output name=patch::$(git diff | base64 -w0)"
 
   build-updated-macos-env:
     name: Build/cache macOS Nix env
@@ -182,10 +175,12 @@ jobs:
 
     - name: Build home-manager config
       run: |
-        git checkout origin/staged-update
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         cd home-manager
+
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
@@ -221,10 +216,12 @@ jobs:
 
     - name: Build home-manager config
       run: |
-        git checkout origin/staged-update
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         cd home-manager
+
         nix build --verbose --show-trace .#homeConfigurations.github-linux-ci.activationPackage
 
     - name: Activate home-manager environment
@@ -258,10 +255,12 @@ jobs:
 
     - name: Build nixos configuration
       run: |
-        git checkout origin/staged-update
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         cd nixos
+
         echo '{...}: {}' > machines/dl/secrets/wifi.nix
         echo '{...}: {}' > machines/dl/cuda.nix
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
@@ -269,7 +268,7 @@ jobs:
   commit-update:
     name: Commit updated nix.lock
     runs-on: ubuntu-latest
-    needs: [ build-updated-macos-env, build-updated-linux-env, build-updated-nixos-env ]
+    needs: [ stage-update, build-updated-macos-env, build-updated-linux-env, build-updated-nixos-env ]
 
     steps:
     - name: Checkout repository
@@ -279,7 +278,11 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git checkout master
-        git cherry-pick origin/staged-update
-        git push origin master
-        git push origin :staged-update
+
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
+        git add home-manager/flake.lock
+        git add nixos/flake.lock
+        git commit -m "Update inputs"
+
+        git push
