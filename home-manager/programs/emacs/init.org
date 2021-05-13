@@ -1429,7 +1429,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     (setq org-preview-latex-default-process 'dvisvgm
           org-startup-with-latex-preview t)
 
-    :hook (org-mode . org-fragtog-mode))
+    :hook ((org-mode . org-fragtog-mode)
+           (mu4e-compose-mode . org-fragtog-mode)))
 #+end_src
 
 ** Tramp
@@ -1706,7 +1707,7 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
   (use-package org-msg
     :config (org-msg-mode)
     :custom
-    ((org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t")
+    ((org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng")
      (org-msg-startup "hidestars indent inlineimages")
      (org-msg-default-alternatives '(text html))
      (org-msg-convert-citation t)))
