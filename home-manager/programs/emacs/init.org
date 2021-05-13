@@ -400,7 +400,8 @@ And test it like:
   (setq apropos-do-all t
         echo-keystrokes 0.1               ; Show keystrokes asap
         inhibit-startup-message t         ; No splash screen please
-        initial-scratch-message nil)      ; Clean scratch buffer
+        initial-scratch-message nil       ; Clean scratch buffer
+        initial-major-mode 'emacs-lisp-mode)
 #+END_SRC
 
 ** Bell
