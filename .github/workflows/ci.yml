@@ -281,8 +281,5 @@ jobs:
 
         echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
-        git add home-manager/flake.lock
-        git add nixos/flake.lock
-        git commit -m "Update inputs"
-
+        git commit -am "Update inputs"
         git push
