@@ -1026,11 +1026,11 @@ between both flymake & flycheck errors.
              (selection (selectrum--read
                          (format "find %s: " (nuance/project-name project))
                          (lambda (q)
-                           (let ((pattern (s-join ".*" (split-string q " " t))))
-                             (split-string
-                              (shell-command-to-string
-                               (format "fd --color=never --max-results=%d --full-path \"%s\" %s" (* 5 selectrum-num-candidates-displayed) pattern (file-local-name pr)))
-                              "\n" t)))))
+                           (let* ((split (split-string q " " t))
+                                  (pattern (format "(%s){%d}+" (s-join "|" (mapcar (lambda (s) (format "%s.*" s)) split)) (length split)))
+                                  (cmd (format "fd --color=never --max-results=%d --full-path \"%s\" %s" (* 5 selectrum-num-candidates-displayed) pattern (file-local-name pr)))
+                                  (results (shell-command-to-string cmd)))
+                             (split-string results "\n" t)))))
              (path (concat (file-remote-p pr) selection)))
         (xref-push-marker-stack)
         (find-file path)))
@@ -1045,11 +1045,10 @@ between both flymake & flycheck errors.
                          (format "grep %s: " (nuance/project-name project))
                          (lambda (q)
                            (let* ((tokens (split-string q " " t))
-                                  (pattern (s-join ".*" tokens)))
-                             (split-string
-                              (shell-command-to-string
-                               (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 selectrum-num-candidates-displayed)))
-                              "\n" t)))
+                                  (pattern (s-join ".*" tokens))
+                                  (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 selectrum-num-candidates-displayed)))
+                                  (results (shell-command-to-string cmd)))
+                             (split-string results "\n" t)))
                          :initial-input (thing-at-point 'symbol)))
              (parts (split-string selection ":"))
              (path (concat default-directory (car parts)))
