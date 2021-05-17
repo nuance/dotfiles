@@ -515,7 +515,6 @@ I'd like to toggle between light & dark themes.
       (progn
         (dolist (i custom-enabled-themes) (disable-theme i))
         (load-theme (if dark-mode dark-theme light-theme) t)
-        (adapt-theme-org-colors)
         (doom-themes-org-config)
         (doom-themes-visual-bell-config)))
 
