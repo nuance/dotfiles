@@ -8,5 +8,10 @@
       system = "x86_64-linux";
       modules = [ ./machines/dl/configuration.nix ];
     };
+
+    nixosConfigurations.vpn = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [ ./machines/vpn/configuration.nix ];
+    };
   };
 }
