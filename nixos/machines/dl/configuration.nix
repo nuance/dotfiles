@@ -11,7 +11,7 @@
       ./networking.nix
       ./nvidia.nix
       ./cuda.nix
-      ./nix.nix
+      ../../common/common.nix
     ];
 
   networking.hostName = "dl";
@@ -25,23 +25,6 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  security.sudo.wheelNeedsPassword = false;
-  users.extraUsers.matt = {
-    createHome = true;
-    home = "/home/matt";
-    description = "Matt";
-    group = "users";
-    extraGroups = [ "wheel" ];
-    useDefaultShell = true;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMo1DyxU9VJguOa8f78QzlKFfR/ZB1DHoXBVSOtzZL8Q matt"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF/wTtWs6/0SCrhCMq1NzJhyzYEOoUDrBS2rrIGxUdIA matt@ipad"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH02uqD2POyekqgyDmVfwTMZ8pnXoTqxZsnWAvSF7Kvg matt@iphone"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWaAo1P8+vAISe8U0++gXsIVr2zNGafHmHgqZFkDspj biz@mhjones.org"
-      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKhFzdkHyJHZ+tDSi3+3GUM4Qa3d5cXQOVQ7AYyGg+y32+UBFU2Y/vspt1LatfVASXrEc9MIrwtVwjhxYCCGcOM= ssh-key@secretive.Matthew’s-MacBook-Pro.local"
-    ];
-  };
 
   environment.systemPackages = with pkgs; [
     mosh
