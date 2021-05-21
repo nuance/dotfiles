@@ -47,4 +47,7 @@ in
 
   programs.bash.sessionVariables.EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
   programs.zsh.sessionVariables.EDITOR = "${emacs}/bin/emacsclient";
+
+  programs.bash.shellAliases.en = "$EDITOR -n";
+  programs.zsh.shellAliases.en = "$EDITOR -n";
 }
