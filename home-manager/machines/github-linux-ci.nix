@@ -11,7 +11,7 @@
   configuration = { pkgs, lib, config, ... }:
     {
       nixpkgs.overlays = overlays;
-      programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${../rebuild.sh} github-linux-ci)";
+      programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} github-linux-ci)";
       imports = [ ../config.nix ../programs/emacs.nix ];
     };
 }
