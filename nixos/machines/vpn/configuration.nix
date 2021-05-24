@@ -7,6 +7,7 @@
     ../../common/common.nix
   ];
 
+  networking.hostName = "vpn";
   system.stateVersion = "18.09";
 
   environment.systemPackages = with pkgs; [
