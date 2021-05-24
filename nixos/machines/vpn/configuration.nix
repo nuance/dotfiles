@@ -13,7 +13,6 @@
   system.stateVersion = "18.09";
 
   environment.systemPackages = with pkgs; [
-    emacs26-nox
     mosh
     binutils
     zsh
