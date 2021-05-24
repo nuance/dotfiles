@@ -7,7 +7,6 @@ in
     wireguard-tools
     unbound
   ];
-  boot.extraModulePackages = [ config.boot.kernelPackages.wireguard ];
 
   # enable NAT
   networking.nat.enable = true;
