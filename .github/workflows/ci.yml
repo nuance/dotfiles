@@ -39,51 +39,13 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
-        cd home-manager
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
     - name: Activate home-manager environment
       run: |
-        cd home-manager
         HOME_MANAGER_BACKUP_EXT=backup ./github-macos-ci/activate
         HOME_MANAGER_BACKUP_EXT=backup ./macos-bootstrap/activate
-
-  build-linux-env:
-    name: Build/cache linux Nix env
-    runs-on: ubuntu-latest
-    if: ${{ ! (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
-
-    steps:
-
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Install Nix
-      uses: cachix/install-nix-action@v13
-      with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-
-    - name: Setup Cachix
-      uses: cachix/cachix-action@v10
-      with:
-        name: nuance
-        extraPullNames: nix-community
-        signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
-
-    - name: Build home-manager config
-      run: |
-        # Prevent conflict between Cachix installed by workflow and the one installed in the config
-        nix-env --set-flag priority 1 cachix
-        cd home-manager
-        nix build --verbose --show-trace .#homeConfigurations.github-linux-ci.activationPackage
-
-    - name: Activate home-manager environment
-      run: |
-        cd home-manager
-        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
 
   build-nixos-env:
     name: Build/cache linux nixos env
@@ -109,13 +71,21 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Block certains files
+      run: |
+        echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
+        echo '{...}: {}' > nixos/machines/dl/cuda.nix
+
+    - name: Check flake
+      run: |
+        nix flake check
+
     - name: Build nixos configuration
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
-        cd nixos
-        echo '{...}: {}' > machines/dl/secrets/wifi.nix
-        echo '{...}: {}' > machines/dl/cuda.nix
+        echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
+        echo '{...}: {}' > nixos/machines/dl/cuda.nix
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
 
   stage-update:
@@ -141,11 +111,7 @@ jobs:
     - name: Update inputs
       id: lock-files
       run: |
-        cd home-manager
         nix flake lock --recreate-lock-file
-        cd ../nixos
-        nix flake lock --recreate-lock-file
-        cd ..
 
         echo "::set-output name=patch::$(git diff | base64 -w0)"
 
@@ -179,55 +145,13 @@ jobs:
         nix-env --set-flag priority 1 cachix
         echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
-        cd home-manager
-
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
     - name: Activate home-manager environment
       run: |
-        cd home-manager
         HOME_MANAGER_BACKUP_EXT=backup ./github-macos-ci/activate
         HOME_MANAGER_BACKUP_EXT=backup ./macos-bootstrap/activate
-
-  build-updated-linux-env:
-    name: Build/cache linux Nix env
-    runs-on: ubuntu-latest
-    needs: stage-update
-
-    steps:
-
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Install Nix
-      uses: cachix/install-nix-action@v13
-      with:
-        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
-        extra_nix_config: |
-          experimental-features = nix-command flakes
-
-    - name: Setup Cachix
-      uses: cachix/cachix-action@v10
-      with:
-        name: nuance
-        extraPullNames: nix-community
-        signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
-
-    - name: Build home-manager config
-      run: |
-        # Prevent conflict between Cachix installed by workflow and the one installed in the config
-        nix-env --set-flag priority 1 cachix
-        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
-
-        cd home-manager
-
-        nix build --verbose --show-trace .#homeConfigurations.github-linux-ci.activationPackage
-
-    - name: Activate home-manager environment
-      run: |
-        cd home-manager
-        HOME_MANAGER_BACKUP_EXT=backup ./result/activate
 
   build-updated-nixos-env:
     name: Build/cache linux nixos env
@@ -253,22 +177,27 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Block certains files
+      run: |
+        echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
+        echo '{...}: {}' > nixos/machines/dl/cuda.nix
+
+    - name: Check flake
+      run: |
+        nix flake check
+
     - name: Build nixos configuration
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
-        cd nixos
-
-        echo '{...}: {}' > machines/dl/secrets/wifi.nix
-        echo '{...}: {}' > machines/dl/cuda.nix
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
 
   commit-update:
     name: Commit updated nix.lock
     runs-on: ubuntu-latest
-    needs: [ stage-update, build-updated-macos-env, build-updated-linux-env, build-updated-nixos-env ]
+    needs: [ stage-update, build-updated-macos-env, build-updated-nixos-env ]
 
     steps:
     - name: Checkout repository
