@@ -1,5 +1,5 @@
 { lib, ... }:
-let hosts = [ "dl" "print-server" ];
+let hosts = [ "dl" "vpn" "print-server" "synology" "*.mhjones.org" ];
 in
 {
   programs.ssh.enable = true;
@@ -8,8 +8,6 @@ in
     lib.genAttrs hosts
       (host: {
         forwardAgent = true;
-      }) // {
-      "*" = {
         remoteForwards = [
           {
             bind.port = 40000;
@@ -22,6 +20,5 @@ in
             host.port = 40001;
           }
         ];
-      };
-    };
+      });
 }
