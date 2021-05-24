@@ -1862,7 +1862,7 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
 ** Bazel
 
 #+BEGIN_SRC emacs-lisp
-  (use-package bazel-mode
+  (use-package bazel
     :mode ("'BUILD'" "'WORKSPACE'" "\\.bzl\\'" "'TARGETS'")
     :custom
     ((bazel-mode-buildifier-before-save t)
