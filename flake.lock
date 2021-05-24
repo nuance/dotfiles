@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1621667810,
+        "narHash": "sha256-Tsnd84XTiAtqKLOjfCflmeh+R7whf+FNW7OKrTJ6ZOI=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "efee454783c5c14ae78687439077c1d3f0544d97",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "emacs-overlay": {
       "locked": {
         "lastModified": 1621706580,
@@ -35,27 +51,11 @@
         "type": "github"
       }
     },
-    "nixpkgs": {
-      "locked": {
-        "lastModified": 1621667810,
-        "narHash": "sha256-Tsnd84XTiAtqKLOjfCflmeh+R7whf+FNW7OKrTJ6ZOI=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "efee454783c5c14ae78687439077c1d3f0544d97",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
+        "nixpkgs": "nixpkgs",
         "emacs-overlay": "emacs-overlay",
-        "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "home-manager": "home-manager"
       }
     }
   },

@@ -1,6 +1,8 @@
-{ pkgs, config, lib, modulesPath, ... }:
-
+{ overlays }:
+{ pkgs, ... }:
 {
+  nixpkgs.overlays = overlays;
+
   imports = [
     ./google-cloud.nix
     ./wireguard.nix
