@@ -87,6 +87,7 @@ jobs:
         echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
         echo '{...}: {}' > nixos/machines/dl/cuda.nix
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
+        nix build --verbose --show-trace .#nixosConfigurations.vpn.config.system.build.toplevel
 
   stage-update:
     name: Stage new version
@@ -193,6 +194,7 @@ jobs:
         echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
+        nix build --verbose --show-trace .#nixosConfigurations.vpn.config.system.build.toplevel
 
   commit-update:
     name: Commit updated nix.lock
