@@ -12,8 +12,8 @@
     {
       nixpkgs.overlays = overlays;
 
-      programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${../rebuild.sh} m1-pro)";
-      programs.zsh.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${../rebuild.sh} m1-pro)";
+      programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} m1-pro)";
+      programs.zsh.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} m1-pro)";
 
       imports = [
         ../config.nix

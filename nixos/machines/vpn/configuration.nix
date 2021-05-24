@@ -1,6 +1,8 @@
-{ pkgs, config, lib, modulesPath, ... }:
-
+{ overlays }:
+{ pkgs, ... }:
 {
+  nixpkgs.overlays = overlays;
+
   imports = [
     ./google-cloud.nix
     ./wireguard.nix
@@ -11,7 +13,6 @@
   system.stateVersion = "18.09";
 
   environment.systemPackages = with pkgs; [
-    emacs26-nox
     mosh
     binutils
     zsh
