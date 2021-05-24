@@ -11,7 +11,7 @@
   configuration = { pkgs, lib, config, ... }:
     {
       nixpkgs.overlays = overlays;
-      programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles/home-manager && ${../rebuild.sh} macos-bootstrap)";
+      programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} macos-bootstrap)";
       imports = [ ../programs/nix.nix ];
 
       programs.home-manager.enable = true;
