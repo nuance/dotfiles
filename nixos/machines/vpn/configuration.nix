@@ -20,4 +20,10 @@
 
   services.tailscale.enable = true;
   programs.mosh.enable = true;
+
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:nuance/dotfiles";
+    allowReboot = true;
+  };
 }
