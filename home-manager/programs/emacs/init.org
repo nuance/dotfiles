@@ -1422,6 +1422,80 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
            (mu4e-compose-mode . org-fragtog-mode)))
 #+end_src
 
+*** org-nvalt
+
+My personal take on an nvalt replacement in emacs / org-mode / selectrum.
+
+cmd-k - find or create a note (global)
+cmd-l - insert a link to note (creating a note if it doesn't currently exist; wrapping the region with the link if it is active) (org-mode)
+
+#+begin_src emacs-lisp
+  (defvar nuance/nv-notes-dir "~/org" "Location to store notes")
+
+  (defun nuance/nv--notes-path () "Absolute path to notes location" (expand-file-name nuance/nv-notes-dir))
+
+  (defun nuance/nv--create-note (name) "Find or create a note based on a match string."
+         ;; create a new file using the default template
+         (let ((path (f-join default-directory (concat (replace-regexp-in-string "\s+" "_" (downcase name)) ".org"))))
+           (find-file path)
+           (insert (format "#+TITLE: %s\n" (capitalize name)))
+           (org-time-stamp '(16))
+           (insert "\n\n")
+           (org-mode)
+           (auto-save-mode)
+           path))
+
+  (defun nuance/nv-find-note ()
+    "Find or create a note."
+    (interactive)
+    (let* ((default-directory (nuance/nv--notes-path))
+           (selection (selectrum--read
+                       "nv: "
+                       (lambda (q)
+                         (let* ((tokens (split-string q " " t))
+                                (pattern (format "((%s).*){%d}" (s-join "|" tokens) (length tokens)))
+                                (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 selectrum-num-candidates-displayed)))
+                                (results (shell-command-to-string cmd)))
+                           (append (list q) (split-string results "\n" t))))
+                       :initial-input (when (region-active-p) (buffer-substring (region-beginning) (region-end)))))
+           (parts (split-string selection ":")))
+      (if (length> parts 1)
+          ;; open the requested file / line / col and unfold at point
+          (let ((path (f-join default-directory (car parts)))
+                (line (string-to-number (cadr parts)))
+                (column (string-to-number (caddr parts))))
+            (find-file path)
+            (goto-char (point-min))
+            (forward-line (1- line))
+            (forward-char (1- column))
+            ;; expose the current node if we're in a (potentially folded) outline / org file
+            (when (derived-mode-p 'outline-mode) (outline-show-entry)))
+        (nuance/nv--create-note selection))))
+
+  (defun nuance/nv-link-note ()
+    "Insert a link to a note, creating the note if it currently does not exist. Title is either the current region or the name of the note."
+    (interactive)
+    (let* ((default-directory (nuance/nv--notes-path))
+           (selection (selectrum--read
+                       "link: "
+                       (lambda (q)
+                         (let* ((tokens (split-string q " " t))
+                                (pattern (format "((%s).*){%d}" (s-join "|" tokens) (length tokens)))
+                                (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 selectrum-num-candidates-displayed)))
+                                (results (shell-command-to-string cmd)))
+                           (append (list q) (split-string results "\n" t))))
+                       :initial-input (when (region-active-p) (buffer-substring (region-beginning) (region-end)))))
+           (parts (split-string selection ":"))
+           (target (if (length> parts 1) (f-join default-directory (car parts)) (save-window-excursion (nuance/nv--create-note selection))))
+           (title (car parts)))
+      (if (region-active-p)
+          (progn (kill-region (region-beginning) (region-end)) (insert (format "[[%s][" target)) (yank) (insert "]]"))
+        (insert (format "[[%s][%s]]" target title)))))
+
+  (global-set-key (kbd "s-k") 'nuance/nv-find-note)
+  (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
+#+end_src
+
 ** Tramp
 
 #+BEGIN_SRC emacs-lisp
