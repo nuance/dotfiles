@@ -1197,7 +1197,9 @@ A simple xref backend using rg. Inspired by the gxref implementation.
              (magit-restore-window-configuration t)
              (git-commit-fill-column 120))
     :bind ("C-x g" . magit-status))
-#+END_SRC
+
+  (use-package forge :after magit)
+#+end_src
 
 ** smerge-hydra
 
