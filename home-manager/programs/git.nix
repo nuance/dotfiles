@@ -42,6 +42,10 @@
       push = {
         default = "current";
       };
+
+      github = {
+        user = "nuance";
+      };
     };
   };
 
