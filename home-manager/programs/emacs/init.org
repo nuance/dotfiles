@@ -117,7 +117,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   ;; cursor color is concerned).
   (advice-add #'x-apply-session-resources :override #'ignore)
 
-  (setq comp-deferred-compilation nil)
+  (setq native-comp-deferred-compilation nil)
   (setq package-enable-at-startup t)
 
   (setq use-package-verbose t)
@@ -173,7 +173,7 @@ Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org
 ** Increase default parallel compilations
 
 #+begin_src emacs-lisp
-  (setq comp-async-jobs-number 8)
+  (setq native-comp-async-jobs-number 8)
 #+end_src
 
 ** Cache SSL lookups
