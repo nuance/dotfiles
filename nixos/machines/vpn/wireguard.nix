@@ -48,8 +48,8 @@ in
   };
 
   services.unbound.enable = true;
-  services.unbound.settings.access-control = [ "127.0.0.0/24 allow" "10.100.0.0/24 allow" ];
-  services.unbound.settings.interface = [ "127.0.0.1" "10.100.0.1" ];
+  services.unbound.settings.server.access-control = [ "127.0.0.0/24 allow" "10.100.0.0/24 allow" ];
+  services.unbound.settings.server.interface = [ "127.0.0.1" "10.100.0.1" ];
   services.unbound.resolveLocalQueries = false;
   networking.nameservers = [ "8.8.8.8" "8.8.4.4" ];
 }
