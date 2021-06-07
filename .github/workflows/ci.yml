@@ -6,6 +6,11 @@ name: Build Nix envs
 on:
   push:
   workflow_dispatch:
+    inputs:
+      flake_input:
+        description: Flake input to update
+        required: false
+        default: null
   schedule:
     - cron: '0 0 * * 0' # Every Sunday at midnight UTC
 
@@ -112,7 +117,11 @@ jobs:
     - name: Update inputs
       id: lock-files
       run: |
-        nix flake lock --recreate-lock-file
+        if [ ${{ github.event.inputs.flake_input }} ]; then
+          nix flake lock --update-input ${{ github.event.inputs.flake_input }}
+        else
+          nix flake lock --recreate-lock-file
+        fi
 
         echo "::set-output name=patch::$(git diff | base64 -w0)"
 
@@ -212,5 +221,9 @@ jobs:
 
         echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
-        git commit -am "Update inputs"
+        if [ ${{ github.event.inputs.flake_input }} ]; then
+          git commit -am "Update ${{ github.event.inputs.flake_input }} input"
+        else
+          git commit -am "Update inputs"
+        fi
         git push
