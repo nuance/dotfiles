@@ -23,8 +23,8 @@ in
       gnupg1
       ispell
       nixpkgs-fmt
-      python37Packages.black
-      python37Packages.flake8
+      python3Packages.black
+      python3Packages.flake8
       emacs-all-the-icons-fonts
       ibm-plex
       graphviz-nox
