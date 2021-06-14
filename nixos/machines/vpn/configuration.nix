@@ -1,5 +1,5 @@
 { overlays }:
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   nixpkgs.overlays = overlays;
 
@@ -18,8 +18,15 @@
     zsh
   ];
 
+  services.eternal-terminal.enable = true;
   services.tailscale.enable = true;
   programs.mosh.enable = true;
+
+  services.openssh = {
+    enable = true;
+    permitRootLogin = lib.mkForce "no";
+    passwordAuthentication = false;
+  };
 
   system.autoUpgrade = {
     enable = true;
