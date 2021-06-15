@@ -19,6 +19,8 @@
   ];
 
   services.eternal-terminal.enable = true;
+  networking.firewall.allowedUDPPorts = [ 2022 ];
+
   services.tailscale.enable = true;
   programs.mosh.enable = true;
 
