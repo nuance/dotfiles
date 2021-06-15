@@ -18,8 +18,11 @@
     zsh
   ];
 
-  services.eternal-terminal.enable = true;
-  networking.firewall.allowedTCPPorts = [ 2022 ];
+  services.eternal-terminal = {
+    enable = true;
+    port = 443;
+  };
+  networking.firewall.allowedTCPPorts = [ 443 ];
 
   services.tailscale.enable = true;
   programs.mosh.enable = true;
