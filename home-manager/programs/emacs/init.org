@@ -1527,6 +1527,17 @@ Optimize GC usage
   (use-package eldoc-box  :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
+** DevDocs
+
+#+begin_src emacs-lisp
+  (use-package devdocs-browser
+    :config
+    (add-to-list 'devdocs-browser-major-mode-docs-alist
+                 '(python-mode ("Python" "Pytorch" "numpy" "matplotlib")))
+    :bind
+    ("C-c d" . devdocs-browser-open))
+#+end_src
+
 ** Formatter
 
 Generic tramp-friendly helper for formatters that read from stdin / write to stdout
@@ -1804,14 +1815,6 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
         (message region-url))))
 
   (define-key prog-mode-map (kbd "s-u") 'phabricator-url)
-#+end_src
-
-** dash
-
-#+begin_src emacs-lisp
-  (use-package dash-at-point
-    :bind (("C-c d" . dash-at-point))
-    :config (add-to-list 'dash-at-point-mode-alist '(python-mode . "")))
 #+end_src
 
 ** XWidgets
