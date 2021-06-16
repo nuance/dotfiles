@@ -40,6 +40,11 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Block files
+      run: |
+        for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
+        echo '{...}: {}' > nixos/machines/dl/cuda.nix
+
     - name: Build home-manager config
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
@@ -76,9 +81,9 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
-    - name: Block certains files
+    - name: Block certain files
       run: |
-        echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
+        for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
         echo '{...}: {}' > nixos/machines/dl/cuda.nix
 
     - name: Check flake
@@ -89,8 +94,6 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
-        echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
-        echo '{...}: {}' > nixos/machines/dl/cuda.nix
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
         nix build --verbose --show-trace .#nixosConfigurations.vpn.config.system.build.toplevel
 
@@ -149,6 +152,11 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Block files
+      run: |
+        for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
+        echo '{...}: {}' > nixos/machines/dl/cuda.nix
+
     - name: Build home-manager config
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
@@ -187,9 +195,9 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
-    - name: Block certains files
+    - name: Block certain files
       run: |
-        echo '{...}: {}' > nixos/machines/dl/secrets/wifi.nix
+        for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
         echo '{...}: {}' > nixos/machines/dl/cuda.nix
 
     - name: Check flake
