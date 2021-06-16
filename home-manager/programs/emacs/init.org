@@ -1812,22 +1812,11 @@ I sometimes want access to my mu4e-generated contacts list, so provide a helper 
         message-send-mail-function 'message-send-mail-with-sendmail)
 #+end_src
 
-** diffusion
+** github
 
 #+begin_src emacs-lisp
-  (defun phabricator-url ()
-    "Capture a phabricator diffusion url for the current file or region."
-    (interactive)
-    (let*
-        ((url (cadr (split-string (shell-command-to-string (format "BROWSER=echo arc browse %s" (file-name-nondirectory (buffer-file-name)))) "\n" t)))
-         (begin (when (region-active-p) (line-number-at-pos (region-beginning))))
-         (end (when (region-active-p) (line-number-at-pos (1- (region-end)))))
-         (region-url (concat url (when (and begin end) (format "$%d-%d" begin end)))))
-      (unless (string-prefix-p "Usage Exception:" region-url)
-        (kill-new region-url)
-        (message region-url))))
-
-  (define-key prog-mode-map (kbd "s-u") 'phabricator-url)
+  (use-package git-link
+    :bind ("s-u" . git-link))
 #+end_src
 
 ** XWidgets
