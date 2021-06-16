@@ -961,9 +961,6 @@ between both flymake & flycheck errors.
     (interactive)
     (let*
         ((here (point))
-         (next-generic-error (save-excursion
-                               (next-error)
-                               (unless (eq (point) here) (point))))
          (next-flymake-error (save-excursion
                                (flymake-goto-next-error)
                                (unless (eq (point) here) (point))))
@@ -980,9 +977,6 @@ between both flymake & flycheck errors.
     (interactive)
     (let*
         ((here (point))
-         (prev-generic-error (save-excursion
-                               (previous-error)
-                               (unless (eq (point) here) (point))))
          (prev-flymake-error (save-excursion
                                (flymake-goto-prev-error)
                                (unless (eq (point) here) (point))))
