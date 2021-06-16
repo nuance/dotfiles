@@ -22,5 +22,6 @@
     pv
     cachix
     jq
+    eternal-terminal
   ];
 }
