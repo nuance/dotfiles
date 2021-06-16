@@ -1502,6 +1502,15 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
   (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
 #+end_src
 
+*** company org block
+
+#+begin_src emacs-lisp
+  (use-package company-org-block
+    :hook ((org-mode . (lambda ()
+                         (setq-local company-backends '(company-org-block))
+                         (company-mode +1)))))
+#+end_src
+
 ** Tramp
 
 #+BEGIN_SRC emacs-lisp
