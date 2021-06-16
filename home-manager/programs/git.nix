@@ -27,6 +27,10 @@
       changed = "! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD origin/master` | more";
       changed-diff = "! git diff --diff-filter=ACMRTUX `git merge-base HEAD origin/master`";
       squash = "git reset --soft `git merge-base HEAD origin/master`";
+
+      pychanged = "! git changed | egrep '[.]py$'";
+      pylint = "! git pychanged | xargs flake8 && git pychanged | xargs pyright";
+      pyfmt = "! git pychanged | xargs black && git pychanged | xargs isort";
     };
 
     extraConfig = {
