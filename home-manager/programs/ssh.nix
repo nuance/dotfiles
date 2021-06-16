@@ -2,7 +2,11 @@
 let hosts = [ "dl" "vpn" "print-server" "synology" "*.mhjones.org" ];
 in
 {
-  programs.ssh.enable = true;
+  programs.ssh = {
+    enable = true;
+    controlMaster = "yes";
+    controlPersist = "10m";
+  };
 
   programs.ssh.matchBlocks =
     lib.genAttrs hosts
