@@ -11,6 +11,7 @@
   configuration = { pkgs, lib, config, ... }:
     {
       nixpkgs.overlays = overlays;
+      nixpkgs.config.allowUnfree = true;
 
       programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} m1-pro)";
       programs.zsh.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} m1-pro)";
@@ -22,7 +23,7 @@
         ../environments/macos-launch-agents.nix
         ../programs/emacs-server.nix
         ../programs/secretive.nix
-        ./secrets/m1-pro.nix
+        ./secrets/work.nix
       ];
     };
 }
