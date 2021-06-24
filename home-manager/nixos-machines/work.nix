@@ -4,7 +4,7 @@
 
   home.packages = with pkgs; [
     git-town
-    python3Packages.nbdime
+    # python3Packages.nbdime
   ];
 
   programs.git.aliases = {
