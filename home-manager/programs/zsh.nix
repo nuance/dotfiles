@@ -3,6 +3,10 @@
   programs.zsh = {
     enable = true;
 
+    initExtraFirst = ''
+      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+    '';
+
     defaultKeymap = "emacs";
 
     history.ignorePatterns = [ "ls" "cd" "exit" ];
