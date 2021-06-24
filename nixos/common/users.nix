@@ -9,4 +9,11 @@ in
     extraGroups = [ "wheel" ];
     isNormalUser = true;
   };
+
+  users.users.matt-work = {
+    shell = pkgs.zsh;
+    openssh.authorizedKeys.keys = keys;
+    extraGroups = [ "wheel" ];
+    isNormalUser = true;
+  };
 }

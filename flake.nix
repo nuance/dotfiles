@@ -38,6 +38,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.matt = import ./home-manager/nixos-machines/remote.nix;
+            home-manager.users.matt-work = import ./home-manager/nixos-machines/remote.nix;
           }
         ];
       };
