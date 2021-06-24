@@ -35,8 +35,8 @@ in
     ".emacs.d/server/server.el".source = ./emacs/secrets/server;
   };
 
-  programs.bash.sessionVariables.EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
-  programs.zsh.sessionVariables.EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
+  programs.bash.sessionVariables.EDITOR = "${setup-remote-host/secrets/remote-editor}";
+  programs.zsh.sessionVariables.EDITOR = "${setup-remote-host/secrets/remote-editor}";
 
   programs.bash.shellAliases.en = "$EDITOR -n";
   programs.zsh.shellAliases.en = "$EDITOR -n";
