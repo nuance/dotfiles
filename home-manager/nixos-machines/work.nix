@@ -4,6 +4,7 @@
 
   home.packages = with pkgs; [
     git-town
+    python3
     # python3Packages.nbdime
   ];
 
