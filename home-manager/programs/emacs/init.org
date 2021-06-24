@@ -1007,6 +1007,23 @@ between both flymake & flycheck errors.
     (cl-defmethod project-root ((project (head git-dir)))
       (cdr project))
 
+    (cl-defmethod project-files ((project (head git-dir)) &optional dirs)
+      "Implementation of `project-files' for Git projects."
+      (cl-mapcan
+       (lambda (dir)
+         (if-let ((git (and (file-exists-p
+                             (expand-file-name ".git/config" dir))
+                            (executable-find "git"))))
+             (let ((default-directory dir))
+               (sort (split-string
+                      (shell-command-to-string
+                       (concat git " ls-files -z"))
+                      "\0" t)
+                     #'string<))
+           ;; No Git project, so go with the default.
+           (cl-call-next-method)))
+       (or dirs (project-roots project))))
+
     (add-hook 'project-find-functions #'project-find-git-dir)
 
     (defun nuance/project-name (project)
