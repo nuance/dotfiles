@@ -2,7 +2,7 @@
 {
   imports = [ ./remote.nix ./secrets/work.nix ];
 
-  programs = with pkgs; [
+  home.packages = with pkgs; [
     git-town
   ];
 }
