@@ -8,7 +8,6 @@
   ];
 
   programs.git.aliases = {
-    pychanged = "! git changed | egrep '.py$'";
     fix = "! git pychanged | xargs black && git pychanged | xargs isort";
     lint = "! git pychanged | xargs flake8 && git pychanged | xargs pyright";
     test = "! git pychanged | xargs dirname | sort | uniq | xargs pytest";
