@@ -1,5 +1,7 @@
 # -*- mode: sh -*-
 
+[[ $TERM == "dumb" ]] && PS1='$ ' && return
+
 export CLICOLOR="1"
 export PYTHONIOENCODING="UTF-8"
 
