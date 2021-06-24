@@ -32,10 +32,11 @@ in
       onChange = "cd ~/.emacs.d ; ${emacs}/bin/emacs --batch -l ob-tangle --eval \"(org-babel-tangle-file \\\"init.org\\\")\"";
     };
     ".emacs.d/site-lisp/mu4e-thread-folding.el".source = ./emacs/mu4e-thread-folding.el;
+    ".emacs.d/server/server.el".source = ./emacs/secrets/server;
   };
 
   programs.bash.sessionVariables.EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
-  programs.zsh.sessionVariables.EDITOR = "${emacs}/bin/emacsclient";
+  programs.zsh.sessionVariables.EDITOR = "${emacs}/bin/emacsclient -f $HOME/.emacs.d/server/server";
 
   programs.bash.shellAliases.en = "$EDITOR -n";
   programs.zsh.shellAliases.en = "$EDITOR -n";
