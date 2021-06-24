@@ -4,7 +4,7 @@ in
 {
   programs.ssh = {
     enable = true;
-    controlMaster = "yes";
+    controlMaster = "auto";
     controlPersist = "10m";
   };
 
