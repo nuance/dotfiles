@@ -1535,7 +1535,6 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
     :ensure nil
     :custom
     ((tramp-auto-save-directory "/tmp")
-     (tramp-use-ssh-controlmaster-options nil)
      (tramp-inline-compress-start-size (* 64 1024))
      (tramp-default-method "ssh"))
     :config
