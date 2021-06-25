@@ -23,7 +23,6 @@
         ../environments/macos-launch-agents.nix
         ../programs/emacs-server.nix
         ../programs/secretive.nix
-        ./secrets/work.nix
       ];
     };
 }
