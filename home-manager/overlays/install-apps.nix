@@ -77,18 +77,6 @@ self: super: {
     homepage = https://www.mowglii.com/itsycal/;
   };
 
-  XBar = self.installApplication rec {
-    name = "xbar";
-    version = "2.0.42";
-    sourceRoot = "xbar.app";
-    src = super.fetchurl {
-      url = https://github.com/matryer/xbar/releases/download/v2.0.42-beta/xbar.v2.0.42-beta.dmg;
-      sha256 = "0n9nngpywmn1iqv87m3gq7scnrwi6spb7g12qs74l4sfgldrqp0g";
-    };
-    description = "xbar";
-    homepage = https://www.xbarapp.com;
-  };
-
   MonitorControl = self.installApplication rec {
     name = "MonitorControl";
     version = "2.1.0";
