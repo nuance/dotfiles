@@ -11,7 +11,6 @@
   configuration = { pkgs, lib, config, ... }:
     {
       nixpkgs.overlays = overlays;
-      nixpkgs.config.allowUnfree = true;
 
       programs.bash.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} m1-pro)";
       programs.zsh.shellAliases.flake-rebuild = "(cd ~/dotfiles && ${../rebuild.sh} m1-pro)";
