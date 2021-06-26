@@ -30,7 +30,6 @@
   environment.systemPackages = with pkgs; [
     mosh
     pciutils
-    cachix
   ];
 
   services.plex = {

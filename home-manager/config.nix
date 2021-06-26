@@ -20,7 +20,6 @@
     watch
     mosh
     pv
-    cachix
     jq
     eternal-terminal
   ];
