@@ -385,11 +385,7 @@ And test it like:
   (setq savehist-save-minibuffer-history nil
         desktop-files-not-to-save "^$")
   (savehist-mode 1)
-  (add-to-list 'savehist-additional-variables 'kill-ring)
   (add-to-list 'savehist-additional-variables 'compile-command)
-  (add-to-list 'savehist-additional-variables 'search-ring)
-  (add-to-list 'savehist-additional-variables 'regexp-search-ring)
-  (add-to-list 'savehist-additional-variables 'xref--marker-ring)
 #+end_src
 
 * UI Appearance
@@ -543,7 +539,7 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
                       :family "IBM Plex Mono"
-                      :height 110)
+                      :height 140)
   (set-face-attribute 'fixed-pitch nil
                       :family "IBM Plex Mono")
   (set-face-attribute 'variable-pitch nil
@@ -1032,7 +1028,7 @@ between both flymake & flycheck errors.
 
     (defun project-find-file-in (filename dirs project)
       "Complete FILENAME in DIRS in PROJECT and visit the result."
-      (let* ((pr (project-root project))
+      (let* ((pr (if project (project-root project) default-directory))
              (default-directory pr)
              (selection (selectrum--read
                          (format "find %s: " (nuance/project-name project))
@@ -1050,7 +1046,7 @@ between both flymake & flycheck errors.
       "Call git grep in current project. With a universal argument, search one level up."
       (interactive "P")
       (let* ((project (project-current))
-             (pr (project-root project))
+             (pr (if project (project-root project) default-directory))
              (default-directory (if arg (file-name-directory (directory-file-name pr)) pr))
              (selection (selectrum--read
                          (format "grep %s: " (nuance/project-name project))
@@ -1217,8 +1213,6 @@ A simple xref backend using rg. Inspired by the gxref implementation.
              (magit-restore-window-configuration t)
              (git-commit-fill-column 120))
     :bind ("C-x g" . magit-status))
-
-  (use-package forge :after magit)
 #+end_src
 
 ** smerge-hydra
