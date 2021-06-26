@@ -18,8 +18,6 @@
     curl
     tree
     watch
-    mosh
-    pv
     jq
     eternal-terminal
   ];

@@ -13,7 +13,6 @@
   system.stateVersion = "18.09";
 
   environment.systemPackages = with pkgs; [
-    mosh
     binutils
     zsh
   ];
@@ -25,7 +24,6 @@
   networking.firewall.allowedTCPPorts = [ 443 ];
 
   services.tailscale.enable = true;
-  programs.mosh.enable = true;
 
   services.openssh = {
     enable = true;
