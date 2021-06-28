@@ -539,12 +539,12 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
                       :family "IBM Plex Mono"
-                      :height 140)
+                      :height 110)
   (set-face-attribute 'fixed-pitch nil
                       :family "IBM Plex Mono")
   (set-face-attribute 'variable-pitch nil
                       :family "IBM Plex Sans"
-                      :height 140)
+                      :height 110)
 #+END_SRC
 
 ** Set titlebar color
@@ -711,9 +711,12 @@ I'd like to toggle between light & dark themes.
 
 ** Default to regexp search
 #+BEGIN_SRC emacs-lisp
-  (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
-  (global-set-key [remap isearch-backward] 'isearch-backward-regexp)
-  (global-set-key [remap query-replace] 'query-replace-regexp)
+  (use-package visual-regexp-steroids
+    :bind (("C-s" . 'vr/isearch-forward)
+           ("C-r" . 'vr/isearch-backward)
+           ("C-c r" . 'vr/replace)
+           ("C-c q" . 'vr/query-replace)
+           ("C-c m" . 'vr/mc-mark)))
 #+END_SRC
 
 ** Sublime-like
@@ -1738,8 +1741,7 @@ The following is probably not necessary now that I switched to nix and dropped s
     (:map xwidget-webkit-mode-map
           ("C-p" . xwidget-webkit-scroll-down)
           ("C-n" . xwidget-webkit-scroll-up)
-          ("M-w" . xwidget-webkit-copy-selection-as-kill)
-          ("C-c" . xwidget-webkit-copy-selection-as-kill)))
+          ("M-w" . xwidget-webkit-copy-selection-as-kill)))
 #+end_src
 
 * File-type support
