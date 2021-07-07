@@ -30,6 +30,7 @@ in
       graphviz-nox
       fd
       ripgrep
+      rnix-lsp
     ];
 
   home.file = {
