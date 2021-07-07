@@ -270,16 +270,13 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+BEGIN_SRC emacs-lisp
   ;; functional helpers
-  (use-package dash
-    )
+  (use-package dash)
 
   ;; string manipulation
-  (use-package s
-    )
+  (use-package s)
 
   ;; filepath manipulation
-  (use-package f
-    )
+  (use-package f)
 #+END_SRC
 
 ** Encrypted authinfo
@@ -1378,9 +1375,6 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
     ((org-mode . visual-line-mode)
      (org-mode . org-indent-mode)
      (org-mode . (lambda ()
-                   (setq header-line-format " "
-                         left-margin-width 2
-                         right-margin-width 2)
                    (set-window-buffer nil (current-buffer))
                    (org-content 2)
                    (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)
