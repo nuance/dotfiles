@@ -20,5 +20,9 @@
     watch
     jq
     eternal-terminal
+    go
+    gopls
+    protobuf
+    protoc-gen-go
   ];
 }
