@@ -149,21 +149,6 @@ Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org
                        gcs-done)))
 #+END_SRC
 
-** Garbage collector tweaks
-*** Init-time
-
-#+BEGIN_SRC emacs-lisp
-  (setq gc-cons-threshold most-positive-fixnum)
-  (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 100000000)))
-#+END_SRC
-
-*** Minibuffer
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
-  (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
-#+END_SRC
-
 ** Increase read process output buffer size
 
 #+begin_src emacs-lisp
@@ -1553,7 +1538,7 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
 Optimize GC usage
 
 #+BEGIN_SRC emacs-lisp
-  (use-package gcmh )
+  (use-package gcmh :config (gcmh-mode t))
 #+END_SRC
 
 ** ElDoc
