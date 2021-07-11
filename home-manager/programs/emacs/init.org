@@ -864,8 +864,6 @@ Incremental search thats multiple-cursors-friendly.
 #+BEGIN_SRC emacs-lisp
   (put 'upcase-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
-  ;; (global-set-key (kbd "s-k s-u") 'upcase-region)
-  ;; (global-set-key (kbd "s-k s-l") 'downcase-region)
 #+END_SRC
 
 *** Electric pair
@@ -887,6 +885,7 @@ Mimic standard macos window / tab management commands
   (global-set-key (kbd "s-W") (lambda () (interactive) (kill-this-buffer) (delete-window)))
   (global-set-key (kbd "s-N") 'make-frame)
   (global-set-key (kbd "s-W") 'delete-frame)
+  (global-set-key (kbd "s-s") 'save-buffer)
 #+end_src
 
 *** scratch
@@ -1297,12 +1296,20 @@ A simple xref backend using rg. Inspired by the gxref implementation.
      eglot-workspace-configuration '((:gopls . ((usePlaceholders . t)
                                                 (allExperiments . t)
                                                 (staticcheck . t)
-                                                (matcher . "CaseSensitive")))))
+                                                (analyses . (
+                                                             (nilness . t)
+                                                             (fieldalignment . t)
+                                                             (shadow . t)
+                                                             (unusedparams . t)
+                                                             (unusedwrite . t)))
+                                                (matcher . "Fuzzy")))))
     (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
     (add-to-list 'eglot-server-programs '(nix-mode . ("rnix-lsp")))
     :hook
     ((python-mode c++-mode c-mode go-mode rust-mode)
-     . (lambda () (unless (file-remote-p default-directory) (eglot-ensure)))))
+     . (lambda () (unless (file-remote-p default-directory) (eglot-ensure))))
+    :bind (:map eglot-mode-map
+                ("C-c r" . eglot-rename)))
 #+END_SRC
 
 ** Bug hunter
@@ -1825,10 +1832,14 @@ The following is probably not necessary now that I switched to nix and dropped s
 *** Eglot format on save
 
 #+begin_src emacs-lisp
+  (defun nuance/eglot-organize-imports ()
+    (ignore-errors (eglot-code-action-organize-imports (point-min))))
+
   ;; Optional: install eglot-format-buffer as a save hook.
   ;; The depth of -10 places this before eglot's willSave notification,
   ;; so that that notification reports the actual contents that will be saved.
   (defun eglot-format-buffer-on-save ()
+    (add-hook 'before-save-hook #'nuance/eglot-organize-imports -11 t)
     (add-hook 'before-save-hook #'eglot-format-buffer -10 t))
   (add-hook 'go-mode-hook #'eglot-format-buffer-on-save)
 #+end_src
