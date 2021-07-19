@@ -1685,50 +1685,11 @@ The following is probably not necessary now that I switched to nix and dropped s
     :custom ((alert-default-style 'osx-notifier)))
 #+end_src
 
-** org-msg
-
-#+begin_src emacs-lisp
-  (use-package org-msg
-    :config (org-msg-mode)
-    :custom
-    ((org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng")
-     (org-msg-startup "hidestars indent inlineimages")
-     (org-msg-default-alternatives '(text html))
-     (org-msg-convert-citation t)))
-#+end_src
-
-** msmtp
-
-#+begin_src emacs-lisp
-  (setq sendmail-program "/Users/matt/.nix-profile/bin/msmtp"
-        send-mail-function 'smtpmail-send-it
-        message-sendmail-f-is-evil t
-        message-sendmail-extra-arguments '("--read-envelope-from")
-        message-send-mail-function 'message-send-mail-with-sendmail)
-#+end_src
-
 ** github
 
 #+begin_src emacs-lisp
   (use-package git-link
     :bind ("s-u" . git-link))
-#+end_src
-
-** XWidgets
-
-#+begin_src emacs-lisp
-  (use-package xwidget
-    :if window-system
-    :ensure nil
-    :config
-    (defun open-buffer-in-webkit ()
-      (interactive)
-      (xwidget-webkit-browse-url (concat "file://" buffer-file-name)))
-    :bind
-    (:map xwidget-webkit-mode-map
-          ("C-p" . xwidget-webkit-scroll-down)
-          ("C-n" . xwidget-webkit-scroll-up)
-          ("M-w" . xwidget-webkit-copy-selection-as-kill)))
 #+end_src
 
 ** direnv

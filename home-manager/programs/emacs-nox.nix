@@ -21,6 +21,7 @@ in
       graphviz-nox
       fd
       ripgrep
+      pandoc
     ];
 
   programs.mu.enable = true;

@@ -1,19 +1,10 @@
 { pkgs, lib, ... }:
 let
-  rawPackage = (pkgs.emacsGit.override {
-    nativeComp = true;
-    withXwidgets = true;
-  });
-  oaPackage = (if pkgs.stdenv.isLinux then rawPackage else
-  (
-    rawPackage.overrideAttrs (
-      oa: { buildInputs = oa.buildInputs ++ [ pkgs.darwin.apple_sdk.frameworks.WebKit ]; }
-    )));
   emacs = (pkgs.emacsWithPackagesFromUsePackage {
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = oaPackage;
+    package = pkgs.emacsGcc;
   });
 in
 {
@@ -31,6 +22,9 @@ in
       fd
       ripgrep
       rnix-lsp
+      pandoc
+      imagemagick
+      texlive.combined.scheme-medium
     ];
 
   home.file = {
