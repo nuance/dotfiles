@@ -69,6 +69,10 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Apply patch
+      run: |
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
     - name: Block files
       run: |
         for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
@@ -78,7 +82,6 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
-        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
@@ -112,6 +115,10 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Apply patch
+      run: |
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
     - name: Block certain files
       run: |
         for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
@@ -125,7 +132,6 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
-        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
         nix build --verbose --show-trace .#nixosConfigurations.vpn.config.system.build.toplevel
@@ -139,12 +145,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Apply patch
+      run: |
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
     - name: Push commit with updated inputs
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-
-        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
 
         if [ ${{ github.event.inputs.flake_input }} ]; then
           git commit -am "Update ${{ github.event.inputs.flake_input }} input"
