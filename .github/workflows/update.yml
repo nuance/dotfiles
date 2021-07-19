@@ -1,16 +1,54 @@
 # very slightly tweaked from https://github.com/malob/nixpkgs/blob/2772db984cc17320360b30c77c6f6a007ecefb4f/.github/workflows/ci.yml
 # changes: cachix name, remove nix-darwin specific stuff
 
-name: Build nix environments
+name: Update flake lockfile
 
 on:
-  push:
+  workflow_dispatch:
+    inputs:
+      flake_input:
+        description: Flake input to update
+        required: false
+        default: null
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight UTC
 
 jobs:
 
-  build-macos-env:
+  stage-update:
+    name: Stage new version
+    runs-on: ubuntu-latest
+
+    outputs:
+      patch: ${{ steps.lock-files.outputs.patch }}
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v13
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-2.4pre20210429_d15a196/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+
+    - name: Update inputs
+      id: lock-files
+      run: |
+        if [ ${{ github.event.inputs.flake_input }} ]; then
+          nix flake lock --update-input ${{ github.event.inputs.flake_input }}
+        else
+          nix flake lock --recreate-lock-file
+        fi
+
+        echo "::set-output name=patch::$(git diff | base64 -w0)"
+
+  build-updated-macos-env:
     name: Build/cache macOS Nix env
     runs-on: macos-latest
+    needs: stage-update
 
     steps:
 
@@ -40,6 +78,8 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
@@ -48,9 +88,10 @@ jobs:
         HOME_MANAGER_BACKUP_EXT=backup ./github-macos-ci/activate
         HOME_MANAGER_BACKUP_EXT=backup ./macos-bootstrap/activate
 
-  build-nixos-env:
+  build-updated-nixos-env:
     name: Build/cache linux nixos env
     runs-on: ubuntu-latest
+    needs: stage-update
 
     steps:
 
@@ -84,5 +125,30 @@ jobs:
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
         nix build --verbose --show-trace .#nixosConfigurations.dl.config.system.build.toplevel
         nix build --verbose --show-trace .#nixosConfigurations.vpn.config.system.build.toplevel
+
+  commit-update:
+    name: Commit updated nix.lock
+    runs-on: ubuntu-latest
+    needs: [ stage-update, build-updated-macos-env, build-updated-nixos-env ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Push commit with updated inputs
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+
+        echo '${{ needs.stage-update.outputs.patch }}' | base64 -d | patch -p1
+
+        if [ ${{ github.event.inputs.flake_input }} ]; then
+          git commit -am "Update ${{ github.event.inputs.flake_input }} input"
+        else
+          git commit -am "Update inputs"
+        fi
+        git push
