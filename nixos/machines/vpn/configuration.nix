@@ -8,6 +8,10 @@
     ./wireguard.nix
     ../../common/common.nix
   ];
+  
+  boot.kernel.sysctl = {
+    "net.ipv6.conf.all.forwarding" = true;
+  };
 
   networking.hostName = "vpn";
   system.stateVersion = "18.09";
