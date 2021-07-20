@@ -4,6 +4,7 @@
 
   hardware.enableAllFirmware = true;
   networking.wireless.enable = true;
+  networking.wireless.interfaces = [ "wlp5s0" ];
 
   # networking.firewall = {
   #   allowedUDPPorts = [ 51820 60000 60001 ];
