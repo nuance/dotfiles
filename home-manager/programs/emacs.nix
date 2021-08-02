@@ -25,6 +25,7 @@ in
       pandoc
       imagemagick
       texlive.combined.scheme-medium
+      clang-tools
     ];
 
   home.file = {
