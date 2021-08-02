@@ -6,7 +6,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    google-cloud-sdk
+    google-cloud-sdk-gce
   ];
   boot.kernelParams = [
     "console=tty1"
