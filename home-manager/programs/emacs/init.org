@@ -1528,7 +1528,7 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
   (use-package latex
     :ensure auctex
     :config
-    (use-package preview))
+    (use-package preview :ensure nil))
 #+end_src
 
 ** Tramp
