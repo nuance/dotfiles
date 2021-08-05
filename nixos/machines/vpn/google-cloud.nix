@@ -2,12 +2,7 @@
 
 {
   imports = [
-    (modulesPath + "/virtualisation/google-compute-image.nix")
-  ];
-
-  boot.kernelParams = [
-    "console=tty1"
-    "console=ttyS0,115200"
+    (modulesPath + "/virtualisation/google-compute-config.nix")
   ];
 
   services.journaldriver.enable = true;
