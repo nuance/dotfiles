@@ -563,13 +563,21 @@ I'd like to toggle between light & dark themes.
     ;; Find a good default value for prompts
     (if (region-active-p) (buffer-substring (region-beginning) (region-end)) (thing-at-point 'symbol)))
 #+end_src
+** Orderless
 
+#+begin_src emacs-lisp
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless)
+          orderless-matching-styles '(orderless-prefixes)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles . (partial-completion))))))
+#+end_src
 
 ** Selectrum
 
 #+begin_src emacs-lisp
   (use-package selectrum
-
     :bind (:map selectrum-minibuffer-map
                 ;; sorta mimic helm bindings I'm used to
                 ("C-j" . 'selectrum-insert-current-candidate)
@@ -578,16 +586,6 @@ I'd like to toggle between light & dark themes.
     :config
     (setq selectrum-num-candidates-displayed 25)
     (selectrum-mode 1))
-
-  (use-package prescient
-
-    :config
-    (setq prescient-filter-method '(literal initialism regexp fuzzy))
-    (prescient-persist-mode t))
-
-  (use-package selectrum-prescient
-
-    :config (selectrum-prescient-mode 1))
 #+end_src
 
 *** Consult
@@ -661,34 +659,30 @@ I'd like to toggle between light & dark themes.
     :config (mini-frame-mode))
 #+end_src
 
-** Company
+** Corfu
+
 #+BEGIN_SRC emacs-lisp
-  (use-package company
-
+  (use-package corfu
     :custom
-    ((company-idle-delay 0.1)
-     (company-minimum-prefix-length 3)
-     (company-backends '(company-elisp company-capf company-dabbrev-code company-etags company-dabbrev))
-     (company-dabbrev-downcase nil)
-     (company-dabbrev-code-everywhere t))
+    ((corfu-cycle t)
+     (corfu-auto t)
+     (corfu-quit-at-boundary t)
+     (corfu-quit-no-match t)
+     (corfu-echo-documentation t))
+    :bind (:map corfu-map
+                ("TAB" . corfu-next)
+                ([tab] . corfu-next)
+                ("S-TAB" . corfu-previous)
+                ([backtab] . corfu-previous))
     :config
-    (global-company-mode))
+    (corfu-global-mode))
 
-  (use-package company-quickhelp
-
-    :init (setq company-quickhelp-delay 0.1)
-    :config (company-quickhelp-mode))
-
-  (use-package company-box
-
-    :hook (company-mode . company-box-mode)
-    :config
-    (defun company-box-icons--lsp (candidate)
-      (-when-let* ((lsp-item (or (get-text-property 0 'lsp-completion-item candidate)
-                                 (get-text-property 0 'eglot--lsp-item candidate)))
-                   (kind-num (if (hash-table-p lsp-item) (gethash "kind" lsp-item)
-                               (plist-get lsp-item :kind))))
-        (alist-get kind-num company-box-icons--lsp-alist))))
+  (use-package emacs
+    :ensure nil
+    :init
+    (setq completion-cycle-threshold 3)
+    (setq read-extended-command-predicate #'command-completion-default-include-p)
+    (setq tab-always-indent 'complete))
 #+END_SRC
 
 ** Default to regexp search
@@ -749,8 +743,6 @@ I'd like to toggle between light & dark themes.
         (unless (region-active-p) (er/mark-symbol))
         (mc/mark-all-like-this)))
 
-    (add-to-list 'mc/unsupported-minor-modes 'company-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'company-quickhelp-mode)
     (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
     (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
 
@@ -918,13 +910,7 @@ Auto-revert to new tags file
 #+begin_src emacs-lisp
   (use-package eshell
     :ensure nil
-    :bind ("s-e" . eshell)
-    :config
-    (defun toggle-eshell-company ()
-      (company-mode (not (file-remote-p default-directory))))
-    :hook
-    ((eshell-mode . toggle-eshell-company)
-     (eshell-directory-change . toggle-eshell-company)))
+    :bind ("s-e" . eshell))
 #+end_src
 
 ** Reload all buffers
@@ -1511,15 +1497,6 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
 
   (global-set-key (kbd "s-k") 'nuance/nv-find-note)
   (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
-#+end_src
-
-*** company org block
-
-#+begin_src emacs-lisp
-  (use-package company-org-block
-    :hook ((org-mode . (lambda ()
-                         (setq-local company-backends '(company-org-block))
-                         (company-mode +1)))))
 #+end_src
 
 ** Auctex
