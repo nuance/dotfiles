@@ -674,7 +674,7 @@ I'd like to toggle between light & dark themes.
                 ([tab] . corfu-next)
                 ("S-TAB" . corfu-previous)
                 ([backtab] . corfu-previous))
-    :config
+    :init
     (corfu-global-mode))
 
   (use-package emacs
