@@ -1518,7 +1518,8 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
      (tramp-inline-compress-start-size (* 64 1024))
      (tramp-default-method "ssh"))
     :config
-    (add-to-list 'tramp-remote-path "/home/matt/bin"))
+    (add-to-list 'tramp-remote-path "/home/matt/bin")
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+END_SRC
 
 ** GC Magic Hack

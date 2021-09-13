@@ -22,6 +22,8 @@ in
       fd
       ripgrep
       pandoc
+      clang-tools
+      gopls
     ];
 
   programs.mu.enable = true;

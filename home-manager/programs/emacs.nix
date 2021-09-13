@@ -26,6 +26,7 @@ in
       imagemagick
       texlive.combined.scheme-medium
       clang-tools
+      gopls
     ];
 
   home.file = {
