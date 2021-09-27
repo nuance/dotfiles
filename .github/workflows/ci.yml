@@ -10,7 +10,7 @@ jobs:
 
   build-macos-env:
     name: Build/cache macOS Nix env
-    runs-on: macos-latest
+    runs-on: macos-10.15
 
     steps:
 
