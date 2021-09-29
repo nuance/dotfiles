@@ -1277,11 +1277,10 @@ A simple xref backend using rg. Inspired by the gxref implementation.
                                                              (unusedparams . t)
                                                              (unusedwrite . t)))
                                                 (matcher . "Fuzzy")))))
-    (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+    (add-to-list 'eglot-server-programs '(python-mode . ("pyls")))
     (add-to-list 'eglot-server-programs '(nix-mode . ("rnix-lsp")))
     :hook
-    ((python-mode c++-mode c-mode go-mode rust-mode)
-     . (lambda () (unless (file-remote-p default-directory) (eglot-ensure))))
+    ((python-mode c++-mode c-mode go-mode rust-mode) . eglot-ensure)
     :bind (:map eglot-mode-map
                 ("C-c r" . eglot-rename)))
 #+END_SRC
