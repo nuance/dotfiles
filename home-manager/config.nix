@@ -17,6 +17,6 @@
     tree
     watch
     jq
-    eternal-terminal
+    # eternal-terminal
   ];
 }

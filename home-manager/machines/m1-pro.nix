@@ -1,7 +1,7 @@
 { overlays, ... }:
 {
 
-  system = "x86_64-darwin";
+  system = "aarch64-darwin";
 
   homeDirectory = "/Users/matt";
   username = "matt";
