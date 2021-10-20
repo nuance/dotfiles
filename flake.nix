@@ -1,7 +1,7 @@
 {
   description = "home-manager and nixos configurations";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/release-21.05";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
   inputs.emacs-overlay = {
     url = "github:nix-community/emacs-overlay";
@@ -9,7 +9,7 @@
   };
 
   inputs.home-manager = {
-    url = "github:nix-community/home-manager/release-21.05";
+    url = "github:nix-community/home-manager";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
