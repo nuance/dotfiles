@@ -4,9 +4,7 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = (pkgs.emacsGit-nox.override {
-      nativeComp = true;
-    });
+    package = pkgs.emacsGit-nox;
   });
 in
 {
