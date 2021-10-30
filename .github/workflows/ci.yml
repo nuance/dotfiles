@@ -41,7 +41,6 @@ jobs:
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
         nix-env --set-flag priority 1 cachix
         nix build --verbose --show-trace .#homeConfigurations.github-macos-ci.activationPackage -o github-macos-ci
-        nix build --verbose --show-trace .#homeConfigurations.github-macos-aarch64-ci.activationPackage -o github-macos-aarch64-ci
         nix build --verbose --show-trace .#homeConfigurations.macos-bootstrap.activationPackage -o macos-bootstrap
 
     - name: Activate home-manager environment
