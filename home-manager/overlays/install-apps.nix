@@ -29,65 +29,16 @@ self: super: {
         };
       };
 
-  Alfred = self.installApplication rec {
-    name = "Alfred";
-    version = "4.3.4";
-    sourceRoot = "Alfred 4.app";
-    src = super.fetchurl {
-      url = https://cachefly.alfredapp.com/Alfred_4.3.4_1229.dmg;
-      sha256 = "1chsc4nabak3vwlb0jhlrph78k28an74hb5yb9vlviis3snimqbi";
-    };
-    description = "Alfred";
-    homepage = https://alfredapp.com;
-  };
-
   Rectangle = self.installApplication rec {
     name = "Rectangle";
-    version = "0.43";
+    version = "0.49";
     sourceRoot = "Rectangle.app";
     src = super.fetchurl {
-      url = https://github.com/rxhanson/Rectangle/releases/download/v0.43/Rectangle0.43.dmg;
-      sha256 = "020sf87xxgxzv6a935q3fj67hldk0c1i9iycx9bl9spf44ijjcmc";
+      url = https://github.com/rxhanson/Rectangle/releases/download/v0.49/Rectangle0.49.dmg;
+      sha256 = "12ck00pvcbl1x7cyfwzdghjn538bhi1272k663dhxph02x7rlsb0";
     };
     description = "Rectangle";
     homepage = https://rectangleapp.com;
   };
-
-  Secretive = self.installApplication rec {
-    name = "Secretive";
-    version = "2.1.0";
-    sourceRoot = "Secretive.app";
-    src = super.fetchurl {
-      url = https://github.com/maxgoedjen/secretive/releases/download/v2.1.0/Secretive.zip;
-      sha256 = "15fw249r4yamczii8qs32fy48k5hnln1db4xfiflz7mcab2dh8ar";
-    };
-    description = "Secretive";
-    homepage = https://github.com/maxgoedjen/secretive;
-  };
-
-  Itsycal = self.installApplication rec {
-    name = "Itsycal";
-    version = "0.12.6";
-    sourceRoot = "Itsycal.app";
-    src = super.fetchurl {
-      url = https://itsycal.s3.amazonaws.com/Itsycal-0.12.6.zip;
-      sha256 = "1dlzsfi9nwqmvvn54yn7yibzhnvj6jlyy7swp0kwqgc1cyfj37zz";
-    };
-    description = "Itsycal";
-    homepage = https://www.mowglii.com/itsycal/;
-  };
-
-  MonitorControl = self.installApplication rec {
-    name = "MonitorControl";
-    version = "2.1.0";
-    sourceRoot = "MonitorControl.app";
-    src = super.fetchurl {
-      url = https://github.com/MonitorControl/MonitorControl/releases/download/v2.1.0/MonitorControl.2.1.0.dmg;
-      sha256 = "01pjmh94zvxk2zb73jdm4yi36qi2cvm28f9f0zqyk8q2l2b1lan0";
-    };
-    description = "MonitorControl";
-    homepage = https://github.com/MonitorControl/MonitorControl;
-  };
-
 
 }

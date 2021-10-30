@@ -7,11 +7,7 @@
   home.packages = with pkgs; [
     pinentry_mac
     ibm-plex
-    Alfred
     Rectangle
-    Secretive
-    Itsycal
-    MonitorControl
   ];
 
   targets.darwin.keybindings = {
