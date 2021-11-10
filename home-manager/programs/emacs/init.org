@@ -1279,6 +1279,18 @@ A simple xref backend using rg. Inspired by the gxref implementation.
                                                 (matcher . "Fuzzy")))))
     (add-to-list 'eglot-server-programs '(python-mode . ("pyls")))
     (add-to-list 'eglot-server-programs '(nix-mode . ("rnix-lsp")))
+    (add-to-list 'eglot-server-programs '(rust-mode . ("~/.cargo/bin/rustup" "run" "nightly" "rust-analyzer")))
+
+    (defun nuance/eglot-organize-imports ()
+      (ignore-errors (eglot-code-action-organize-imports (point-min))))
+
+    ;; Optional: install eglot-format-buffer as a save hook.
+    ;; The depth of -10 places this before eglot's willSave notification,
+    ;; so that that notification reports the actual contents that will be saved.
+    (defun nuance/eglot-format-buffer-on-save ()
+      (add-hook 'before-save-hook #'nuance/eglot-organize-imports -11 t)
+      (add-hook 'before-save-hook #'eglot-format-buffer -10 t))
+
     :hook
     ((python-mode c++-mode c-mode go-mode rust-mode) . eglot-ensure)
     :bind (:map eglot-mode-map
@@ -1739,13 +1751,15 @@ The following is probably not necessary now that I switched to nix and dropped s
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
-  (use-package rust-mode)
+  (use-package rust-mode
+    :hook (rust-mode . nuance/eglot-format-buffer-on-save))
 #+END_SRC
 
 ** Go
 
 #+BEGIN_SRC emacs-lisp
-  (use-package go-mode)
+  (use-package go-mode
+    :hook (go-mode . nuance/eglot-format-buffer-on-save))
 #+END_SRC
 
 *** Eglot Module Support
@@ -1762,21 +1776,6 @@ The following is probably not necessary now that I switched to nix and dropped s
     (cdr project))
 
   (add-hook 'project-find-functions #'project-find-go-module)
-#+end_src
-
-*** Eglot format on save
-
-#+begin_src emacs-lisp
-  (defun nuance/eglot-organize-imports ()
-    (ignore-errors (eglot-code-action-organize-imports (point-min))))
-
-  ;; Optional: install eglot-format-buffer as a save hook.
-  ;; The depth of -10 places this before eglot's willSave notification,
-  ;; so that that notification reports the actual contents that will be saved.
-  (defun eglot-format-buffer-on-save ()
-    (add-hook 'before-save-hook #'nuance/eglot-organize-imports -11 t)
-    (add-hook 'before-save-hook #'eglot-format-buffer -10 t))
-  (add-hook 'go-mode-hook #'eglot-format-buffer-on-save)
 #+end_src
 
 ** Bazel
