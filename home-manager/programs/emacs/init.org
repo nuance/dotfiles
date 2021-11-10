@@ -554,7 +554,6 @@ I'd like to toggle between light & dark themes.
     :hook (text-mode . mixed-pitch-mode))
 #+end_src
 
-
 * UI Interaction
 ** Helpers
 
@@ -955,6 +954,13 @@ between both flymake & flycheck errors.
 
   (bind-key (kbd "M-n") 'nuance/next-error)
   (bind-key (kbd "M-p") 'nuance/previous-error)
+#+end_src
+
+** Show flymake errors
+
+#+begin_src elisp
+  (use-package flymake-diagnostic-at-point
+    :hook (flymake-mode . flymake-diagnostic-at-point-mode))
 #+end_src
 
 ** Project Navigation
