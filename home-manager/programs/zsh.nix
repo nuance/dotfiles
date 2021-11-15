@@ -2,6 +2,7 @@
 {
   programs.zsh = {
     enable = true;
+    enableCompletion = false;
 
     initExtraFirst = ''
       [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
