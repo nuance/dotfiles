@@ -2,6 +2,7 @@
 {
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
+  programs.direnv.nix-direnv.enableFlakes = true;
   programs.direnv.stdlib = ''
     # $HOME/.config/direnv/direnvrc
     : ''${XDG_CACHE_HOME:=$HOME/.cache}
