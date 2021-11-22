@@ -723,7 +723,9 @@ I'd like to toggle between light & dark themes.
   (use-package expand-region
 
     :bind (("s-f" . 'er/expand-region)
-           ("s-F" . 'er/contract-region)))
+           ("C-c f" . 'er/expand-region)
+           ("s-F" . 'er/contract-region)
+           ("C-c F" . 'er/contract-region)))
 #+END_SRC
 
 *** Multiple cursors
@@ -739,8 +741,11 @@ I'd like to toggle between light & dark themes.
     (define-key mc/keymap (kbd "<return>") nil)
 
     :bind (("s-L" . mc/edit-lines)
+           ("C-c L" . mc/edit-lines)
            ("s-d" . mc/mark-next-like-this-symbol)
+           ("C-c d" . mc/mark-next-like-this-symbol)
            ("s-D" . mc/mark-all-dwim)
+           ("C-c D" . mc/mark-all-dwim)
            ("s-<mouse-1>" . mc/add-cursor-on-click)))
 #+END_SRC
 
@@ -1173,6 +1178,13 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "s-r") 'revert-buffer)
+#+end_src
+
+** Casing
+
+#+begin_src emacs-lisp
+  (use-package string-inflection
+    :bind (:map prog-mode-map ("C-c i" . string-inflection-cycle)))
 #+end_src
 
 * Packages
