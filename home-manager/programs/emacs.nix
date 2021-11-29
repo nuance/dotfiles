@@ -24,7 +24,6 @@ in
       rnix-lsp
       pandoc
       imagemagick
-      texlive.combined.scheme-medium
       clang-tools
       gopls
     ];
