@@ -19,7 +19,6 @@ in
       graphviz-nox
       fd
       ripgrep
-      pandoc
       clang-tools
       gopls
     ];
