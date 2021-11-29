@@ -22,7 +22,6 @@ in
       fd
       ripgrep
       rnix-lsp
-      imagemagick
       clang-tools
       gopls
     ];
