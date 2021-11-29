@@ -74,6 +74,10 @@ jobs:
         for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
         echo '{...}: {}' > nixos/machines/dl/cuda.nix
 
+    - name: Check flake
+      run: |
+        nix flake check
+
     - name: Build home-manager config
       run: |
         # Prevent conflict between Cachix installed by workflow and the one installed in the config
