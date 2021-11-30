@@ -578,7 +578,7 @@ I'd like to toggle between light & dark themes.
     (setq completion-styles '(orderless)
           orderless-matching-styles '(orderless-prefixes)
           completion-category-defaults nil
-          completion-category-overrides '((file (styles . (partial-completion))))))
+          completion-category-overrides '((file (styles . (partial-completion))) (nuance/dynamic (styles . (basic))))))
 #+end_src
 
 ** Completion
@@ -665,6 +665,18 @@ I'd like to toggle between light & dark themes.
     ;; auto-updating embark collect buffer
     :hook
     (embark-collect-mode . embark-consult-preview-minor-mode))
+#+end_src
+
+*** Dynamic completion helper
+
+#+begin_src emacs-lisp
+  (defun nuance/complete-dynamic (results-fn)
+    "Construct a completion table with results from results-fn"
+    (lambda (string predicate action)
+      (pcase action
+        (`(boundaries . ,suffix) `(boundaries . (0 . 0)))
+        ('metadata `(metadata (category . nuance/dynamic)))
+        (_ (apply results-fn (list string))))))
 #+end_src
 
 ** Mini frame
@@ -1039,17 +1051,17 @@ between both flymake & flycheck errors.
       "Return a nice version of the project name"
       (file-name-base (directory-file-name (file-local-name (project-root project)))))
 
-    (defun project-find-file-in (filename dirs project)
+    (defun project-find-file-in (filename dirs project &optional include-all)
       "Complete FILENAME in DIRS in PROJECT and visit the result."
       (let* ((pr (if project (project-root project) default-directory))
              (default-directory pr)
              (selection (completing-read
                          (format "find %s: " (nuance/project-name project))
-                         (completion-table-dynamic
+                         (nuance/complete-dynamic
                           (lambda (q)
                             (let* ((split (split-string q " " t))
                                    (pattern (format "(%s){%d}+" (s-join "|" (mapcar (lambda (s) (format "%s.*" s)) split)) (length split)))
-                                   (cmd (format "fd --color=never --max-results=%d --full-path \"%s\" %s" (* 5 nuance/completion-candidates) pattern (file-local-name pr)))
+                                   (cmd (format "fd --hidden --exclude .git --color=never --max-results=%d --full-path \"%s\" %s" (* 5 nuance/completion-candidates) pattern (file-local-name pr)))
                                    (results (shell-command-to-string cmd)))
                               (split-string results "\n" t))))
                          nil nil (dwim-default-text)))
@@ -1065,7 +1077,7 @@ between both flymake & flycheck errors.
              (default-directory (if arg (file-name-directory (directory-file-name pr)) pr))
              (selection (completing-read
                          (format "grep %s: " (nuance/project-name project))
-                         (completion-table-dynamic
+                         (nuance/complete-dynamic
                           (lambda (q)
                             (let* ((tokens (split-string q " " t))
                                    (pattern (s-join ".*" tokens))
@@ -1108,7 +1120,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
            (pr (project-root project))
            (default-directory pr)
            (matches (split-string
-                     (shell-command-to-string (format "rg --vimgrep --max-columns %d --color=never -e '%s' | head -n %d" (frame-width) pattern (* 5 nuance/complet))) "\n" t)))
+                     (shell-command-to-string (format "rg --vimgrep --max-columns %d --color=never -e '%s' | head -n %d" (frame-width) pattern (* 5 nuance/completion-candidates))) "\n" t)))
       (mapcar
        (lambda (m)
          (let* ((parts (split-string m ":"))
@@ -1507,11 +1519,11 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
     (let* ((default-directory (nuance/nv--notes-path))
            (selection (completing-read
                        "nv: "
-                       (completion-table-dynamic
+                       (nuance/complete-dynamic
                         (lambda (q)
                           (let* ((tokens (split-string q " " t))
                                  (pattern (format "((%s).*){%d}" (s-join "|" tokens) (length tokens)))
-                                 (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/complet)))
+                                 (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/completion-candidates)))
                                  (results (shell-command-to-string cmd)))
                             (append (list q) (split-string results "\n" t)))))
                        nil nil (dwim-default-text)))
@@ -1535,11 +1547,11 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
     (let* ((default-directory (nuance/nv--notes-path))
            (selection (completing-read
                        "link: "
-                       (completion-table-dynamic
+                       (nuance/complete-dynamic
                         (lambda (q)
                           (let* ((tokens (split-string q " " t))
                                  (pattern (format "((%s).*){%d}" (s-join "|" tokens) (length tokens)))
-                                 (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/complet)))
+                                 (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/completion-candidates)))
                                  (results (shell-command-to-string cmd)))
                             (append (list q) (split-string results "\n" t)))))
                        nil nil (dwim-default-text)))
