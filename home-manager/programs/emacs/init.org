@@ -1406,7 +1406,8 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
      org-enforce-todo-dependencies t
      org-agenda-log-mode-items '(closed clock state)
      org-agenda-include-diary t
-     org-agenda-window-setup 'current-window)
+     org-agenda-window-setup 'current-window
+     org-agenda-files '("~/org/"))
 
     (setq org-todo-keywords
           '((sequence "PLAN()" "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
