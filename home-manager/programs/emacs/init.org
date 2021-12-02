@@ -486,22 +486,17 @@ And test it like:
 I'd like to toggle between light & dark themes.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
-    :init
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (use-package kaolin-themes
     :config
-    (defvar light-theme 'doom-acario-light)
-    (defvar dark-theme 'doom-sourcerer)
+    (defvar light-theme 'kaolin-light)
+    (defvar dark-theme 'kaolin-dark)
 
     (defvar dark-mode t)
 
     (defun update-theme ()
       (progn
         (dolist (i custom-enabled-themes) (disable-theme i))
-        (load-theme (if dark-mode dark-theme light-theme) t)
-        (doom-themes-org-config)
-        (doom-themes-visual-bell-config)))
+        (load-theme (if dark-mode dark-theme light-theme) t)))
 
     (defun update-ui-appearance (name)
       (setq dark-mode (string= name "dark"))
@@ -512,9 +507,6 @@ I'd like to toggle between light & dark themes.
       (progn
         (setq dark-mode (not dark-mode))
         (update-theme)))
-
-    (doom-themes-org-config)
-    (doom-themes-visual-bell-config)
 
     (defun sync-active-theme ()
       (interactive)
@@ -1258,8 +1250,8 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :requires hydra
     :config
     (defhydra unpackaged/smerge-hydra
-      (:color pink :hint nil :post (smerge-auto-leave))
-      "
+              (:color pink :hint nil :post (smerge-auto-leave))
+              "
     ^Move^       ^Keep^               ^Diff^                 ^Other^
     ^^-----------^^-------------------^^---------------------^^-------
     _n_ext       _b_ase               _<_: upper/base        _C_ombine
@@ -1268,28 +1260,28 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     ^^           _a_ll                _R_efine
     ^^           _RET_: current       _E_diff
     "
-      ("n" smerge-next)
-      ("p" smerge-prev)
-      ("b" smerge-keep-base)
-      ("u" smerge-keep-upper)
-      ("l" smerge-keep-lower)
-      ("a" smerge-keep-all)
-      ("RET" smerge-keep-current)
-      ("\C-m" smerge-keep-current)
-      ("<" smerge-diff-base-upper)
-      ("=" smerge-diff-upper-lower)
-      (">" smerge-diff-base-lower)
-      ("R" smerge-refine)
-      ("E" smerge-ediff)
-      ("C" smerge-combine-with-next)
-      ("r" smerge-resolve)
-      ("k" smerge-kill-current)
-      ("ZZ" (lambda ()
-              (interactive)
-              (save-buffer)
-              (bury-buffer))
-       "Save and bury buffer" :color blue)
-      ("q" nil "cancel" :color blue))
+              ("n" smerge-next)
+              ("p" smerge-prev)
+              ("b" smerge-keep-base)
+              ("u" smerge-keep-upper)
+              ("l" smerge-keep-lower)
+              ("a" smerge-keep-all)
+              ("RET" smerge-keep-current)
+              ("\C-m" smerge-keep-current)
+              ("<" smerge-diff-base-upper)
+              ("=" smerge-diff-upper-lower)
+              (">" smerge-diff-base-lower)
+              ("R" smerge-refine)
+              ("E" smerge-ediff)
+              ("C" smerge-combine-with-next)
+              ("r" smerge-resolve)
+              ("k" smerge-kill-current)
+              ("ZZ" (lambda ()
+                      (interactive)
+                      (save-buffer)
+                      (bury-buffer))
+               "Save and bury buffer" :color blue)
+              ("q" nil "cancel" :color blue))
     :hook (magit-diff-visit-file . (lambda ()
                                      (when smerge-mode
                                        (unpackaged/smerge-hydra/body)))))
