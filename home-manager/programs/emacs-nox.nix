@@ -4,7 +4,19 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = pkgs.emacsGit-nox;
+    package = (
+      (
+        pkgs.emacs28.override {
+          withX = false;
+          withGTK2 = false;
+          withGTK3 = false;
+        }
+      ).overrideAttrs (
+        oa: {
+          name = "${oa.name}-nox";
+        }
+      )
+    );
   });
 in
 {
