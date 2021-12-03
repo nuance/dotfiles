@@ -570,7 +570,10 @@ I'd like to toggle between light & dark themes.
     (setq completion-styles '(orderless)
           orderless-matching-styles '(orderless-prefixes)
           completion-category-defaults nil
-          completion-category-overrides '((file (styles . (partial-completion))) (nuance/dynamic (styles . (basic))))))
+          completion-category-overrides
+          '((file (styles . (partial-completion)))
+            (nuance/dynamic (styles . (basic)))
+            (nuance/dynamic-file (styles . (basic))))))
 #+end_src
 
 ** Completion
@@ -639,16 +642,21 @@ I'd like to toggle between light & dark themes.
 
     :config
     (marginalia-mode)
-    (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light)))
+    (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light))
+    (add-to-list 'marginalia-annotator-registry '(nuance/dynamic-file marginalia-annotate-file)))
 #+end_src
 
 *** Embark
 
 #+begin_src emacs-lisp
   (use-package embark
-    :config (setq embark-prompter 'embark-completing-read-prompter)
+    :init (setq prefix-help-command #'embark-prefix-help-command)
+    :custom ((embark-indicators '(embark-minimal-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
+             (embark-prompter 'embark-completing-read-prompter))
     :bind
-    ("s-;" . embark-act))
+    ("C-." . embark-act)
+    ("C-;" . embark-dwim)
+    ("C-h b" . embark-bindings))
 
   (use-package embark-consult
     :after (embark consult)
@@ -662,12 +670,12 @@ I'd like to toggle between light & dark themes.
 *** Dynamic completion helper
 
 #+begin_src emacs-lisp
-  (defun nuance/complete-dynamic (results-fn)
+  (defun nuance/complete-dynamic (results-fn &optional category)
     "Construct a completion table with results from results-fn"
     (lambda (string predicate action)
       (pcase action
         (`(boundaries . ,suffix) `(boundaries . (0 . 0)))
-        ('metadata `(metadata (category . nuance/dynamic)))
+        ('metadata `(metadata (category . ,(if category category 'nuance/dynamic))))
         (_ (apply results-fn (list string))))))
 #+end_src
 
@@ -1055,7 +1063,7 @@ between both flymake & flycheck errors.
                                    (pattern (format "(%s){%d}+" (s-join "|" (mapcar (lambda (s) (format "%s.*" s)) split)) (length split)))
                                    (cmd (format "fd --hidden --exclude .git --color=never --max-results=%d --full-path \"%s\" %s" (* 5 nuance/completion-candidates) pattern (file-local-name pr)))
                                    (results (shell-command-to-string cmd)))
-                              (split-string results "\n" t))))
+                              (split-string results "\n" t))) 'nuance/dynamic-file)
                          nil nil (dwim-default-text)))
              (path (concat (file-remote-p pr) selection)))
         (xref-push-marker-stack)
@@ -1250,8 +1258,8 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :requires hydra
     :config
     (defhydra unpackaged/smerge-hydra
-              (:color pink :hint nil :post (smerge-auto-leave))
-              "
+      (:color pink :hint nil :post (smerge-auto-leave))
+      "
     ^Move^       ^Keep^               ^Diff^                 ^Other^
     ^^-----------^^-------------------^^---------------------^^-------
     _n_ext       _b_ase               _<_: upper/base        _C_ombine
@@ -1260,28 +1268,28 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     ^^           _a_ll                _R_efine
     ^^           _RET_: current       _E_diff
     "
-              ("n" smerge-next)
-              ("p" smerge-prev)
-              ("b" smerge-keep-base)
-              ("u" smerge-keep-upper)
-              ("l" smerge-keep-lower)
-              ("a" smerge-keep-all)
-              ("RET" smerge-keep-current)
-              ("\C-m" smerge-keep-current)
-              ("<" smerge-diff-base-upper)
-              ("=" smerge-diff-upper-lower)
-              (">" smerge-diff-base-lower)
-              ("R" smerge-refine)
-              ("E" smerge-ediff)
-              ("C" smerge-combine-with-next)
-              ("r" smerge-resolve)
-              ("k" smerge-kill-current)
-              ("ZZ" (lambda ()
-                      (interactive)
-                      (save-buffer)
-                      (bury-buffer))
-               "Save and bury buffer" :color blue)
-              ("q" nil "cancel" :color blue))
+      ("n" smerge-next)
+      ("p" smerge-prev)
+      ("b" smerge-keep-base)
+      ("u" smerge-keep-upper)
+      ("l" smerge-keep-lower)
+      ("a" smerge-keep-all)
+      ("RET" smerge-keep-current)
+      ("\C-m" smerge-keep-current)
+      ("<" smerge-diff-base-upper)
+      ("=" smerge-diff-upper-lower)
+      (">" smerge-diff-base-lower)
+      ("R" smerge-refine)
+      ("E" smerge-ediff)
+      ("C" smerge-combine-with-next)
+      ("r" smerge-resolve)
+      ("k" smerge-kill-current)
+      ("ZZ" (lambda ()
+              (interactive)
+              (save-buffer)
+              (bury-buffer))
+       "Save and bury buffer" :color blue)
+      ("q" nil "cancel" :color blue))
     :hook (magit-diff-visit-file . (lambda ()
                                      (when smerge-mode
                                        (unpackaged/smerge-hydra/body)))))
