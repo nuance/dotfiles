@@ -27,6 +27,10 @@ jobs:
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
 
+    - name: Run cachix in the background
+      run: |
+        cachix watch-store nuance &
+
     - name: Block files
       run: |
         for file in $(find . -ipath '**/secrets/*.nix'); do echo '{...}: {}' > $file; done
@@ -66,6 +70,10 @@ jobs:
         name: nuance
         extraPullNames: nix-community
         signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+    - name: Run cachix in the background
+      run: |
+        cachix watch-store nuance &
 
     - name: Block certain files
       run: |
