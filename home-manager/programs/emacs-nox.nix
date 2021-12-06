@@ -6,7 +6,7 @@ let
     alwaysTangle = true;
     package = (
       (
-        pkgs.emacs28.override {
+        pkgs.emacsUnstable.override {
           withX = false;
           withGTK2 = false;
           withGTK3 = false;

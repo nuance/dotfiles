@@ -4,7 +4,7 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = pkgs.emacsGcc28;
+    package = pkgs.emacsUnstableGcc;
   });
 in
 {
