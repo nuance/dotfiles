@@ -4,19 +4,7 @@ let
     config = ./emacs/init.org;
     alwaysEnsure = true;
     alwaysTangle = true;
-    package = (
-      (
-        pkgs.emacsUnstable.override {
-          withX = false;
-          withGTK2 = false;
-          withGTK3 = false;
-        }
-      ).overrideAttrs (
-        oa: {
-          name = "${oa.name}-nox";
-        }
-      )
-    );
+    package = pkgs.emacsUnstable-nox;
   });
 in
 {

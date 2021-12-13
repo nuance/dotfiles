@@ -1,7 +1,7 @@
 {
   description = "home-manager and nixos configurations";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/staging-21.11";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/release-21.11";
 
   inputs.emacs-overlay = {
     url = "github:nix-community/emacs-overlay";
