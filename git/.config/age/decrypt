@@ -1,3 +1,0 @@
-#!/usr/bin/env zsh
-
-exec age --identity ~/.ssh/id_ed25519 --decrypt -
