@@ -1,3 +1,4 @@
+brew "cmake"
 brew "fd"
 brew "go"
 brew "ripgrep"
