@@ -1,4 +1,3 @@
-brew "age"
 brew "fd"
 brew "go"
 brew "ripgrep"

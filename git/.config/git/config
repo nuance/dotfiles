@@ -25,9 +25,9 @@
 	u = "fetch -n origin"
 	up = "! git u && git p"
 
-[filter "age"]
-        smudge = ~/.config/age/decrypt
-        clean = ~/.config/age/encrypt
+[filter "secret"]
+        smudge = ~/.config/secret/decrypt
+        clean = ~/.config/secret/encrypt
 
 [color]
 	ui = "auto"

@@ -1,6 +1,10 @@
-all: homebrew stow emacs
+all: homebrew stow secrets.json emacs
 
 .PHONY: homebrew homebrew-install homebrew-bundle stow emacs clean
+secrets.json: generate-secrets.py
+	python3 generate-secrets.py
+	rm .git/index
+	git checkout HEAD -- .
 
 homebrew: homebrew-install homebrew-bundle
 
