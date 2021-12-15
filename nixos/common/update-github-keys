@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-curl https://github.com/nuance.keys > github-keys.txt

@@ -1,1 +1,3 @@
-**/secrets/** filter=git-crypt diff=git-crypt
+emacs/.emacs.d/server filter=age
+emacs/.emacs.d/server.el filter=age
+remote/.remote/remote-editor filter=age

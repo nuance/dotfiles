@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+
+keys=$(mktemp)
+curl --silent https://github.com/nuance.keys -o $keys
+
+exec age -R $keys --armor -
