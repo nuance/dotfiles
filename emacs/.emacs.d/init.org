@@ -1123,7 +1123,7 @@ between both flymake & flycheck errors.
     :bind (("s-p" . project-find-file)
            ("s-F" . nuance/project-grep)
            ("s-P" . nuance/find-in-dotfiles)
-           ("s-," . (lambda () (interactive) (find-file "~/dotfiles/home-manager/programs/emacs/init.org")))))
+           ("s-," . (lambda () (interactive) (find-file "~/dotfiles/emacs/.emacs.d/init.org")))))
 #+end_src
 
 ** Custom xref definition
