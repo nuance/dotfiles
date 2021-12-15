@@ -18,6 +18,7 @@ homebrew-bundle: Brewfile
 stow: homebrew DefaultKeyBinding.dict
 	for dir in $$(find . -type d -not -path "./.git/*" -and -not -path "./.github/*" -mindepth 2); do mkdir -p ~/$${dir#*/*/}; done
 	for dir in $$(find . -type d -not -path "./.git" -and -not -path "./.github" -mindepth 1 -maxdepth 1); do stow -v $${dir#*/}; done
+	mkdir -p ~/Library/KeyBindings
 	cp DefaultKeyBinding.dict ~/Library/KeyBindings/
 
 emacs: emacs/.emacs.d/init.org stow
