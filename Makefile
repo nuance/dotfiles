@@ -4,8 +4,10 @@ all: homebrew stow secrets.json emacs defaults
 
 secrets.json: generate-secrets.py
 	python3 generate-secrets.py
+	git stash
 	rm .git/index
 	git checkout HEAD -- .
+	git stash apply
 
 homebrew: homebrew-install homebrew-bundle
 
@@ -16,7 +18,7 @@ homebrew-bundle: Brewfile
 	command brew bundle
 
 stow: homebrew DefaultKeyBinding.dict
-	for dir in $$(find . -type d -not -path "./.git" -and -not -path "./.github" -mindepth 1 -maxdepth 1); do stow -t $HOME --no-folding -v $${dir#*/}; done
+	for dir in $$(find . -type d -not -path "./.git" -and -not -path "./.github" -mindepth 1 -maxdepth 1); do stow -t $$HOME --no-folding -v $${dir#*/}; done
 	mkdir -p ~/Library/KeyBindings
 	cp DefaultKeyBinding.dict ~/Library/KeyBindings/
 
