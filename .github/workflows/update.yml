@@ -21,6 +21,9 @@ jobs:
         brew bundle cleanup --force
 
     - name: Make
+      run: make
+
+    - name: Update
       run: make update
 
     - name: Push commit with updated inputs
