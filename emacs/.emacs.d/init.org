@@ -127,7 +127,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   ;; cursor color is concerned).
   (advice-add #'x-apply-session-resources :override #'ignore)
 
-  (setq native-comp-deferred-compilation t)
+  (setq native-comp-deferred-compilation nil)
   (setq package-enable-at-startup t)
 #+end_src
 
@@ -1499,17 +1499,6 @@ Use this by invoking `M-x bug-hunter-init-file` and following instructions.
      ("C-x j" . org-journal-new-entry)))
 #+END_SRC
 
-*** Latex Preview
-
-#+begin_src emacs-lisp
-  (use-package org-fragtog
-    :config
-    (setq org-preview-latex-default-process 'dvisvgm
-          org-startup-with-latex-preview t)
-
-    :hook ((org-mode . org-fragtog-mode)))
-#+end_src
-
 *** org-nvalt
 
 My personal take on an nvalt replacement in emacs / org-mode.
@@ -1584,15 +1573,6 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
 
   (global-set-key (kbd "s-k") 'nuance/nv-find-note)
   (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
-#+end_src
-
-** Auctex
-
-#+begin_src emacs-lisp :lexical no
-  (use-package latex
-    :straight auctex
-    :config
-    (use-package preview :straight nil))
 #+end_src
 
 ** Tramp
@@ -1888,41 +1868,6 @@ The following is probably not necessary now that I switched to nix and dropped s
     :hook
     (('markdown-mode .'variable-pitch-mode)
      ('markdown-mode . 'visual-line-mode)))
-#+END_SRC
-
-** Nix
-
-#+BEGIN_SRC emacs-lisp
-  (use-package nix-mode
-    :mode ("\\.nix\\'" "\\.nix.in\\'"))
-
-  (use-package nix-drv-mode
-    :straight nil
-    :mode "\\.drv\\'")
-
-  (use-package nix-shell
-    :straight nil
-    :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
-
-  (use-package nix-repl
-    :straight nil
-    :commands (nix-repl))
-#+END_SRC
-
-*** Formatter
-
-#+BEGIN_SRC emacs-lisp
-  (defun nixpkgs-fmt-buffer (arg)
-    (interactive "P")
-    (nuance/format-buffer arg "nixpkgs-fmt" "nixpkgs-fmt" nil))
-
-  (defun nixpkgs-fmt--save-hook ()
-    "Add this to .emacs to nixpkgs-fmt on save
-  (add-hook 'before-save-hook 'nixpkgs-fmt-before-save)."
-    (interactive)
-    (when (eq major-mode 'nix-mode) (nixpkgs-fmt-buffer nil)))
-
-  (add-hook 'before-save-hook 'nixpkgs-fmt--save-hook)
 #+END_SRC
 
 ** Docker
