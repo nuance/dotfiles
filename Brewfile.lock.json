@@ -365,10 +365,10 @@
   "system": {
     "macos": {
       "monterey": {
-        "HOMEBREW_VERSION": "3.3.8",
+        "HOMEBREW_VERSION": "3.3.9",
         "HOMEBREW_PREFIX": "/opt/homebrew",
-        "Homebrew/homebrew-core": "56b7592b15c8ade777487631ac94eeaae859ea78",
-        "CLT": "13.0.0.0.1.1627064638",
+        "Homebrew/homebrew-core": "bc84b0da507c30650468892a9c1eeae860f1c10a",
+        "CLT": "13.2.0.0.1.1638488800",
         "Xcode": "13.1",
         "macOS": "12.1"
       },

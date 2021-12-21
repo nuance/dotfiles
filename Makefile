@@ -1,4 +1,4 @@
-all: homebrew stow secrets.json emacs defaults
+all: homebrew stow secrets.json emacs emacs-compile defaults
 
 .PHONY: homebrew homebrew-install homebrew-bundle stow emacs defaults clean update update-emacs update-homebrew
 
@@ -25,6 +25,8 @@ stow: homebrew DefaultKeyBinding.dict
 emacs: emacs/.emacs.d/init.org stow
 	$$(command brew --prefix)/bin/emacs --batch --eval "(setq vc-follow-symlinks nil)" --eval "(require 'org)" --eval '(org-babel-tangle-file "~/.emacs.d/init.org")'
 	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(straight-thaw-versions)"
+
+emacs-compile: emacs
 	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(setq native-comp-deferred-compilation t)" --exec "(native-compile-async \"$$HOME/.emacs.d/straight/build\" 'recursively)" --exec "(while (and comp-files-queue (> (comp-async-runnings) 0)) (progn (message \"comp-files-queue: %s | comp-async-runnings: %d\" (and comp-files-queue (length comp-files-queue)) (comp-async-runnings)) (sleep-for 1)))"
 
 update-emacs: emacs
