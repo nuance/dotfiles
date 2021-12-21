@@ -332,12 +332,12 @@
         "revision": "aaf5811a00bf2a826fbe8d91a24f9e5029af1e97"
       },
       "homebrew/cask-fonts": {
-        "revision": "67e89af711b03a8a9df84b1eb63abd5c60638cb5"
+        "revision": "519d8e71add933722188e317db65b969f5cdb145"
       }
     },
     "cask": {
       "raycast": {
-        "version": "1.26.2",
+        "version": "1.26.3",
         "options": {
           "full_name": "raycast"
         }
@@ -371,6 +371,14 @@
         "CLT": "13.0.0.0.1.1627064638",
         "Xcode": "13.1",
         "macOS": "12.1"
+      },
+      "big_sur": {
+        "HOMEBREW_VERSION": "3.3.8",
+        "HOMEBREW_PREFIX": "/usr/local",
+        "Homebrew/homebrew-core": "c76cb4c0f65959779184449a27e8fac60b6820cf",
+        "CLT": "13.2.0.0.1.1638488800",
+        "Xcode": "13.1",
+        "macOS": "11.6.2"
       }
     }
   }
