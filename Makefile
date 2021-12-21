@@ -24,7 +24,8 @@ stow: homebrew DefaultKeyBinding.dict
 
 emacs: emacs/.emacs.d/init.org stow
 	$$(command brew --prefix)/bin/emacs --batch --eval "(setq vc-follow-symlinks nil)" --eval "(require 'org)" --eval '(org-babel-tangle-file "~/.emacs.d/init.org")'
-	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el
+	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(straight-thaw-versions)"
+	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(native-compile-async \"$HOME/.emacs.d\" 'recursively)" --exec "(while (or comp-files-queue (> (comp-async-runnings) 0)) (sleep-for 1))"
 
 defaults:
 	defaults import 'com.apple.Terminal' terminal.plist
