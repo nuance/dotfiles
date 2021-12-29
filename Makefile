@@ -35,6 +35,7 @@ update-emacs: emacs
 update-homebrew: homebrew
 	command brew update
 	command brew upgrade
+	command brew bundle
 
 update: update-homebrew update-emacs
 
