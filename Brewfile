@@ -11,6 +11,9 @@ brew "emacs-plus@28", args: ["with-native-comp", "with-elrumo2-icon"]
 cask "raycast"
 cask "rectangle"
 cask "1password"
+cask "teensy"
+
+mas "hand-mirror", id: 1502839586
 
 tap "homebrew/cask-fonts"
 cask "font-ibm-plex"
