@@ -1604,17 +1604,6 @@ Optimize GC usage
   (use-package eldoc-box  :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
-** DevDocs
-
-#+begin_src emacs-lisp
-  (use-package devdocs-browser
-    :config
-    (add-to-list 'devdocs-browser-major-mode-docs-alist
-                 '(python-mode ("Python" "Pytorch" "numpy" "matplotlib")))
-    :bind
-    ("C-c d" . devdocs-browser-open))
-#+end_src
-
 ** Formatter
 
 Generic tramp-friendly helper for formatters that read from stdin / write to stdout
