@@ -1,6 +1,6 @@
 all: homebrew stow secrets.json emacs emacs-compile defaults
 
-.PHONY: homebrew homebrew-install homebrew-bundle stow emacs defaults clean update update-emacs update-homebrew
+.PHONY: homebrew homebrew-install homebrew-bundle stow emacs defaults clean update update-emacs update-homebrew reinstall-emacs refresh-emacs
 
 secrets.json: generate-secrets.py
 	python3 generate-secrets.py
@@ -38,6 +38,11 @@ update-homebrew: homebrew
 	command brew bundle
 
 update: update-homebrew update-emacs
+
+reinstall-emacs: homebrew
+	command brew reinstall
+
+refresh-emacs: reinstall-emacs update-emacs emacs-compile
 
 defaults:
 	defaults import 'com.apple.Terminal' defaults/terminal.plist
