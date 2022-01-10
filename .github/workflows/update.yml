@@ -27,11 +27,17 @@ jobs:
       run: |
         brew bundle cleanup --force
 
+    - name: Ignore MAS apps
+      run: sed -i .bak -e 's/^mas/#mas/g' Brewfile
+
     - name: Make
       run: make
 
     - name: Update
       run: make update
+
+    - name: Reset ignore for MAS apps
+      run: git checkout -- Brewfile
 
     - name: Push commit with updated inputs
       run: |
