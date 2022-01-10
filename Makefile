@@ -18,7 +18,7 @@ homebrew-bundle: Brewfile
 	command brew bundle
 
 stow: homebrew DefaultKeyBinding.dict
-	for dir in $$(find . -type d -not -path "./.git" -and -not -path "./.github" -mindepth 1 -maxdepth 1); do stow --target $$HOME --no-folding --verbose $${dir#*/}; done
+	for dir in $$(find . -type d -not -path "./.git" -and -not -path "./.github" -mindepth 1 -maxdepth 1); do if [ ! -e $$dir/.nostow ]; then stow --target $$HOME --no-folding --verbose $${dir#*/}; fi; done
 	mkdir -p ~/Library/KeyBindings
 	cp DefaultKeyBinding.dict ~/Library/KeyBindings/
 
@@ -40,12 +40,12 @@ update-homebrew: homebrew
 update: update-homebrew update-emacs
 
 defaults:
-	defaults import 'com.apple.Terminal' terminal.plist
-	defaults import 'Apple Global Domain' key-repeat.plist
-	defaults import 'com.apple.desktopservices' dsstore.plist
-	defaults import 'com.apple.dock' dock.plist
+	defaults import 'com.apple.Terminal' defaults/terminal.plist
+	defaults import 'Apple Global Domain' defaults/key-repeat.plist
+	defaults import 'com.apple.desktopservices' defaults/dsstore.plist
+	defaults import 'com.apple.dock' defaults/dock.plist
 
 clean: homebrew
-	for dir in $$(find . -type d -not -path "./.git" -mindepth 1 -maxdepth 1); do stow -v -D $${dir#*/}; done
+	for dir in $$(find . -type d -not -path "./.git" -and -not -path "./.github" -mindepth 1 -maxdepth 1); do if [ ! -e $$dir/.nostow ]; then stow -v -D $${dir#*/}; fi; done
 	rm ~/Library/KeyBindings/DefaultKeyBinding.dict
 	rm -rf $$HOME/.emacs.d
