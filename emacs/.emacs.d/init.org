@@ -530,6 +530,9 @@ I'd like to toggle between light & dark themes.
         ('light (load-theme light-theme t))
         ('dark (load-theme dark-theme t))))
 
+    (defun dark () (interactive) (nuance/apply-theme 'dark))
+    (defun light () (interactive) (nuance/apply-theme 'light))
+
     (add-hook 'ns-system-appearance-change-functions #'nuance/apply-theme))
 #+END_SRC
 
