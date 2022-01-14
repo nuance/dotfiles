@@ -27,7 +27,7 @@ emacs: emacs/.emacs.d/init.org stow
 	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(straight-thaw-versions)"
 
 emacs-compile: emacs
-	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(setq native-comp-deferred-compilation t)" --exec "(native-compile-async \"$$HOME/.emacs.d/straight/build\" 'recursively)" --exec "(while (and comp-files-queue (> (comp-async-runnings) 0)) (progn (message \"comp-files-queue: %s | comp-async-runnings: %d\" (and comp-files-queue (length comp-files-queue)) (comp-async-runnings)) (sleep-for 1)))"
+	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(setq native-comp-deferred-compilation t)" --exec "(setq native-comp-async-jobs-number 16)" --exec "(native-compile-async \"$$HOME/.emacs.d/straight/build\" 'recursively)" --exec "(while (and comp-files-queue (> (comp-async-runnings) 0)) (progn (message \"comp-files-queue: %s | comp-async-runnings: %d\" (and comp-files-queue (length comp-files-queue)) (comp-async-runnings)) (sleep-for 1)))"
 
 update-emacs: emacs
 	$$(command brew --prefix)/bin/emacs --batch --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --eval "(straight-pull-all)" --eval "(straight-freeze-versions)"
