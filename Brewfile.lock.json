@@ -314,10 +314,10 @@
     },
     "tap": {
       "d12frosted/emacs-plus": {
-        "revision": "aaf5811a00bf2a826fbe8d91a24f9e5029af1e97"
+        "revision": "b7809dd815e7753e20851c81603c82a573d7d1cc"
       },
       "homebrew/cask-fonts": {
-        "revision": "25e63dfd72905c8ce156a7af6940e2bd18662c13"
+        "revision": "c7e61b05bfaf552f0609408bacba8646df830027"
       }
     },
     "cask": {
@@ -367,12 +367,12 @@
         "macOS": "12.1"
       },
       "big_sur": {
-        "HOMEBREW_VERSION": "3.3.12",
+        "HOMEBREW_VERSION": "3.3.13",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "e03e9826395557d66c1f7f26f2d2dbf4def29cc1",
+        "Homebrew/homebrew-core": "a4b9ad5039118b4f975070d7f077fe4aa4fbbb3d",
         "CLT": "13.2.0.0.1.1638488800",
         "Xcode": "13.2.1",
-        "macOS": "11.6.2"
+        "macOS": "11.6.3"
       }
     }
   }
