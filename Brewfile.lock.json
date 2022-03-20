@@ -317,12 +317,12 @@
         "revision": "9d4f6639f3f931f7423a29936865970c662fff7f"
       },
       "homebrew/cask-fonts": {
-        "revision": "8638ed31c1224c84215722b0f2ad005c3b136580"
+        "revision": "21aa88605da3e0de4df9ad64389b5e1a22d8ee28"
       }
     },
     "cask": {
       "raycast": {
-        "version": "1.30.2",
+        "version": "1.30.3",
         "options": {
           "full_name": "raycast"
         }
@@ -334,7 +334,7 @@
         }
       },
       "1password": {
-        "version": "7.9.2",
+        "version": "7.9.3",
         "options": {
           "full_name": "1password"
         }
@@ -367,9 +367,9 @@
         "macOS": "12.1"
       },
       "big_sur": {
-        "HOMEBREW_VERSION": "3.4.1",
+        "HOMEBREW_VERSION": "3.4.2",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "ffaaa05a956784a51a2a7b7ce34bbcd92028894c",
+        "Homebrew/homebrew-core": "7d0cf07928097663861b85a886266ff74e725588",
         "CLT": "13.2.0.0.1.1638488800",
         "Xcode": "13.2.1",
         "macOS": "11.6.4"
