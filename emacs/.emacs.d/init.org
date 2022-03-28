@@ -3,10 +3,6 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 
-* About
-
-My emacs config, heavily inspired / forked from [[https://github.com/larstvei/dot-emacs]].
-
 * Configurations
 ** Lexical binding
 
@@ -17,7 +13,7 @@ header. The first line of the configuration is as follows:
   ;;; -*- lexical-binding: t -*-
 #+END_SRC
 
-#+begin_src emacs-lisp :tangle "early-init.org"
+#+begin_src emacs-lisp :tangle "early-init.el"
   ;;; -*- lexical-binding: t -*-
 #+end_src
 
@@ -49,8 +45,6 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 
 * early-init
 
-Emacs HEAD (27+) introduces early-init.el, which is run before init.el, before package and UI initialization happens.
-
 #+begin_src emacs-lisp :tangle "early-init.el"
   ;; Defer garbage collection further back in the startup process
   (setq gc-cons-threshold most-positive-fixnum)
@@ -80,7 +74,7 @@ Emacs HEAD (27+) introduces early-init.el, which is run before init.el, before p
   ;; cursor color is concerned).
   (advice-add #'x-apply-session-resources :override #'ignore)
 
-  (setq native-comp-deferred-compilation nil)
+  (setq comp-deferred-compilation-deny-list ".*")
   (setq package-enable-at-startup t)
 #+end_src
 
@@ -114,7 +108,28 @@ Emacs HEAD (27+) introduces early-init.el, which is run before init.el, before p
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'use-package)
   (setq straight-use-package-by-default t)
+  (setq use-package-verbose t)
 #+END_SRC
+
+** Package management
+
+#+begin_src emacs-lisp
+  (defun nuance/update-versions ()
+    (interactive)
+    (straight-pull-all)
+    (straight-freeze-versions))
+
+  (defun nuance/native-compile ()
+    (interactive)
+    (let
+        ((native-comp-deferred-compilation t)
+         (native-comp-async-jobs-number 16))
+      (native-compile-async "~/.emacs.d/straight/build" 'recursively)
+      (while
+          (and comp-files-queue (> (comp-async-runnings) 0))
+        (progn (message "comp-files-queue: %s | comp-async-runnings: %d" (and comp-files-queue (length comp-files-queue)) (comp-async-runnings))
+               (sleep-for 1)))))
+#+end_src
 
 * Performance optimizations
 
@@ -230,8 +245,6 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (setq load-prefer-newer t
         save-place-file (concat user-emacs-directory "places")
         backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
-                                          ; auto-revert-interval 1            ; Refresh buffers fast
-                                          ; recentf-max-saved-items 100       ; Show more recent files
         sentence-end-double-space nil       ; No double space
         vc-follow-symlinks nil)
 #+END_SRC
@@ -247,9 +260,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 #+BEGIN_SRC emacs-lisp
   (use-package exec-path-from-shell
     :custom ((exec-path-from-shell-variables '("PATH" "MANPATH" "SSH_AUTH_SOCK")))
-    :config
-    (when (memq window-system '(mac ns x))
-      (exec-path-from-shell-initialize)))
+    :config (exec-path-from-shell-initialize))
 #+END_SRC
 
 ** Elisp helpers
@@ -354,6 +365,33 @@ And test it like:
         desktop-files-not-to-save "^$")
   (savehist-mode 1)
   (add-to-list 'savehist-additional-variables 'compile-command)
+
+  (recentf-mode 1)
+  (save-place-mode 1)
+#+end_src
+
+*** desktop
+
+#+begin_src emacs-lisp
+  (if (not (daemonp))
+      (desktop-save-mode 1)
+    (defun restore-desktop (frame)
+      "Restores desktop and cancels hook after first frame opens.
+       So the daemon can run at startup and it'll still work"
+      (with-selected-frame frame
+        (desktop-save-mode 1)
+        (desktop-read)
+        (remove-hook 'after-make-frame-functions 'restore-desktop)))
+    (add-hook 'after-make-frame-functions 'restore-desktop))
+#+end_src
+
+
+*** savehist
+
+#+begin_src emacs-lisp
+  (setq savehist-save-minibuffer-history nil)
+  (savehist-mode 1)
+  (add-to-list 'savehist-additional-variables 'compile-command)
 #+end_src
 
 * UI Appearance
@@ -372,13 +410,6 @@ And test it like:
 
 #+BEGIN_SRC emacs-lisp
   (setq visible-bell t
-        ring-bell-function
-        (lambda ()
-          (let ((orig-fg (face-foreground 'mode-line)))
-            (set-face-foreground 'mode-line "#F2804F")
-            (run-with-idle-timer 0.1 nil
-                                 (lambda (fg) (set-face-foreground 'mode-line fg))
-                                 orig-fg)))
         inhibit-startup-echo-area-message t)
 #+END_SRC
 
@@ -388,6 +419,12 @@ And test it like:
   (setq cursor-type 'hbar)
   (blink-cursor-mode 0)
 #+END_SRC
+
+** Scrolling
+
+#+begin_src emacs-lisp
+  (pixel-scroll-precision-mode 1)
+#+end_src
 
 ** Highlight line
 #+BEGIN_SRC emacs-lisp
@@ -424,9 +461,7 @@ And test it like:
      doom-modeline-minor-modes nil
      doom-modeline-buffer-encoding nil
      doom-modeline-height 1
-     doom-modeline-env-version nil)
-    (set-face-attribute 'mode-line nil :height 110)
-    (set-face-attribute 'mode-line-inactive nil :height 110))
+     doom-modeline-env-version nil))
 #+END_SRC
 
 ** Line numbering
@@ -438,33 +473,69 @@ And test it like:
     :hook ('prog-mode . #'display-line-numbers-mode))
 #+end_src
 
+** Rainbow delimiters
+
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
 ** Matching parens highlight
 
 #+BEGIN_SRC emacs-lisp
   (show-paren-mode)
 #+END_SRC
 
+** Terminal Title
+
+#+begin_src emacs-lisp
+  (defun nuance/osc-command (code body)
+    (when (not (window-system))
+      (let ((cmd (concat "\033]" code  ";" body "\007")))
+        (send-string-to-terminal cmd))))
+
+  (defun nuance/xterm-title-update ()
+    (nuance/osc-command "2" (format-mode-line frame-title-format)))
+
+  (defun nuance/xterm-bg-update (color)
+    (nuance/osc-command "11" color))
+
+  (add-hook 'post-command-hook 'nuance/xterm-title-update)
+#+end_src
+
 ** Light / Dark theme toggle
 I'd like to toggle between light & dark themes.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package kaolin-themes
+  (defvar nuance/after-theme-change-hook nil "Hook called after theme has changed")
+
+  (use-package doom-themes
     :config
-    (defvar light-theme 'kaolin-light)
-    (defvar dark-theme 'kaolin-dark)
+    (defvar light-theme 'doom-tomorrow-day)
+    (defvar dark-theme 'doom-opera)
 
     (defun nuance/apply-theme (appearance)
       "Load theme, taking current system APPEARANCE into consideration."
       (mapc #'disable-theme custom-enabled-themes)
+      (run-hooks 'nuance/after-theme-change-hook)
       (pcase appearance
-        ('light (load-theme light-theme t))
-        ('dark (load-theme dark-theme t))))
+        ('light (load-theme light-theme t) (nuance/xterm-bg-update "#ffffff"))
+        ('dark (load-theme dark-theme t) (nuance/xterm-bg-update "#323334")))
+      (doom-themes-visual-bell-config)
+      (doom-themes-org-config))
 
     (defun dark () (interactive) (nuance/apply-theme 'dark))
     (defun light () (interactive) (nuance/apply-theme 'light))
 
-    (add-hook 'ns-system-appearance-change-functions #'nuance/apply-theme))
+    (add-hook 'ns-system-appearance-change-functions #'nuance/apply-theme)
+    (nuance/apply-theme 'light))
 #+END_SRC
+
+*** Solaire
+
+#+begin_src emacs-lisp
+  (use-package solaire-mode
+    :config (solaire-global-mode))
+#+end_src
 
 ** Fonts
 
@@ -475,8 +546,10 @@ I'd like to toggle between light & dark themes.
   (set-face-attribute 'fixed-pitch nil
                       :family "IBM Plex Mono")
   (set-face-attribute 'variable-pitch nil
-                      :family "IBM Plex Sans"
-                      :height 110)
+                      :family "IBM Plex Sans")
+
+  (set-face-attribute 'mode-line nil :height 110)
+  (set-face-attribute 'mode-line-inactive nil :height 110)
 
   (use-package all-the-icons :if (display-graphic-p))
 #+END_SRC
@@ -484,20 +557,11 @@ I'd like to toggle between light & dark themes.
 ** Set titlebar color
 
 #+BEGIN_SRC emacs-lisp
-  (when (eq system-type 'darwin)
-    (use-package ns-auto-titlebar
-
-      :config
-      (ns-auto-titlebar-mode)))
+  (use-package ns-auto-titlebar
+    :if (eq system-type 'darwin)
+    :config
+    (ns-auto-titlebar-mode))
 #+END_SRC
-
-** Balanced windows
-
-#+begin_src emacs-lisp
-  (use-package balanced-windows
-
-    :config (balanced-windows-mode))
-#+end_src
 
 ** Mixed pitch
 
@@ -515,7 +579,12 @@ I'd like to toggle between light & dark themes.
     (if (region-active-p) (buffer-substring (region-beginning) (region-end)) (thing-at-point 'symbol)))
 #+end_src
 
-** Orderless
+** Minibuffer
+
+#+begin_src emacs-lisp
+  (setq nuance/completion-candidates 25)
+#+end_src
+*** Orderless
 
 #+begin_src emacs-lisp
   (use-package orderless
@@ -527,12 +596,6 @@ I'd like to toggle between light & dark themes.
           '((file (styles . (partial-completion)))
             (nuance/dynamic (styles . (basic)))
             (nuance/dynamic-file (styles . (basic))))))
-#+end_src
-
-** Completion
-
-#+begin_src emacs-lisp
-  (setq nuance/completion-candidates 25)
 #+end_src
 
 *** Vertico
@@ -572,8 +635,8 @@ I'd like to toggle between light & dark themes.
 #+begin_src emacs-lisp
   (use-package consult
 
-    :bind (("s-o" . consult-line)
-           ("s-O" . consult-project-imenu)
+    :bind (("s-o" . (lambda () (interactive) (consult-line (dwim-default-text))))
+           ("s-O" . consult-imenu-multi)
            ("s-l" . consult-goto-line)
            ("s-t" . consult-buffer)
            ("M-y" . consult-yank-pop)
@@ -592,24 +655,35 @@ I'd like to toggle between light & dark themes.
 
 #+begin_src emacs-lisp
   (use-package marginalia
-
+    :custom (marginalias-max-relative-age 0) (marginalia-align 'right)
     :config
     (marginalia-mode)
     (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light))
     (add-to-list 'marginalia-annotator-registry '(nuance/dynamic-file marginalia-annotate-file)))
 #+end_src
 
+*** All-the-icons-completion
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons-completion
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+#+end_src
+
 *** Embark
 
 #+begin_src emacs-lisp
   (use-package embark
+    :demand t
     :init (setq prefix-help-command #'embark-prefix-help-command)
-    :custom ((embark-indicators '(embark-minimal-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
-             (embark-prompter 'embark-completing-read-prompter))
+    :custom ((embark-indicators '(embark-minimal-indicator embark-highlight-indicator embark-isearch-highlight-indicator)))
     :bind
     ("C-." . embark-act)
     ("C-;" . embark-dwim)
-    ("C-h b" . embark-bindings))
+    ("C-h b" . embark-bindings)
+    ("<mouse-3>" . (lambda (event) (interactive "e")  (mouse-set-point event) (embark-dwim))))
 
   (use-package embark-consult
     :after (embark consult)
@@ -632,7 +706,7 @@ I'd like to toggle between light & dark themes.
         (_ (apply results-fn (list string))))))
 #+end_src
 
-** Mini frame
+*** Mini frame
 
 #+begin_src emacs-lisp
   (use-package mini-frame
@@ -657,41 +731,112 @@ I'd like to toggle between light & dark themes.
         (apply f args)))
     :config (mini-frame-mode))
 #+end_src
+** Completion
 
-** Corfu
+*** Corfu
 
 #+BEGIN_SRC emacs-lisp
   (use-package corfu
-    :custom
-    ((corfu-cycle t)
-     (corfu-auto t)
-     (corfu-quit-at-boundary t)
-     (corfu-quit-no-match t)
-     (corfu-echo-documentation t))
     :bind (:map corfu-map
-                ("TAB" . corfu-next)
-                ([tab] . corfu-next)
-                ("S-TAB" . corfu-previous)
-                ([backtab] . corfu-previous))
-    :init
-    (corfu-global-mode))
+                ("C-n" . corfu-next)
+                ("C-p" . corfu-previous)
+                ("<escape>" . corfu-quit)
+                ("<return>" . corfu-insert)
+                ("<tab>" . corfu-insert)
+                ("SPC" . corfu-insert-separator)
+                ("M-d" . corfu-show-documentation)
+                ("C-g" . corfu-quit)
+                ("M-l" . corfu-show-location))
+    :custom
+    ;; Works with `indent-for-tab-command'. Make sure tab doesn't indent when you
+    ;; want to perform completion
+    (tab-always-indent 'complete)
+    (c-tab-always-indent 'complete)
+    (completion-cycle-threshold nil)      ; Always show candidates in menu
 
-  (use-package emacs
-    :straight nil
+    (corfu-auto t)
+    (corfu-auto-prefix 2)
+    (corfu-auto-delay 0.25)
+
+    (corfu-min-width 80)
+    (corfu-max-width corfu-min-width)     ; Always have the same width
+    (corfu-count 14)
+    (corfu-scroll-margin 4)
+    (corfu-cycle nil)
+
+    (corfu-echo-documentation nil)        ; Already use corfu-doc
+    (corfu-separator ?\s)                 ; Necessary for use with orderless
+    (corfu-quit-no-match 'separator)
+
+    (corfu-preview-current 'insert)       ; Preview current candidate?
+    (corfu-preselect-first t)             ; Preselect first candidate?
+
     :init
-    (setq completion-cycle-threshold 3)
-    (setq tab-always-indent 'complete))
+    (corfu-global-mode)
+    :config
+
+    ;; Enable Corfu more generally for every minibuffer, as long as no other
+    ;; completion UI is active. If you use Mct or Vertico as your main minibuffer
+    ;; completion UI. From
+    ;; https://github.com/minad/corfu#completing-with-corfu-in-the-minibuffer
+    (defun corfu-enable-always-in-minibuffer ()
+      "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+      (unless (or (bound-and-true-p mct--active) ; Useful if I ever use MCT
+                  (bound-and-true-p vertico--input))
+        (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
+        (corfu-mode 1)))
+    :hook (minibuffer-setup . corfu-enable-always-in-minibuffer))
 #+END_SRC
+
+*** Kind icon
+
+#+begin_src emacs-lisp
+  (use-package kind-icon
+    :demand t
+    :custom
+    (kind-icon-use-icons t)
+    (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
+    (kind-icon-blend-background nil)  ; Use midpoint color between foreground and background colors ("blended")?
+    (kind-icon-blend-frac 0.08)
+
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter) ; Enable `kind-icon'
+
+    :hook (nuance/after-theme-change . kind-icon-reset-cache))
+#+end_src
+
+*** Corfu-doc
+
+#+begin_src emacs-lisp
+  (use-package corfu-doc
+    ;; NOTE 2022-02-05: At the time of writing, `corfu-doc' is not yet on melpa
+    :straight (corfu-doc :type git :host github :repo "galeo/corfu-doc")
+    :after corfu
+    :hook (corfu-mode . corfu-doc-mode)
+    :bind (:map corfu-map
+                ;; This is a manual toggle for the documentation popup.
+                ([remap corfu-show-documentation] . corfu-doc-toggle) ; Remap the default doc command
+                ;; Scroll in the documentation window
+                ("M-n" . corfu-doc-scroll-up)
+                ("M-p" . corfu-doc-scroll-down))
+    :custom
+    (corfu-doc-delay 0.5)
+    (corfu-doc-max-width 70)
+    (corfu-doc-max-height 20)
+
+    ;; NOTE 2022-02-05: I've also set this in the `corfu' use-package to be
+    ;; extra-safe that this is set when corfu-doc is loaded. I do not want
+    ;; documentation shown in both the echo area and in the `corfu-doc' popup.
+    (corfu-echo-documentation nil))
+#+end_src
+
 
 ** Default to regexp search
 
 #+BEGIN_SRC emacs-lisp
-  (use-package visual-regexp-steroids
-    :bind (("C-s" . 'vr/isearch-forward)
-           ("C-r" . 'vr/isearch-backward)
-           ("C-c r" . 'vr/replace)
-           ("C-c q" . 'vr/query-replace)
-           ("C-c m" . 'vr/mc-mark)))
+  (use-package emacs
+    :bind (("C-s" . 'isearch-forward-regexp)
+           ("C-r" . 'isearch-backward-regexp)))
 #+END_SRC
 
 ** Sublime-like
@@ -724,9 +869,7 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
 
-    :bind (("s-f" . 'er/expand-region)
-           ("C-c f" . 'er/expand-region)
-           ("s-F" . 'er/contract-region)
+    :bind (("C-c f" . 'er/expand-region)
            ("C-c F" . 'er/contract-region)))
 #+END_SRC
 
@@ -822,10 +965,8 @@ Incremental search thats multiple-cursors-friendly.
 
 #+BEGIN_SRC emacs-lisp
   (use-package dtrt-indent
-
     :config
-    (dtrt-indent-mode 1)
-    )
+    (dtrt-indent-mode 1))
 #+END_SRC
 
 *** Window navigation
@@ -903,19 +1044,10 @@ Auto-revert to new tags file
     :hook (vterm-mode . goto-address-mode)
     :custom (vterm-max-scrollback 20000)
     :config
-    (add-to-list 'vterm-eval-cmds '("alert" alert))
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
 
   (use-package vterm-toggle :bind ("s-T" . vterm-toggle))
 #+END_SRC
-
-** EShell
-
-#+begin_src emacs-lisp
-  (use-package eshell
-    :straight nil
-    :bind ("s-e" . eshell))
-#+end_src
 
 ** Scroll through errors
 
@@ -1061,6 +1193,17 @@ between both flymake & flycheck errors.
            ("s-<" . (lambda () (interactive) (find-file (concat user-emacs-directory "private.org"))))))
 #+end_src
 
+*** tab-bar-mode integration
+
+Add a nice binding for switching tabs.
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config (tab-bar-mode)
+    :bind (("s-{" . tab-previous)
+           ("s-}" . tab-next)))
+#+end_src
+
 ** Custom xref definition
 
 A simple xref backend using rg. Inspired by the gxref implementation.
@@ -1168,6 +1311,12 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :bind (:map prog-mode-map ("C-c i" . string-inflection-cycle)))
 #+end_src
 
+** Terminal Mouse
+
+#+begin_src emacs-lisp
+  (when (not (window-system)) (xterm-mouse-mode))
+#+end_src
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
@@ -1190,17 +1339,9 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :config
     (global-diff-hl-mode)
     (diff-hl-margin-mode)
-    (diff-hl-flydiff-mode)
-
-    ;; re-arrange the order of checks to test file-remote-p earlier
-    (defun diff-hl-flydiff-update ()
-      (unless (or
-               (not diff-hl-mode)
-               (eq diff-hl-flydiff-modified-tick (buffer-chars-modified-tick))
-               (file-remote-p default-directory)
-               (not buffer-file-name)
-               (not (file-exists-p buffer-file-name)))
-        (diff-hl-update))))
+    (global-diff-hl-amend-mode)
+    (global-diff-hl-show-hunk-mouse-mode)
+    (diff-hl-flydiff-mode))
 #+END_SRC
 
 ** Flycheck
@@ -1211,9 +1352,38 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
 ** Snippets
 
+*** Yasnippet
+
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet-snippets :config (yas-global-mode))
 #+END_SRC
+
+*** Tempel
+
+#+begin_src emacs-lisp
+  (use-package tempel
+    :demand t
+    :init
+    (defun tempel-setup-capf () (setq-local completion-at-point-functions (cons #'tempel-complete completion-at-point-functions)))
+    :hook ((prog-mode . tempel-setup-capf)
+           (text-mode . tempel-setup-capf)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/templates
+  ;; -*- mode: lisp -*-
+
+  org-mode
+
+  (quote "#+begin_quote" n> r> n> "#+end_quote")
+  (example "#+begin_example" n> r> n> "#+end_example")
+  (center "#+begin_center" n> r> n> "#+end_center")
+  (comment "#+begin_comment" n> r> n> "#+end_comment")
+  (verse "#+begin_verse" n> r> n> "#+end_verse")
+  (src "#+begin_src " p n> r> n> "#+end_src")
+  (task "*************** TODO " p n>)
+  (elisp "#+begin_src emacs-lisp" n> r> n "#+end_src"
+         :post (progn (tempel-done) (org-edit-src-code)))
+#+end_src
 
 ** LSP
 #+BEGIN_SRC emacs-lisp
@@ -1284,8 +1454,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
     ;; Appearance
     (setq org-startup-folded t
-          org-pretty-entities t
-          org-hide-emphasis-markers t)
+          org-pretty-entities t)
 
     ;; Tasks / Agenda
     (setq
@@ -1296,8 +1465,14 @@ A simple xref backend using rg. Inspired by the gxref implementation.
      org-agenda-window-setup 'current-window
      org-agenda-files '("~/org/"))
 
+    (require 'org-inlinetask)
+
+    (setq org-export-backends '(ascii html md))
+
     (setq org-todo-keywords
-          '((sequence "PLAN()" "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")))
+          '((sequence "PLAN()" "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
+            (sequence "IDEA")))
+
     (setq org-agenda-custom-commands
           '(("d" "Daily agenda and all TODOs"
              ((agenda "" ((org-agenda-span 'day) (org-agenda-repeating-timestamp-show-all t)))
@@ -1332,33 +1507,6 @@ A simple xref backend using rg. Inspired by the gxref implementation.
      ))
 #+END_SRC
 
-*** Org-Journal
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-journal
-    :after org
-    :custom ((org-journal-dir "~/org/journal")
-             (org-journal-file-type 'monthly)
-             (org-journal-date-format "%A <%Y-%m-%d>")
-             (org-journal-file-format "journal.%Y%m%d.org")
-             (org-journal-carryover-items ""))
-    :config
-    (defun org-journal-find-location ()
-      ;; Open today's journal, but specify a non-nil prefix argument in order to
-      ;; inhibit inserting the heading; org-capture will insert the heading.
-      (org-journal-new-entry t)
-      (unless (eq org-journal-file-type 'daily)
-        (org-narrow-to-subtree))
-      (goto-char (point-max)))
-
-    (add-to-list 'org-capture-templates '("j" "Journal entry" plain (function org-journal-find-location)
-                                          "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
-                                          :jump-to-captured t :immediate-finish t))
-    :bind
-    (("s-j" . org-journal-open-current-journal-file)
-     ("C-x j" . org-journal-new-entry)))
-#+END_SRC
-
 *** org-nvalt
 
 My personal take on an nvalt replacement in emacs / org-mode.
@@ -1367,7 +1515,7 @@ cmd-k - find or create a note (global)
 cmd-l - insert a link to note (creating a note if it doesn't currently exist; wrapping the region with the link if it is active) (org-mode)
 
 #+begin_src emacs-lisp
-  (defvar nuance/nv-notes-dir "~/org" "Location to store notes")
+  (defvar nuance/nv-notes-dir "~/org/nv" "Location to store notes")
 
   (defun nuance/nv--notes-path () "Absolute path to notes location" (expand-file-name nuance/nv-notes-dir))
 
@@ -1382,12 +1530,10 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
            (auto-save-mode)
            path))
 
-  (defun nuance/nv-find-note ()
-    "Find or create a note."
-    (interactive)
-    (let* ((default-directory (nuance/nv--notes-path))
+  (defun nuance/nv--find-note (prompt)
+    (let* ((default-directory (file-name-directory (nuance/nv--notes-path)))
            (selection (completing-read
-                       "nv: "
+                       (concat prompt ": ")
                        (nuance/complete-dynamic
                         (lambda (q)
                           (let* ((tokens (split-string q " " t))
@@ -1402,34 +1548,38 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
           (let ((path (f-join default-directory (car parts)))
                 (line (string-to-number (cadr parts)))
                 (column (string-to-number (caddr parts))))
+            (cons t (list path line column)))
+        (cons nil (list selection)))))
+
+  (defun nuance/nv-find-note ()
+    "Find or create a note."
+    (interactive)
+    (let* ((default-directory (nuance/nv--notes-path))
+           (selection (nuance/nv--find-note "nv")))
+      (if (car selection)
+          ;; open the requested file / line / col and unfold at point
+          (let ((path (cadr selection))
+                (line (caddr selection))
+                (column (cadddr selection)))
             (find-file path)
             (goto-char (point-min))
             (forward-line (1- line))
             (forward-char (1- column))
             ;; expose the current node if we're in a (potentially folded) outline / org file
             (when (derived-mode-p 'outline-mode) (outline-show-entry)))
-        (nuance/nv--create-note selection))))
+        (nuance/nv--create-note (cadr selection)))))
 
   (defun nuance/nv-link-note ()
     "Insert a link to a note, creating the note if it currently does not exist. Title is either the current region or the name of the note."
     (interactive)
     (let* ((default-directory (nuance/nv--notes-path))
-           (selection (completing-read
-                       "link: "
-                       (nuance/complete-dynamic
-                        (lambda (q)
-                          (let* ((tokens (split-string q " " t))
-                                 (pattern (format "((%s).*){%d}" (s-join "|" tokens) (length tokens)))
-                                 (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/completion-candidates)))
-                                 (results (shell-command-to-string cmd)))
-                            (append (list q) (split-string results "\n" t)))))
-                       nil nil (dwim-default-text)))
-           (parts (split-string selection ":"))
-           (target (if (length> parts 1) (f-join default-directory (car parts)) (save-window-excursion (nuance/nv--create-note selection))))
-           (title (car parts)))
+           (selection (nuance/nv--find-note "link"))
+           (target (if (car selection) (cdr selection) (list (save-window-excursion (nuance/nv--create-note selection)) 0 0)))
+           (link (format "%s::%d" (car target) (cadr target)))
+           (title (file-name-base (car target))))
       (if (region-active-p)
-          (progn (kill-region (region-beginning) (region-end)) (insert (format "[[%s][" target)) (yank) (insert "]]"))
-        (insert (format "[[%s][%s]]" target title)))))
+          (progn (kill-region (region-beginning) (region-end)) (insert (format "[[%s][" link)) (yank) (insert "]]"))
+        (insert (format "[[%s][%s]]" link title)))))
 
   (global-set-key (kbd "s-k") 'nuance/nv-find-note)
   (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
@@ -1445,7 +1595,6 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
      (tramp-inline-compress-start-size (* 64 1024))
      (tramp-default-method "ssh"))
     :config
-    (add-to-list 'tramp-remote-path "/home/matt/bin")
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+END_SRC
 
@@ -1461,7 +1610,7 @@ Optimize GC usage
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
-  (use-package eldoc-box  :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
+  (use-package eldoc-box :if (window-system) :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
 ** Formatter
@@ -1546,6 +1695,13 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
   (add-hook 'before-save-hook 'blacken--save-hook)
 #+END_SRC
 
+** which-key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config (which-key-mode))
+#+end_src
+
 ** Helpful
 
 #+begin_src emacs-lisp
@@ -1559,23 +1715,8 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
            ("C-h C" . 'helpful-command)))
 #+end_src
 
-** Alert
-
-#+begin_src emacs-lisp
-  (use-package alert
-    :custom ((alert-default-style 'osx-notifier)))
-#+end_src
-
-** github
-
-#+begin_src emacs-lisp
-  (use-package git-link
-    :bind ("s-u" . git-link))
-#+end_src
-
 * File-type support
-** Generic prog-mode improvements
-*** Toggleable function narrowing
+** Toggleable function narrowing
 
 #+BEGIN_SRC emacs-lisp
   (defun nuance/toggle-narrow-to-defun ()
@@ -1616,7 +1757,15 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
 #+BEGIN_SRC emacs-lisp
   (use-package cc-mode
     :straight nil
-    :mode ("\\.h|\\.cpp" . c++-mode))
+    :config
+    (defun my/c-indent-complete ()
+      (interactive)
+      (let ((p (point)))
+        (c-indent-line-or-region)
+        (when (= p (point))
+          (call-interactively 'complete-symbol))))
+    :mode ("\\.h|\\.cpp" . c++-mode)
+    :bind (:map c-mode-base-map ("TAB" .  my/c-indent-complete)))
 #+END_SRC
 
 ** Python
@@ -1698,36 +1847,13 @@ exists after the init-file has loaded.
       (load-file private-file)))
 #+END_SRC
 
-* Server
-
-#+BEGIN_SRC emacs-lisp
-  (let ((server-file (concat user-emacs-directory "server.el")))
-    (when (file-exists-p server-file)
-      (load-file server-file)))
-#+END_SRC
-
 * Startup
 Launch a server if not currently running.
 
 #+BEGIN_SRC emacs-lisp
+  (setq server-use-tcp t)
+  (setq server-port 40000)
+  (setq server-auth-key "emacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskey")
+
   (server-start)
 #+END_SRC
-
-* License
-
-My Emacs configurations written in Org mode.
-
-Copyright (c) 2019 Matthew Jones
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
