@@ -359,11 +359,11 @@
   "system": {
     "macos": {
       "monterey": {
-        "HOMEBREW_VERSION": "3.3.10",
+        "HOMEBREW_VERSION": "3.4.3",
         "HOMEBREW_PREFIX": "/opt/homebrew",
-        "Homebrew/homebrew-core": "d8a3b22c919c396a6b79097894031508c1c48c3c",
+        "Homebrew/homebrew-core": "39666e6d8ebfc259a1ccb572cba1e331efffd5be",
         "CLT": "13.2.0.0.1.1638488800",
-        "Xcode": "13.1",
+        "Xcode": "13.2.1",
         "macOS": "12.1"
       },
       "big_sur": {
