@@ -889,10 +889,16 @@ I'd like to toggle between light & dark themes.
 
     (define-key mc/keymap (kbd "<return>") nil)
 
+    (defun nuance/mark-next-like-this-symbol (arg)
+      (interactive "p")
+      (if (region-active-p)
+          (mc/mark-more-like-this (= arg 0) 'forwards)
+        (mc--select-thing-at-point 'symbol)))
+
     :bind (("s-L" . mc/edit-lines)
            ("C-c L" . mc/edit-lines)
-           ("s-d" . mc/mark-next-like-this-symbol)
-           ("C-c d" . mc/mark-next-like-this-symbol)
+           ("s-d" . nuance/mark-next-like-this-symbol)
+           ("C-c d" . nuance/mark-next-like-this-symbol)
            ("s-D" . mc/mark-all-dwim)
            ("C-c D" . mc/mark-all-dwim)
            ("s-<mouse-1>" . mc/add-cursor-on-click)))
