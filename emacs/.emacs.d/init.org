@@ -245,6 +245,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (setq load-prefer-newer t
         save-place-file (concat user-emacs-directory "places")
         backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
+        backup-inhibited t
         sentence-end-double-space nil       ; No double space
         vc-follow-symlinks nil)
 #+END_SRC
@@ -641,6 +642,8 @@ I'd like to toggle between light & dark themes.
            ("s-t" . consult-buffer)
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
+    :custom ((consult-async-input-throttle 0.05)
+             (consult-async-input-debounce 0.1))
     :init
     (fset 'multi-occur #'consult-multi-occur)
     ;; Use Consult to select xref locations with preview
@@ -1022,6 +1025,11 @@ Mimic standard macos window / tab management commands
   (global-set-key (kbd "s-N") 'make-frame)
   (global-set-key (kbd "s-W") 'delete-frame)
   (global-set-key (kbd "s-s") 'save-buffer)
+#+END_SRC
+
+#+begin_src emacs-lisp
+  (winner-mode t)
+  (global-set-key (kbd "C-c 0") 'winner-undo)
 #+end_src
 
 *** scratch
@@ -1056,37 +1064,37 @@ next-error-function implementation, so define a wrapper that navigates
 between both flymake & flycheck errors.
 
 #+begin_src emacs-lisp
+  (defun nuance/maybe-point (func)
+    (let ((here (point)))
+      (save-excursion (ignore-errors (call-interactively func)) (unless (eq (point) here) (point)))))
+
   (defun nuance/next-error ()
     (interactive)
-    (let*
-        ((here (point))
-         (next-flymake-error (save-excursion
-                               (flymake-goto-next-error)
-                               (unless (eq (point) here) (point))))
-         (next-flycheck-error (flycheck-next-error-pos 1))
-         (errors (sort (seq-filter 'numberp (list next-flymake-error next-flycheck-error)) '<))
-         (here-index (seq-position errors here '>))
-         (rel-index (if (numberp here-index) here-index)))
-      (cond ((not errors) nil)
-            ((not (numberp rel-index)) nil)
-            ((or (< rel-index 0) (>= rel-index (length errors))) nil)
-            (t (goto-char (seq-elt errors rel-index))))))
+    (let ((here (point))
+          (points))
+      (when (and (boundp 'flymake-mode) flymake-mode)
+        (when-let ((p (nuance/maybe-point #'flymake-goto-next-error)))
+          (push p points)))
+      (when (and (boundp 'flycheck-mode) flycheck-mode)
+        (when-let ((p (nuance/maybe-point #'flycheck-next-error)))
+          (push p points)))
+      (when-let ((p (nuance/maybe-point #'next-error)))
+        (push p points))
+      (unless (null points) (goto-char (apply 'min points)))))
 
   (defun nuance/previous-error ()
     (interactive)
-    (let*
-        ((here (point))
-         (prev-flymake-error (save-excursion
-                               (flymake-goto-prev-error)
-                               (unless (eq (point) here) (point))))
-         (prev-flycheck-error (flycheck-next-error-pos -1))
-         (errors (sort (seq-filter 'numberp (list prev-flymake-error prev-flycheck-error)) '>))
-         (here-index (seq-position errors here '<))
-         (rel-index (if (numberp here-index) here-index)))
-      (cond ((not errors) nil)
-            ((not (numberp rel-index)) nil)
-            ((or (< rel-index 0) (>= rel-index (length errors))) nil)
-            (t (goto-char (seq-elt errors rel-index))))))
+    (let ((here (point))
+          (points))
+      (when (and (boundp 'flymake-mode) flymake-mode)
+        (when-let ((p (nuance/maybe-point #'flymake-goto-prev-error)))
+          (push p points)))
+      (when (and (boundp 'flycheck-mode) flycheck-mode)
+        (when-let ((p (nuance/maybe-point #'flycheck-previous-error)))
+          (push p points)))
+      (when-let ((p (nuance/maybe-point #'previous-error)))
+        (push p points))
+      (unless (null points) (goto-char (apply 'min points)))))
 
   (bind-key (kbd "M-n") 'nuance/next-error)
   (bind-key (kbd "M-p") 'nuance/previous-error)
@@ -1332,6 +1340,13 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :bind ("C-x g" . magit-status))
 #+end_src
 
+*** delta
+
+#+begin_src emacs-lisp
+  (use-package magit-delta
+    :if (executable-find "delta")
+    :hook (magit-mode . magit-delta-mode))
+#+end_src
 ** Diff Highlight
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
@@ -1347,7 +1362,8 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-    :hook ('prog-mode . (lambda () (unless (file-remote-p default-directory) (flycheck-mode)))))
+    :hook ('prog-mode . (lambda () (unless (file-remote-p default-directory) (flycheck-mode))))
+    :custom ((flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
 #+END_SRC
 
 ** Snippets
@@ -1365,6 +1381,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :demand t
     :init
     (defun tempel-setup-capf () (setq-local completion-at-point-functions (cons #'tempel-complete completion-at-point-functions)))
+    :bind (:map tempel-map ("TAB" . tempel-next))
     :hook ((prog-mode . tempel-setup-capf)
            (text-mode . tempel-setup-capf)))
 #+end_src
@@ -1591,8 +1608,7 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
   (use-package tramp
     :straight nil
     :custom
-    ((tramp-auto-save-directory "/tmp")
-     (tramp-inline-compress-start-size (* 64 1024))
+    ((tramp-inline-compress-start-size (* 64 1024))
      (tramp-default-method "ssh"))
     :config
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
@@ -1765,6 +1781,7 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
         (when (= p (point))
           (call-interactively 'complete-symbol))))
     :mode ("\\.h|\\.cpp" . c++-mode)
+    :hook (c++-mode . nuance/eglot-format-buffer-on-save)
     :bind (:map c-mode-base-map ("TAB" .  my/c-indent-complete)))
 #+END_SRC
 
