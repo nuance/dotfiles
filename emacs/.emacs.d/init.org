@@ -75,6 +75,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   (advice-add #'x-apply-session-resources :override #'ignore)
 
   (setq comp-deferred-compilation-deny-list ".*")
+  (setq native-comp-deferred-compilation nil)
   (setq package-enable-at-startup t)
 #+end_src
 
@@ -424,7 +425,7 @@ And test it like:
 ** Scrolling
 
 #+begin_src emacs-lisp
-  (pixel-scroll-precision-mode 1)
+  (if (boundp 'pixel-scroll-precision-mode) (pixel-scroll-precision-mode 1))
 #+end_src
 
 ** Highlight line
@@ -635,6 +636,7 @@ I'd like to toggle between light & dark themes.
 
 #+begin_src emacs-lisp
   (use-package consult
+    :demand t
 
     :bind (("s-o" . (lambda () (interactive) (consult-line (dwim-default-text))))
            ("s-O" . consult-imenu-multi)
@@ -1119,103 +1121,108 @@ between both flymake & flycheck errors.
   (use-package project
     :straight nil
     :config
+    (defvar nuance/dotfiles-base-dir (expand-file-name "~/dotfiles"))
+    (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d")))
 
-    (defun project-find-git-dir (dir)
-      (when-let ((root (locate-dominating-file dir ".git")))
-        (cons 'git-dir root)))
+    (defun project-find-dotfiles-dir (dir)
+      (when (-any (lambda (p) (or (f-same? p dir) (f-ancestor-of? p dir))) nuance/dotfiles-dirs)
+        (cons 'dotfiles-dir nuance/dotfiles-base-dir)))
 
-    (cl-defmethod project-root ((project (head git-dir)))
+    (cl-defmethod project-root ((project (head dotfiles-dir)))
       (cdr project))
 
-    (cl-defmethod project-files ((project (head git-dir)) &optional dirs)
-      "Implementation of `project-files' for Git projects."
+    (cl-defmethod project-files ((project (head dotfiles-dir)) &optional dirs)
+      "Implementation of `project-files' for dotfiles projects."
       (cl-mapcan
-       (lambda (dir)
-         (if-let ((git (and (file-exists-p
-                             (expand-file-name ".git/config" dir))
-                            (executable-find "git"))))
-             (let ((default-directory dir))
-               (sort (split-string
-                      (shell-command-to-string
-                       (concat git " ls-files -z"))
-                      "\0" t)
-                     #'string<))
-           ;; No Git project, so go with the default.
-           (cl-call-next-method)))
+       (lambda (dir) (cl-call-next-method))
        (or dirs (project-roots project))))
 
-    (add-hook 'project-find-functions #'project-find-git-dir)
+    (add-hook 'project-find-functions #'project-find-dotfiles-dir)
 
     (defun nuance/project-name (project)
       "Return a nice version of the project name"
       (file-name-base (directory-file-name (file-local-name (project-root project)))))
+    :bind (("s-," . (lambda () (interactive) (find-file (concat user-emacs-directory "init.org"))))
+           ("s-<" . (lambda () (interactive) (find-file (concat user-emacs-directory "private.org"))))))
+#+end_src
+
+*** Find by name
+
+#+begin_src emacs-lisp
+  (use-package project
+    :straight t
+    :after (consult)
+
+    :config
+    (cl-defmethod nuance/project-find-by-name-cmd ((project t) q)
+      (let* ((split (split-string q " " t))
+             (pattern (format "(%s){%d}+" (s-join "|" (mapcar (lambda (s) (format "%s.*" s)) split)) (length split))))
+        (format "fd --hidden --no-ignore --color=never --max-results=%d \"%s\" %s" (* 5 nuance/completion-candidates) pattern (project-root project))))
+
+    (cl-defmethod nuance/project-find-by-name-initial ((project t)) "")
+
+    (defvar nuance/find-by-name-history nil)
+    (add-to-list 'savehist-additional-variables 'nuance/find-by-name-history)
+
+    (defun nuance/find-by-name (prompt builder initial)
+      (consult--read
+       (consult--async-command builder
+         (consult--async-map (lambda (x) (f-relative (concat (file-remote-p default-directory) (string-remove-prefix "./" x)) default-directory)))
+         (consult--async-highlight builder)
+         :file-handler t) ;; allow tramp
+       :prompt prompt
+       :sort nil
+       :require-match t
+       :initial (consult--async-split-initial initial)
+       :add-history (consult--async-split-thingatpt 'filename)
+       :category 'file
+       :history '(:input nuance/find-by-name-history)))
+
+    (defun nuance/find-by-name-builder (input)
+      "Build command line given INPUT."
+      (pcase-let* ((cmd (nuance/project-find-by-name-cmd (project-current) input))
+                   (`(,arg . ,opts) (consult--command-split input))
+                   (`(,re . ,hl) (funcall consult--regexp-compiler arg 'basic t)))
+        (when re
+          (list :command (split-string-and-unquote cmd)
+                :highlight hl))))
 
     (defun project-find-file-in (filename dirs project &optional include-all)
-      "Complete FILENAME in DIRS in PROJECT and visit the result."
-      (let* ((pr (if project (project-root project) default-directory))
-             (default-directory pr)
-             (selection (completing-read
-                         (format "find %s: " (nuance/project-name project))
-                         (nuance/complete-dynamic
-                          (lambda (q)
-                            (let* ((split (split-string q " " t))
-                                   (pattern (format "(%s){%d}+" (s-join "|" (mapcar (lambda (s) (format "%s.*" s)) split)) (length split)))
-                                   (cmd (format "fd --hidden --exclude .git --color=never --max-results=%d --full-path \"%s\" %s" (* 5 nuance/completion-candidates) pattern (file-local-name pr)))
-                                   (results (shell-command-to-string cmd)))
-                              (split-string results "\n" t))) 'nuance/dynamic-file)
-                         nil nil (dwim-default-text)))
-             (path (concat (file-remote-p pr) selection)))
+      "Search for regexp with find in DIR with INITIAL input.
+    The find process is started asynchronously, similar to `consult-grep'.
+    See `consult-grep' for more details regarding the asynchronous search."
+      (interactive "P")
+      (let* ((default-directory (project-root project))
+             (path (nuance/find-by-name (format "%s: " (nuance/project-name project)) #'nuance/find-by-name-builder (nuance/project-find-by-name-initial project))))
         (xref-push-marker-stack)
         (find-file path)))
-
-    (defun nuance/project-grep (&optional arg)
-      "Call git grep in current project. With a universal argument, search one level up."
-      (interactive "P")
-      (let* ((project (project-current))
-             (pr (if project (project-root project) default-directory))
-             (default-directory (if arg (file-name-directory (directory-file-name pr)) pr))
-             (selection (completing-read
-                         (format "grep %s: " (nuance/project-name project))
-                         (nuance/complete-dynamic
-                          (lambda (q)
-                            (let* ((tokens (split-string q " " t))
-                                   (pattern (s-join ".*" tokens))
-                                   (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/completion-candidates)))
-                                   (results (shell-command-to-string cmd)))
-                              (split-string results "\n" t))))
-                         nil nil (dwim-default-text)))
-             (parts (split-string selection ":"))
-             (path (concat default-directory (car parts)))
-             (line (string-to-number (cadr parts)))
-             (column (string-to-number (caddr parts))))
-        (xref-push-marker-stack)
-        (find-file path)
-        (goto-char (point-min))
-        (forward-line (1- line))
-        (forward-char (1- column))
-        ;; expose the current node if we're in a (potentially folded) outline / org file
-        (when (derived-mode-p 'outline-mode) (outline-show-entry))))
 
     (defun nuance/find-in-dotfiles ()
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
 
     :bind (("s-p" . project-find-file)
-           ("s-F" . nuance/project-grep)
-           ("s-P" . nuance/find-in-dotfiles)
-           ("s-," . (lambda () (interactive) (find-file (concat user-emacs-directory "init.org"))))
-           ("s-<" . (lambda () (interactive) (find-file (concat user-emacs-directory "private.org"))))))
+           ("s-P" . nuance/find-in-dotfiles)))
 #+end_src
 
-*** tab-bar-mode integration
-
-Add a nice binding for switching tabs.
+*** Find by content
 
 #+begin_src emacs-lisp
-  (use-package emacs
-    :config (tab-bar-mode)
-    :bind (("s-{" . tab-previous)
-           ("s-}" . tab-next)))
+  (use-package project
+    :straight t
+    :after (consult)
+    :config
+    (cl-defmethod nuance/find-by-content-dispatch ((project t))
+      (consult-git-grep))
+
+    (defun nuance/find-by-content ()
+      "Search for regexp with find in DIR with INITIAL input.
+      The find process is started asynchronously, similar to `consult-grep'.
+      See `consult-grep' for more details regarding the asynchronous search."
+      (interactive)
+      (nuance/find-by-content-dispatch (project-current)))
+
+    :bind (("s-f" . nuance/find-by-content)))
 #+end_src
 
 ** Custom xref definition
