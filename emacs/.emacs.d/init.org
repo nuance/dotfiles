@@ -1359,6 +1359,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :if (executable-find "delta")
     :hook (magit-mode . magit-delta-mode))
 #+end_src
+
 ** Diff Highlight
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
@@ -1458,11 +1459,18 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :demand t
     :config
 
+    (setq org-auto-align-tags nil
+          org-tags-column 0
+          org-special-ctrl-a/e t
+          org-catch-invisible-edits 'show-and-error
+          org-insert-heading-respect-content t)
+
     ;; Babel
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((python . t)
-       (emacs-lisp . t)))
+       (emacs-lisp . t)
+       (shell . t)))
     (setq
      org-babel-python-command "python3"
      org-src-tab-acts-natively t
