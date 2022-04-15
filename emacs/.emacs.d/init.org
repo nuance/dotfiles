@@ -719,7 +719,7 @@ I'd like to toggle between light & dark themes.
     :when window-system
     :custom
     ((mini-frame-ignore-commands '(eval-expression "edebug-eval-expression" debugger-eval-expression "^phi-"))
-     (mini-frame-show-parameters '((top . 10) (width . 0.7) (left . 0.5) (height . 25))))
+     (mini-frame-show-parameters '((top . 10) (width . 0.9) (left . 0.5))))
     :init
     (define-advice fit-frame-to-buffer (:around (f &rest args) dont-skip-ws-for-mini-frame)
       (cl-letf* ((orig (symbol-function #'window-text-pixel-size))
@@ -882,20 +882,17 @@ I'd like to toggle between light & dark themes.
 
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
-
+    :custom (mc/always-run-for-all t)
     :config
     (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
     (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
 
-    (setq mc/always-run-for-all t)
-
-    (define-key mc/keymap (kbd "<return>") nil)
-
     (defun nuance/mark-next-like-this-symbol (arg)
       (interactive "p")
       (if (region-active-p)
-          (mc/mark-more-like-this (= arg 0) 'forwards)
+          (mc/mark-next-like-this arg)
         (mc--select-thing-at-point 'symbol)))
+    (add-to-list 'mc/cmds-to-run-once 'nuance/mark-next-like-this-symbol)
 
     :bind (("s-L" . mc/edit-lines)
            ("C-c L" . mc/edit-lines)
@@ -903,7 +900,9 @@ I'd like to toggle between light & dark themes.
            ("C-c d" . nuance/mark-next-like-this-symbol)
            ("s-D" . mc/mark-all-dwim)
            ("C-c D" . mc/mark-all-dwim)
-           ("s-<mouse-1>" . mc/add-cursor-on-click)))
+           ("s-<mouse-1>" . mc/add-cursor-on-click)
+           :map mc/keymap
+           ("<return>" . nil)))
 #+END_SRC
 
 **** Phi-search
