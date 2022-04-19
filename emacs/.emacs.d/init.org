@@ -415,6 +415,7 @@ And test it like:
         inhibit-startup-echo-area-message t)
 
   (use-package mode-line-bell
+    :demand t
     :config (mode-line-bell-mode))
 #+END_SRC
 
@@ -597,7 +598,7 @@ I'd like to toggle between light & dark themes.
           orderless-matching-styles '(orderless-prefixes)
           completion-category-defaults nil
           completion-category-overrides
-          '((file (styles . (partial-completion)))
+          '((file (styles basic-remote orderless))
             (nuance/dynamic (styles . (basic)))
             (nuance/dynamic-file (styles . (basic))))))
 #+end_src
@@ -684,12 +685,13 @@ I'd like to toggle between light & dark themes.
   (use-package embark
     :demand t
     :init (setq prefix-help-command #'embark-prefix-help-command)
-    :custom ((embark-indicators '(embark-minimal-indicator embark-highlight-indicator embark-isearch-highlight-indicator)))
+    :custom ((embark-indicators '(embark-minimal-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
+             (embark-prompter 'embark-completing-read-prompter))
     :bind
     ("C-." . embark-act)
     ("C-;" . embark-dwim)
     ("C-h b" . embark-bindings)
-    ("<mouse-3>" . (lambda (event) (interactive "e")  (mouse-set-point event) (embark-dwim))))
+    ("<mouse-3>" . (lambda (event) (interactive "e") (mouse-set-point event) (embark-act))))
 
   (use-package embark-consult
     :after (embark consult)
