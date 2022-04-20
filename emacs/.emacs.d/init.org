@@ -714,29 +714,34 @@ I'd like to toggle between light & dark themes.
         (_ (apply results-fn (list string))))))
 #+end_src
 
-*** Mini frame
+*** Mini-popup
+
+I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found a little buggy. =mini-popup= seems to be the easiest to debug when things go wrong, so I'm sticking to that.
 
 #+begin_src emacs-lisp
-  (use-package mini-frame
-    :when window-system
-    :custom
-    ((mini-frame-ignore-commands '(eval-expression "edebug-eval-expression" debugger-eval-expression "^phi-"))
-     (mini-frame-show-parameters '((top . 10) (width . 0.9) (left . 0.5))))
-    :init
-    (define-advice fit-frame-to-buffer (:around (f &rest args) dont-skip-ws-for-mini-frame)
-      (cl-letf* ((orig (symbol-function #'window-text-pixel-size))
-                 ((symbol-function #'window-text-pixel-size)
-                  (lambda (win from to &rest args)
-                    (apply orig
-                           (append (list win from
-                                         (if (and (window-minibuffer-p win)
-                                                  (frame-root-window-p win)
-                                                  (eq t to))
-                                             nil
-                                           to))
-                                   args)))))
-        (apply f args)))
-    :config (mini-frame-mode))
+  (use-package mini-popup
+    :config
+    ;; resize to at most 60% of the frame height
+    (defun mini-popup-height-resize ()
+      (min (floor (* 0.6 (frame-pixel-height))) (* (1+ (min vertico--total vertico-count)) (default-line-height))))
+    (setq mini-popup--height-function #'mini-popup-height-resize)
+
+    ;; Disable the minibuffer resizing of Vertico (HACK)
+    (advice-add #'vertico--resize-window :around
+                (lambda (&rest args)
+                  (unless mini-popup-mode
+                    (apply args))))
+
+    ;; don't cache the frame
+    (advice-add #'mini-popup--hide :around (lambda (&rest args) (when (and mini-popup-mode mini-popup--frame) (delete-frame mini-popup--frame))))
+
+    ;; place the frame near the top
+    (setf (alist-get 'top mini-popup--frame-parameters) 0.05)
+
+    (mini-popup-mode)
+
+    ;; Ensure that the popup is updated after refresh (Consult-specific)
+    :hook (consult--completion-refresh . (lambda (&rest _) (mini-popup--setup))))
 #+end_src
 
 ** Completion
