@@ -75,7 +75,8 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   (advice-add #'x-apply-session-resources :override #'ignore)
 
   (setq comp-deferred-compilation-deny-list ".*")
-  (setq native-comp-deferred-compilation nil)
+  (setq native-comp-deferred-compilation nil
+        native-comp-async-report-warnings-errors nil)
   (setq package-enable-at-startup t)
 #+end_src
 
@@ -151,9 +152,7 @@ Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org
   (add-hook 'emacs-startup-hook
             (lambda ()
               (message "Emacs ready in %s with %d garbage collections."
-                       (format "%.2f seconds"
-                               (float-time
-                                (time-subtract after-init-time before-init-time)))
+                       (emacs-init-time)
                        gcs-done)))
 #+END_SRC
 
@@ -184,7 +183,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
           [?\s-']
           [?\s-`]
           [?\s-~]
-          [?\s--]
+          ;; [?\s--]
           [?\s-:]
           [?\s-?]
           [?\s-^]
@@ -387,20 +386,25 @@ And test it like:
     (add-hook 'after-make-frame-functions 'restore-desktop))
 #+end_src
 
-
-*** savehist
+** Kill / yank
 
 #+begin_src emacs-lisp
-  (setq savehist-save-minibuffer-history nil)
-  (savehist-mode 1)
-  (add-to-list 'savehist-additional-variables 'compile-command)
+  (customize-set-variable 'kill-do-not-save-duplicates t)
+#+end_src
+
+** Executable bit
+
+#+begin_src emacs-lisp
+  (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 #+end_src
 
 * UI Appearance
 ** UI Interaction
 
 #+BEGIN_SRC emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)
+  (if (boundp 'use-short-answers)
+      (setq use-short-answers t)
+    (advice-add 'yes-or-no-p :override #'y-or-n-p))
   (setq apropos-do-all t
         echo-keystrokes 0.1               ; Show keystrokes asap
         inhibit-startup-message t         ; No splash screen please
@@ -429,13 +433,20 @@ And test it like:
 ** Scrolling
 
 #+begin_src emacs-lisp
-  (if (boundp 'pixel-scroll-precision-mode) (pixel-scroll-precision-mode 1))
+  (if (boundp 'pixel-scroll-precision-mode)
+      (pixel-scroll-precision-mode 1))
 #+end_src
 
 ** Highlight line
-#+BEGIN_SRC emacs-lisp
-  (global-hl-line-mode +1)
-#+END_SRC
+#+begin_src emacs-lisp
+  (global-hl-line-mode t)
+  (defun pulse-line (&rest _)
+    "Pulse the current line."
+    (pulse-momentary-highlight-one-line (point)))
+
+  (dolist (command '(scroll-up-command scroll-down-command recenter-top-bottom other-window))
+    (advice-add command :after #'pulse-line))
+#+end_src
 
 ** Line spacing
 
@@ -547,7 +558,7 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
                       :family "IBM Plex Mono"
-                      :height 110)
+                      :height 130)
   (set-face-attribute 'fixed-pitch nil
                       :family "IBM Plex Mono")
   (set-face-attribute 'variable-pitch nil
@@ -720,6 +731,8 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
 
 #+begin_src emacs-lisp
   (use-package mini-popup
+    :demand t
+    :when (window-system)
     :config
     ;; resize to at most 60% of the frame height
     (defun mini-popup-height-resize ()
@@ -736,7 +749,8 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
     (advice-add #'mini-popup--hide :around (lambda (&rest args) (when (and mini-popup-mode mini-popup--frame) (delete-frame mini-popup--frame))))
 
     ;; place the frame near the top
-    (setf (alist-get 'top mini-popup--frame-parameters) 0.05)
+    (setf (alist-get 'top mini-popup--frame-parameters) 0.05
+          (alist-get 'width mini-popup--frame-parameters) 0.9)
 
     (mini-popup-mode)
 
@@ -785,7 +799,7 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
     (corfu-preselect-first t)             ; Preselect first candidate?
 
     :init
-    (corfu-global-mode)
+    (global-corfu-mode)
     :config
 
     ;; Enable Corfu more generally for every minibuffer, as long as no other
@@ -1027,6 +1041,7 @@ Incremental search thats multiple-cursors-friendly.
 *** Auto revert
 
 #+BEGIN_SRC emacs-lisp
+  (customize-set-variable 'global-auto-revert-not-file-buffers t)
   (global-auto-revert-mode t)
 #+END_SRC
 
@@ -1758,8 +1773,21 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
            ([remap describe-function] . 'helpful-callable)
            ([remap describe-variable] . 'helpful-variable)
            ([remap describe-key] . 'helpful-key)
+           ([remap describe-command] . 'helpful-command)
+           ([remap describe-symbol] . 'helpful-symbol)
+           ("C-h F" . 'helpful-function)
            ("C-c C-d" . 'helpful-at-point)
-           ("C-h C" . 'helpful-command)))
+           ("C-h C" . 'helpful-command)
+           :map helpful-mode-map ([remap revert-buffer] . 'helpful-update)))
+#+end_src
+
+*** elisp-demos
+
+#+begin_src emacs-lisp
+  (use-package elisp-demos
+    :after helpful
+    :config
+    (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
 * File-type support
