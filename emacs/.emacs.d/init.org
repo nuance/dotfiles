@@ -63,7 +63,8 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars) default-frame-alist)
-  (push '(fullscreen . fullboth) default-frame-alist)
+
+  (add-hook 'after-make-frame-functions (lambda (frame) (set-frame-parameter frame 'fullscreen-restore 'fullscreen)))
 
   ;; Resizing the Emacs frame can be a terribly expensive part of changing the
   ;; font. By inhibiting this, we easily halve startup times with fonts that are
@@ -472,22 +473,19 @@ And test it like:
   (modify-all-frames-parameters '((internal-border-width . 0)))
 #+END_SRC
 
-** Doom-modeline
+** Modeline
 
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline
+Minimal modeline.
 
-    :hook (after-init . doom-modeline-mode)
-    :config
-    (line-number-mode 1)
-    (column-number-mode 1)
-    (size-indication-mode 1)
-    (setq
-     doom-modeline-minor-modes nil
-     doom-modeline-buffer-encoding nil
-     doom-modeline-height 1
-     doom-modeline-env-version nil))
-#+END_SRC
+#+begin_src emacs-lisp
+  (use-package mood-line :hook (after-init . mood-line-mode))
+#+end_src
+
+Show isearch hit information in modeline.
+
+#+begin_src emacs-lisp
+  (use-package anzu :config (global-anzu-mode t))
+#+end_src
 
 ** Line numbering
 
