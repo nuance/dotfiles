@@ -1,19 +1,12 @@
 brew "cmake"
 brew "fd"
-brew "go"
 brew "ripgrep"
 brew "stow"
 brew "tree"
 
-tap "d12frosted/emacs-plus"
-brew "emacs-plus@28", args: ["with-native-comp", "with-elrumo2-icon"]
-
 cask "raycast"
-cask "rectangle"
-cask "1password"
-cask "teensy"
-
-mas "hand-mirror", id: 1502839586
+tap "railwaycat/emacsmacport"
+cask "emacs-mac"
 
 tap "homebrew/cask-fonts"
 cask "font-ibm-plex"

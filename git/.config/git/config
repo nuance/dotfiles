@@ -45,3 +45,5 @@
 [user]
 	email = "matt@mhjones.org"
 	name = "Matthew Jones"
+[init]
+	defaultBranch = main
