@@ -606,6 +606,7 @@ I'd like to toggle between light & dark themes.
 #+begin_src emacs-lisp
   (setq nuance/completion-candidates 25)
 #+end_src
+
 *** Orderless
 
 #+begin_src emacs-lisp
@@ -702,13 +703,10 @@ I'd like to toggle between light & dark themes.
   (use-package embark
     :demand t
     :init (setq prefix-help-command #'embark-prefix-help-command)
-    :custom ((embark-indicators '(embark-minimal-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
-             (embark-prompter 'embark-completing-read-prompter))
     :bind
     ("C-." . embark-act)
     ("C-;" . embark-dwim)
-    ("C-h b" . embark-bindings)
-    ("<mouse-3>" . (lambda (event) (interactive "e") (mouse-set-point event) (embark-act))))
+    ("C-h b" . embark-bindings))
 
   (use-package embark-consult
     :after (embark consult)
@@ -731,37 +729,15 @@ I'd like to toggle between light & dark themes.
         (_ (apply results-fn (list string))))))
 #+end_src
 
-*** Mini-popup
+*** Posframe
 
-I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found a little buggy. =mini-popup= seems to be the easiest to debug when things go wrong, so I'm sticking to that.
+I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found a little buggy.
 
 #+begin_src emacs-lisp
-  (use-package mini-popup
-    :demand t
-    :when (window-system)
-    :config
-    ;; resize to at most 60% of the frame height
-    (defun mini-popup-height-resize ()
-      (min (floor (* 0.6 (frame-pixel-height))) (* (1+ (min vertico--total vertico-count)) (default-line-height))))
-    (setq mini-popup--height-function #'mini-popup-height-resize)
-
-    ;; Disable the minibuffer resizing of Vertico (HACK)
-    (advice-add #'vertico--resize-window :around
-                (lambda (&rest args)
-                  (unless mini-popup-mode
-                    (apply args))))
-
-    ;; don't cache the frame
-    (advice-add #'mini-popup--hide :around (lambda (&rest args) (when (and mini-popup-mode mini-popup--frame) (delete-frame mini-popup--frame))))
-
-    ;; place the frame near the top
-    (setf (alist-get 'top mini-popup--frame-parameters) 0.05
-          (alist-get 'width mini-popup--frame-parameters) 0.9)
-
-    (mini-popup-mode)
-
-    ;; Ensure that the popup is updated after refresh (Consult-specific)
-    :hook (consult--completion-refresh . (lambda (&rest _) (mini-popup--setup))))
+  (use-package vertico-posframe
+    :if (window-system)
+    :custom ((vertico-posframe-poshandler 'posframe-poshandler-frame-top-center))
+    :config (vertico-posframe-mode 1))
 #+end_src
 
 ** Completion
@@ -1207,9 +1183,9 @@ between both flymake & flycheck errors.
        :category 'file
        :history '(:input nuance/find-by-name-history)))
 
-    (defun nuance/find-by-name-builder (input)
+    (defun nuance/find-by-name-builder (project input)
       "Build command line given INPUT."
-      (pcase-let* ((cmd (nuance/project-find-by-name-cmd (project-current) input))
+      (pcase-let* ((cmd (nuance/project-find-by-name-cmd project input))
                    (`(,arg . ,opts) (consult--command-split input))
                    (`(,re . ,hl) (funcall consult--regexp-compiler arg 'basic t)))
         (when re
@@ -1222,7 +1198,7 @@ between both flymake & flycheck errors.
     See `consult-grep' for more details regarding the asynchronous search."
       (interactive "P")
       (let* ((default-directory (project-root project))
-             (path (nuance/find-by-name (format "%s: " (nuance/project-name project)) #'nuance/find-by-name-builder (nuance/project-find-by-name-initial project))))
+             (path (nuance/find-by-name (format "%s: " (nuance/project-name project)) (lambda (input) (nuance/find-by-name-builder project input)) (nuance/project-find-by-name-initial project))))
         (xref-push-marker-stack)
         (find-file path)))
 
@@ -1230,8 +1206,7 @@ between both flymake & flycheck errors.
       (interactive)
       (let ((default-directory "~/dotfiles")) (project-find-file)))
 
-    :bind (("s-p" . project-find-file)
-           ("s-P" . nuance/find-in-dotfiles)))
+    :bind (("s-p" . project-find-file)))
 #+end_src
 
 *** Find by content
@@ -1678,7 +1653,7 @@ Optimize GC usage
 ** ElDoc
 
 #+BEGIN_SRC emacs-lisp
-  (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
+  (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode) :custom ((eldoc-idle-delay 2.5)))
   (use-package eldoc-box :if (window-system) :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
