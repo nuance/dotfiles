@@ -1939,5 +1939,5 @@ Launch a server if not currently running.
   (setq server-port 40000)
   (setq server-auth-key "emacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskey")
 
-  (server-start)
+  (when (not noninteractive) (server-start))
 #+END_SRC
