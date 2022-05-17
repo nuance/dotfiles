@@ -1458,99 +1458,29 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
 ** Org
 *** Installation
-#+BEGIN_SRC emacs-lisp
+
+#+begin_src emacs-lisp
   (use-package org
     :straight org-contrib
     :demand t
-    :config
-
-    (setq org-auto-align-tags nil
-          org-tags-column 0
-          org-special-ctrl-a/e t
-          org-catch-invisible-edits 'show-and-error
-          org-insert-heading-respect-content t)
-
-    ;; Babel
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((python . t)
-       (emacs-lisp . t)
-       (shell . t)))
-    (setq
-     org-babel-python-command "python3"
-     org-src-tab-acts-natively t
-     org-src-window-setup 'current-window
-     org-table-convert-region-max-lines 999)
-
-    (use-package ob-async)
-
-    ;; Capture
-    (setq org-capture-templates '())
-
-    ;; Refile
-    (defun nuance/current-org-buffers ()
-      (delq nil (mapcar #'buffer-file-name (org-buffer-list 'files t))))
-
-    (setq
-     org-refile-targets '((org-agenda-files :maxlevel . 3) (nuance/current-org-buffers :maxlevel . 3))
-     org-refile-use-outline-path 'file
-     org-outline-path-complete-in-steps nil
-     org-refile-allow-creating-parent-nodes 'confirm)
-
-    ;; Appearance
-    (setq org-startup-folded t
-          org-pretty-entities t)
-
-    ;; Tasks / Agenda
-    (setq
-     org-log-done t
-     org-enforce-todo-dependencies t
-     org-agenda-log-mode-items '(closed clock state)
-     org-agenda-include-diary t
-     org-agenda-window-setup 'current-window
-     org-agenda-files '("~/org/"))
-
-    (require 'org-inlinetask)
-
-    (setq org-export-backends '(ascii html md))
-
-    (setq org-todo-keywords
-          '((sequence "PLAN()" "TODO(t!)" "IN-PROGRESS(i@/!)" "|" "DONE(d!)" "CANCELED(c@!)")
-            (sequence "IDEA")))
-
-    (setq org-agenda-custom-commands
-          '(("d" "Daily agenda and all TODOs"
-             ((agenda "" ((org-agenda-span 'day) (org-agenda-repeating-timestamp-show-all t)))
-              (todo "PLAN" ((org-agenda-overriding-header "Snippets:")))
-              (tags ":refile:" ((org-agenda-overriding-header "Refile:")))
-              (todo "IN-PROGRESS" ((org-agenda-overriding-header "Finish:")))
-              (todo "TODO" ((org-agenda-overriding-header "Next:"))))
-             ((org-agenda-compact-blocks t)))
-            ("p" "3-week context plan"
-             ((agenda "" ((org-agenda-start-day "-7d") (org-agenda-span 21))))
-             ((org-agenda-compact-blocks t)
-              (org-agenda-include-inactive-timestamps 't)))))
+    :custom ((org-special-ctrl-a/e t)
+             (org-startup-folded t)
+             (org-pretty-entities t)
+             (org-src-tab-acts-natively t)
+             (org-src-window-setup 'current-window))
+    :config (setq org-capture-templates '())
     :hook
     ((org-mode . visual-line-mode)
-     (org-mode . org-indent-mode)
      (org-mode . (lambda ()
-                   (set-window-buffer nil (current-buffer))
                    (org-content 2)
                    (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)
                    (define-key org-mode-map (kbd "C-c G") 'org-mac-chrome-insert-frontmost-url)
-                   (define-key org-mode-map (kbd "s-b") 'org-babel-execute-src-block)
-                   (define-key org-mode-map (kbd "s-B") 'org-babel-execute-buffer)
-                   (define-key org-mode-map (kbd "s-o") 'consult-outline)
                    (define-key org-mode-map (kbd "s-.") 'org-toggle-narrow-to-subtree)))
      (before-save . (lambda () (when (eq major-mode 'org-mode) (indent-region (buffer-end -1) (buffer-end 1))))))
     :bind
     (("C-c c" . org-capture)
-     ("C-c l" . org-store-link)
-     ("C-c a" . (lambda () (interactive) (org-agenda nil "d")))
-     ("s-i" . (lambda () (interactive) (let ((default-directory "~/org")) (project-find-file))))
-     ("s-I" . (lambda () (interactive) (let ((default-directory "~/org")) (nuance/project-grep))))
-     ))
-#+END_SRC
+     ("C-c l" . org-store-link)))
+#+end_src
 
 *** org-nvalt
 
