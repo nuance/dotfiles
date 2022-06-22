@@ -1045,7 +1045,7 @@ Mimic standard macos window / tab management commands
 *** scratch
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "s-k") (lambda () (interactive) (switch-to-buffer "*scratch*")))
+  (global-set-key (kbd "s-n") #'ielm)
 #+end_src
 
 ** CTags
@@ -1339,6 +1339,22 @@ A simple xref backend using rg. Inspired by the gxref implementation.
   (when (not (window-system)) (xterm-mouse-mode))
 #+end_src
 
+** MacOS links
+
+#+begin_src emacs-lisp
+  (defun nuance/chrome-url-title ()
+    (let*
+        ((applescript (concat
+                       "tell application \"Chrome\"\n"
+                       " set theUrl to get URL of active tab of first window\n"
+                       " set theTitle to get title of active tab of first window\n"
+                       " return (get theUrl) & \"::split::\" & theTitle\n"
+                       "end tell\n"))
+         (raw-result (do-applescript applescript))
+         (split (split-string (substring raw-result 1 -1) "::split::")))
+      (cons (elt split 0) (elt split 1))))
+#+end_src
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
@@ -1432,10 +1448,8 @@ A simple xref backend using rg. Inspired by the gxref implementation.
                                                              (shadow . t)
                                                              (unusedparams . t)
                                                              (unusedwrite . t)))
-                                                (matcher . "Fuzzy")))))
-    (add-to-list 'eglot-server-programs '(python-mode . ("pyls")))
-    (add-to-list 'eglot-server-programs '(nix-mode . ("rnix-lsp")))
-    (add-to-list 'eglot-server-programs '(rust-mode . ("~/.cargo/bin/rustup" "run" "nightly" "rust-analyzer")))
+                                                (matcher . "Fuzzy"))))
+     eglot-events-buffer-size 0)
 
     (defun nuance/eglot-organize-imports ()
       (ignore-errors (eglot-code-action-organize-imports (point-min))))
@@ -1448,7 +1462,8 @@ A simple xref backend using rg. Inspired by the gxref implementation.
       (add-hook 'before-save-hook #'eglot-format-buffer -10 t))
 
     :hook
-    ((python-mode c++-mode c-mode go-mode rust-mode) . eglot-ensure)
+    (((python-mode c++-mode c-mode go-mode rust-mode) . eglot-ensure)
+     (eglot-managed-mode . nuance/eglot-format-buffer-on-save))
     :bind (:map eglot-mode-map
                 ("C-c r" . eglot-rename)))
 #+END_SRC
@@ -1468,12 +1483,18 @@ A simple xref backend using rg. Inspired by the gxref implementation.
              (org-element-use-cache nil)
              (org-element-cache-persistent nil))
     :config (setq org-capture-templates '())
+
+    (defun nuance/store-chrome-link ()
+      (interactive)
+      (pcase-let ((`(,link . ,desc) (nuance/chrome-url-title)))
+        (unless (member (list link desc) org-stored-links)
+          (push (list link desc) org-stored-links))))
+
     :hook
     ((org-mode . visual-line-mode)
      (org-mode . (lambda ()
                    (org-content 2)
-                   (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)
-                   (define-key org-mode-map (kbd "C-c G") 'org-mac-chrome-insert-frontmost-url)
+                   (define-key org-mode-map (kbd "C-c g") 'nuance/store-chrome-link)
                    (define-key org-mode-map (kbd "s-.") 'org-toggle-narrow-to-subtree)))
      (before-save . (lambda () (when (eq major-mode 'org-mode) (indent-region (buffer-end -1) (buffer-end 1))))))
     :bind
@@ -1555,7 +1576,7 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
           (progn (kill-region (region-beginning) (region-end)) (insert (format "[[%s][" link)) (yank) (insert "]]"))
         (insert (format "[[%s][%s]]" link title)))))
 
-  (global-set-key (kbd "s-n") 'nuance/nv-find-note)
+  (global-set-key (kbd "s-k") 'nuance/nv-find-note)
   (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
 #+end_src
 
@@ -1750,7 +1771,6 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
         (when (= p (point))
           (call-interactively 'complete-symbol))))
     :mode ("\\.h|\\.cpp" . c++-mode)
-    :hook (c++-mode . nuance/eglot-format-buffer-on-save)
     :bind (:map c-mode-base-map ("TAB" .  my/c-indent-complete)))
 #+END_SRC
 
@@ -1773,8 +1793,7 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
 ** Go
 
 #+BEGIN_SRC emacs-lisp
-  (use-package go-mode
-    :hook (go-mode . nuance/eglot-format-buffer-on-save))
+  (use-package go-mode)
 #+END_SRC
 
 *** Eglot Module Support
@@ -1821,6 +1840,8 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
     :hook
     (('markdown-mode .'variable-pitch-mode)
      ('markdown-mode . 'visual-line-mode)))
+
+  (use-package edit-indirect)
 #+END_SRC
 
 * Private.el
