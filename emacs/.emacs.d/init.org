@@ -1606,88 +1606,6 @@ Optimize GC usage
   (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
 #+END_SRC
 
-** Formatter
-
-Generic tramp-friendly helper for formatters that read from stdin / write to stdout
-
-#+BEGIN_SRC emacs-lisp
-  (use-package async )
-
-  (defun nuance/delete-file-async (path) (async-start (lambda () (delete-file path nil)) 'ignore))
-
-  (define-minor-mode nuance-remote-formatter-mode
-    "Toggle python formatting")
-
-  (defun nuance/format-buffer (prefix-arg tmp-buf-name binary &optional failure-p &rest args)
-    (if (or (not (file-remote-p (buffer-file-name))) nuance-remote-formatter-mode)
-        (if (and (not prefix-arg) (> (buffer-size) tramp-inline-compress-start-size)) (message "Skipping formatting for large file")
-          (let ((tmp-stdin-path (make-nearby-temp-file (format "%s--stdin" tmp-buf-name)))
-                (tmp-stdout-buf (generate-new-buffer (format "*%s--stdout*" tmp-buf-name)))
-                (tmp-stderr-path (make-nearby-temp-file (format "*%s--stderr*" tmp-buf-name)))
-                (input-buffer (current-buffer))
-                (failure-check (if failure-p failure-p (lambda (errno stdout-buf stderr-buf) (/= errno 0)))))
-            (write-region nil nil tmp-stdin-path)
-            (let ((errno (apply 'process-file binary tmp-stdin-path (list tmp-stdout-buf tmp-stderr-path) nil args)))
-              (if (not (funcall failure-check errno tmp-stdout-buf tmp-stderr-path))
-                  (progn (replace-buffer-contents tmp-stdout-buf)
-                         (nuance/delete-file-async tmp-stdin-path)
-                         (kill-buffer tmp-stdout-buf)
-                         (nuance/delete-file-async tmp-stderr-path))))))))
-#+END_SRC
-
-*** autobuildify
-
-#+BEGIN_SRC emacs-lisp
-  (defvar autobuildify--buildifier-binary
-    "buildifier"
-    "Path to Buildifier binary.")
-
-  (defun autobuildify--run-buildifier-on-current-file (arg)
-    (interactive "P")
-    (nuance/format-buffer arg "buildifier" autobuildify--buildifier-binary))
-
-  (defun autobuildify--save-hook ()
-    (let ((fname (buffer-file-name)))
-      (if (and fname
-               (string-match "/\\(TARGETS\\|BUILD\\)$" fname))
-          (autobuildify--run-buildifier-on-current-file nil))))
-
-  (add-hook 'before-save-hook 'autobuildify--save-hook)
-#+END_SRC
-
-*** clang-format
-
-#+BEGIN_SRC emacs-lisp
-  (defun clang-format-buffer (arg)
-    (interactive "P")
-    (nuance/format-buffer arg
-                          "clang-format" "clang-format" nil "-style=file" (format "-assume-filename=%s" (file-local-name (buffer-file-name)))))
-
-  (defun clang-format--save-hook ()
-    "Add this to .emacs to clang-format on save
-  (add-hook 'before-save-hook 'clang-format-before-save)."
-    (interactive)
-    (when (eq major-mode 'c++-mode) (clang-format-buffer nil)))
-
-  (add-hook 'before-save-hook 'clang-format--save-hook)
-#+END_SRC
-
-*** blacken
-
-#+BEGIN_SRC emacs-lisp
-  (defun blacken-buffer (arg)
-    (interactive "P")
-    (nuance/format-buffer arg "black" "black" nil "-" "-q"))
-
-  (defun blacken--save-hook ()
-    "Add this to .emacs to blacken on save
-        (add-hook 'before-save-hook blacken-before-save)."
-    (interactive)
-    (when (eq major-mode 'python-mode) (blacken-buffer nil)))
-
-  (add-hook 'before-save-hook 'blacken--save-hook)
-#+END_SRC
-
 ** which-key
 
 #+begin_src emacs-lisp
@@ -1786,8 +1704,7 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
-  (use-package rust-mode
-    :hook (rust-mode . nuance/eglot-format-buffer-on-save))
+  (use-package rust-mode)
 #+END_SRC
 
 ** Go
@@ -1795,22 +1712,6 @@ Generic tramp-friendly helper for formatters that read from stdin / write to std
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode)
 #+END_SRC
-
-*** Eglot Module Support
-
-#+begin_src emacs-lisp
-  (require 'project)
-
-  (defun project-find-go-module (dir)
-    (unless (file-remote-p dir)
-      (when-let ((root (locate-dominating-file dir "go.mod")))
-        (cons 'go-module root))))
-
-  (cl-defmethod project-root ((project (head go-module)))
-    (cdr project))
-
-  (add-hook 'project-find-functions #'project-find-go-module)
-#+end_src
 
 ** Bazel
 
