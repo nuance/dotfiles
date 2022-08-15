@@ -1587,7 +1587,8 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
     :straight nil
     :custom
     ((tramp-inline-compress-start-size (* 64 1024))
-     (tramp-default-method "ssh"))
+     (tramp-default-method "ssh")
+     (tramp-terminal-type "tramp"))
     :config
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+END_SRC
