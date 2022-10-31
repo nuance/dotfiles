@@ -2,10 +2,12 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Yabai: Focus Next
+# @raycast.title Yabai: Restart
 # @raycast.mode silent
 
 # Optional parameters:
 # @raycast.icon 🤖
 
-yabai -m window --focus next || yabai -m window --focus first_node
+#!/bin/bash
+
+/opt/homebrew/bin/brew services restart yabai

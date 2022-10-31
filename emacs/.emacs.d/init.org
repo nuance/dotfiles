@@ -126,7 +126,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
     (when (featurep 'native-compile)
       (let
           ((native-comp-deferred-compilation t)
-           (native-comp-async-jobs-number 16))
+           (native-comp-async-jobs-number (cl-parse-integer (s-trim (shell-command-to-string "getconf _NPROCESSORS_ONLN")))))
         (native-compile-async "~/.emacs.d/straight/build" 'recursively)
         (while
             (and comp-files-queue (> (comp-async-runnings) 0))
@@ -372,6 +372,7 @@ And test it like:
         desktop-files-not-to-save "^$")
   (savehist-mode 1)
   (add-to-list 'savehist-additional-variables 'compile-command)
+  (add-to-list 'savehist-additional-variables 'xref--history)
 
   (recentf-mode 1)
   (save-place-mode 1)
@@ -470,18 +471,46 @@ And test it like:
   (modify-all-frames-parameters '((internal-border-width . 0)))
 #+END_SRC
 
-** Modeline
+** Mode-line
 
-Minimal modeline.
+Minimal mode-line.
 
 #+begin_src emacs-lisp
   (use-package mood-line :hook (after-init . mood-line-mode))
 #+end_src
 
-Show isearch hit information in modeline.
+Show isearch hit information in mode-line.
 
 #+begin_src emacs-lisp
   (use-package anzu :config (global-anzu-mode t))
+#+end_src
+
+*** Mode-Line Buffer Name
+
+#+begin_src emacs-lisp
+  (with-eval-after-load 'mood-line
+    (use-package shrink-path
+      :config
+
+      (defun nuance/project-relative-shrunk-path (project path)
+        (if (f-ancestor-of? (project-root project) path)
+            (let*
+                ((shrunk-path (split-string (shrink-path-file path) "/"))
+                 (project-root-size (length (split-string (project-root project) "/"))))
+              (string-join (-slice shrunk-path project-root-size) "/"))
+          (shrink-path-file path)))
+
+      (defun nuance/buffer-name ()
+        (cond
+         ((and (project-current) (buffer-file-name)) (format "[%s] %s" (nuance/project-name (project-current)) (nuance/project-relative-shrunk-path (project-current) (buffer-file-name))))
+         ((buffer-file-name) (shrink-path-file (buffer-file-name)))
+         (t (buffer-name))))
+
+      (defvar-local nuance/buffer-name--cache nil)
+      (defun mood-line-segment-buffer-name ()
+        (unless nuance/buffer-name--cache
+          (set-variable 'nuance/buffer-name--cache (format "%s  " (nuance/buffer-name))))
+        (propertize nuance/buffer-name--cache 'face 'mood-line-buffer-name))))
 #+end_src
 
 ** Line numbering
@@ -561,7 +590,7 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
                       :family "IBM Plex Mono"
-                      :height 130)
+                      :height 110)
   (set-face-attribute 'fixed-pitch nil
                       :family "IBM Plex Mono")
   (set-face-attribute 'variable-pitch nil
@@ -667,10 +696,7 @@ I'd like to toggle between light & dark themes.
     (fset 'multi-occur #'consult-multi-occur)
     ;; Use Consult to select xref locations with preview
     (setq xref-show-xrefs-function #'consult-xref
-          xref-show-definitions-function #'consult-xref)
-
-    (advice-add #'completing-read-multiple
-                :override #'consult-completing-read-multiple))
+          xref-show-definitions-function #'consult-xref))
 #+end_src
 
 *** Marginalia
@@ -703,7 +729,9 @@ I'd like to toggle between light & dark themes.
     :bind
     ("C-." . embark-act)
     ("C-;" . embark-dwim)
-    ("C-h b" . embark-bindings))
+    ("C-h b" . embark-bindings)
+    ;; DWIM inside the minibuffer is pretty much always export
+    (:map minibuffer-local-map ("C-;" . embark-export)))
 
   (use-package embark-consult
     :after (embark consult)
@@ -711,7 +739,7 @@ I'd like to toggle between light & dark themes.
     ;; if you want to have consult previews as you move around an
     ;; auto-updating embark collect buffer
     :hook
-    (embark-collect-mode . embark-consult-preview-minor-mode))
+    (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
 *** Dynamic completion helper
@@ -733,8 +761,10 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
 #+begin_src emacs-lisp
   (use-package vertico-posframe
     :if (window-system)
-    :custom ((vertico-posframe-poshandler 'posframe-poshandler-frame-top-center))
+    :custom ((vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
+             (vertico-posframe-truncate-lines nil))
     :config (vertico-posframe-mode 1))
+
 #+end_src
 
 ** Completion
@@ -752,7 +782,8 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
                 ("SPC" . corfu-insert-separator)
                 ("M-d" . corfu-show-documentation)
                 ("C-g" . corfu-quit)
-                ("M-l" . corfu-show-location))
+                ("M-l" . corfu-show-location)
+                ("M-;" . corfu-move-to-minibuffer))
     :custom
     ;; Works with `indent-for-tab-command'. Make sure tab doesn't indent when you
     ;; want to perform completion
@@ -761,12 +792,12 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
     (completion-cycle-threshold nil)      ; Always show candidates in menu
 
     (corfu-auto t)
-    (corfu-auto-prefix 2)
-    (corfu-auto-delay 0.25)
+    (corfu-auto-prefix 0)
+    (corfu-auto-delay 0)
 
     (corfu-min-width 80)
-    (corfu-max-width corfu-min-width)     ; Always have the same width
-    (corfu-count 14)
+    (corfu-max-width 160)     ; Always have the same width
+    (corfu-count 28)
     (corfu-scroll-margin 4)
     (corfu-cycle nil)
 
@@ -781,14 +812,19 @@ I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found 
     (global-corfu-mode)
     :config
 
+    (defun corfu-move-to-minibuffer ()
+      (interactive)
+      (let ((completion-extra-properties corfu--extra)
+            completion-cycle-threshold completion-cycling)
+        (apply #'consult-completion-in-region completion-in-region--data)))
+
     ;; Enable Corfu more generally for every minibuffer, as long as no other
     ;; completion UI is active. If you use Mct or Vertico as your main minibuffer
     ;; completion UI. From
     ;; https://github.com/minad/corfu#completing-with-corfu-in-the-minibuffer
     (defun corfu-enable-always-in-minibuffer ()
       "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-      (unless (or (bound-and-true-p mct--active) ; Useful if I ever use MCT
-                  (bound-and-true-p vertico--input))
+      (unless (bound-and-true-p vertico--input)
         (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
         (corfu-mode 1)))
     :hook (minibuffer-setup . corfu-enable-always-in-minibuffer))
@@ -919,6 +955,15 @@ Incremental search thats multiple-cursors-friendly.
     :after phi-search
     :bind (:map mc/keymap ([remap query-replace] . phi-replace-query)))
 #+END_SRC
+
+*** MWIM
+
+#+begin_src emacs-lisp
+  (use-package mwim
+    :bind
+    (("C-e" . mwim-end)
+     ("C-a" . mwim-beginning)))
+#+end_src
 
 *** Comment line / region
 
@@ -1155,17 +1200,18 @@ between both flymake & flycheck errors.
     :straight t
     :after (consult)
 
-    :config
-    (cl-defmethod nuance/project-find-by-name-cmd ((project t) q)
+    :init
+    (cl-defgeneric nuance/project-find-by-name-cmd (project q)
       (let* ((split (split-string q " " t))
              (pattern (format "(%s){%d}+" (s-join "|" (mapcar (lambda (s) (format "%s.*" s)) split)) (length split))))
         (format "fd --hidden --no-ignore --color=never --max-results=%d \"%s\" %s" (* 5 nuance/completion-candidates) pattern (project-root project))))
 
-    (cl-defmethod nuance/project-find-by-name-initial ((project t)) "")
+    (cl-defgeneric nuance/project-find-by-name-initial (project) "" nil "")
 
     (defvar nuance/find-by-name-history nil)
     (add-to-list 'savehist-additional-variables 'nuance/find-by-name-history)
 
+    :config
     (defun nuance/find-by-name (prompt builder initial)
       (consult--read
        (consult--async-command builder
@@ -1195,7 +1241,10 @@ between both flymake & flycheck errors.
     See `consult-grep' for more details regarding the asynchronous search."
       (interactive "P")
       (let* ((default-directory (project-root project))
-             (path (nuance/find-by-name (format "%s: " (nuance/project-name project)) (lambda (input) (nuance/find-by-name-builder project input)) (nuance/project-find-by-name-initial project))))
+             (prompt (format "%s: " (nuance/project-name project)))
+             (builder (lambda (input) (nuance/find-by-name-builder project input)))
+             (initial  (concat (nuance/project-find-by-name-initial project) (thing-at-point 'word)))
+             (path (nuance/find-by-name prompt builder initial)))
         (xref-push-marker-stack)
         (find-file path)))
 
@@ -1212,10 +1261,11 @@ between both flymake & flycheck errors.
   (use-package project
     :straight t
     :after (consult)
-    :config
-    (cl-defmethod nuance/find-by-content-dispatch ((project t))
-      (consult-git-grep))
+    :init
+    (cl-defgeneric nuance/find-by-content-dispatch (project) "" nil
+                   (consult-git-grep))
 
+    :config
     (defun nuance/find-by-content ()
       "Search for regexp with find in DIR with INITIAL input.
       The find process is started asynchronously, similar to `consult-grep'.
@@ -1355,6 +1405,13 @@ A simple xref backend using rg. Inspired by the gxref implementation.
       (cons (elt split 0) (elt split 1))))
 #+end_src
 
+** Tabs
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "s-}") 'tab-next)
+  (global-set-key (kbd "s-{") 'tab-previous)
+#+end_src
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
@@ -1367,7 +1424,10 @@ A simple xref backend using rg. Inspired by the gxref implementation.
              ;; Get rid of the previous advice to go into fullscreen
              (magit-restore-window-configuration t)
              (git-commit-fill-column 120))
-    :bind ("C-x g" . magit-status))
+    :init
+    (cl-defgeneric nuance/status (project)
+      (magit-status (project-root project)))
+    :bind ("C-x g" . (lambda () (interactive) (nuance/status (project-current)))))
 #+end_src
 
 *** delta
@@ -1389,6 +1449,13 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     (global-diff-hl-show-hunk-mouse-mode)
     (diff-hl-flydiff-mode))
 #+END_SRC
+
+** Ediff
+
+#+begin_src emacs-lisp
+  (use-package ediff
+    :custom ((ediff-window-setup-function 'ediff-setup-windows-plain)))
+#+end_src
 
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
@@ -1588,7 +1655,8 @@ cmd-l - insert a link to note (creating a note if it doesn't currently exist; wr
     :custom
     ((tramp-inline-compress-start-size (* 64 1024))
      (tramp-default-method "ssh")
-     (tramp-terminal-type "tramp"))
+     (tramp-terminal-type "tramp")
+     (remote-file-name-inhibit-locks t))
     :config
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+END_SRC

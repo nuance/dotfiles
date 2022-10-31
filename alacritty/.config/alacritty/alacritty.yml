@@ -1,0 +1,46 @@
+import:
+  - ~/.config/alacritty/keybindings.yml
+
+window:
+  dynamic_padding: true
+
+colors:
+  primary:
+    # dark
+    background: '#242427'
+    # light
+    # background: '#eeeeee'
+
+cursor:
+  style:
+    shape: Underline
+    blinking: Off
+
+font:
+  normal:
+    family: IBM Plex Mono
+  bold:
+    family: IBM Plex Mono
+  italic:
+    family: IBM Plex Mono
+  bold_italic:
+    family: IBM Plex Mono
+
+hints:
+  enabled:
+   - regex: "(https:|http:)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+     command: open
+     post_processing: true
+     mouse:
+       enabled: true
+       mods: None
+
+# override generated bindings
+key_bindings:
+  - { key: V, mods: Command, action: Paste }
+  - { key: C, mods: Command, action: Copy }
+  - { key: Space, mods: Control, chars: "\x00" }
+  - { key: Return, mods: Shift,   chars: "\x1b[13;2u" }
+  - { key: Return, mods: Control, chars: "\x1b[13;5u" }
+  - { key: Equals, mods: Command, action: IncreaseFontSize }
+  - { key: Minus, mods: Command, action: DecreaseFontSize }

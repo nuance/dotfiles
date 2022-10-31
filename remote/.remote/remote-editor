@@ -12,5 +12,5 @@ else
         files="${files} -file ${file}"
     done
 
-    echo "-auth `server-key` -dir ${dir} -nowait -current-frame -tty /dev/ttys001 xterm-256color ${files}" | nc localhost 40000
+    echo "-auth emacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskey -dir ${dir} -nowait -current-frame -tty /dev/ttys001 xterm-256color ${files}" | nc localhost 40000
 fi

@@ -1,8 +1,6 @@
 [alias]
 	br = "branch -vv --sort=\"-committerdate\""
 	ca = "commit --amend -a --no-edit"
-	changed = "! git diff --diff-filter=ACMRTUX --name-only `git merge-base HEAD origin/master` | more"
-	changed-diff = "! git diff --diff-filter=ACMRTUX `git merge-base HEAD origin/master`"
 	ci = "commit"
 	cim = "commit -am"
 	co = "checkout"
@@ -12,22 +10,14 @@
 	dss = "diff --staged --summary --stat"
 	lg = "log -p"
 	ms = "merge --squash"
-	p = "rebase origin/master"
+	p = "rebase"
 	push = "push -u"
 	pushf = "push --force-with-lease"
-	pychanged = "! git changed | egrep '[.]py$'"
-	pyfmt = "! git pychanged | xargs black && git pychanged | xargs isort"
-	pylint = "! git pychanged | xargs flake8 && git pychanged | xargs pyright"
 	rc = "rebase --continue"
-	squash = "git reset --soft `git merge-base HEAD origin/master`"
 	st = "status -s"
 	touch = "commit --allow-empty"
 	u = "fetch -n origin"
 	up = "! git u && git p"
-
-[filter "secret"]
-        smudge = ~/.config/secret/decrypt
-        clean = ~/.config/secret/encrypt
 
 [color]
 	ui = "auto"

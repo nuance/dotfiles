@@ -1,3 +1,0 @@
-emacs/.emacs.d/server filter=secret
-emacs/.emacs.d/server.el filter=secret
-remote/.remote/remote-editor filter=secret
