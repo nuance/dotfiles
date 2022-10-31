@@ -44,4 +44,6 @@ yabai -m config                                 \
     window_gap                   6              \
     layout                       bsp
 
+yabai -m rule --add app="^Raycast$" manage=off
+
 echo "yabai configuration loaded.."
