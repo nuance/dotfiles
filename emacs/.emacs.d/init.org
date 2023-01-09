@@ -907,7 +907,6 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
     :custom (mc/always-run-for-all t)
     :config
     (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
-    (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
 
     (defun nuance/mark-next-like-this-symbol (arg)
       (interactive "p")
@@ -1441,13 +1440,6 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :custom ((ediff-window-setup-function 'ediff-setup-windows-plain)))
 #+end_src
 
-** Flycheck
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :hook ('prog-mode . (lambda () (unless (file-remote-p default-directory) (flycheck-mode))))
-    :custom ((flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
-#+END_SRC
-
 ** Snippets
 
 *** Yasnippet
@@ -1748,10 +1740,7 @@ Optimize GC usage
 ** Python
 
 #+BEGIN_SRC emacs-lisp
-  (use-package python
-    :config (setq
-             flycheck-python-pycompile-executable "python3"
-             flycheck-python-flake8-executable "flake8"))
+  (use-package python)
 #+END_SRC
 
 ** Rust
