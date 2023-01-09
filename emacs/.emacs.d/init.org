@@ -783,10 +783,13 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
                 ("<return>" . corfu-insert)
                 ("<tab>" . corfu-insert)
                 ("SPC" . corfu-insert-separator)
-                ("M-d" . corfu-show-documentation)
+                ("M-d" . corfu-popupinfo-toggle)
                 ("C-g" . corfu-quit)
                 ("M-l" . corfu-show-location)
-                ("M-;" . corfu-move-to-minibuffer))
+                ("M-;" . corfu-move-to-minibuffer)
+                ;; Scroll in the documentation window
+                ("M-n" . corfu-popupinfo-scroll-up)
+                ("M-p" . corfu-popupinfo-scroll-down))
     :custom
     ;; Works with `indent-for-tab-command'. Make sure tab doesn't indent when you
     ;; want to perform completion
@@ -810,6 +813,9 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
     (corfu-preview-current 'insert)       ; Preview current candidate?
     (corfu-preselect-first t)             ; Preselect first candidate?
+    (corfu-popupinfo-delay 0.5)
+    (corfu-popupinfo-max-width 70)
+    (corfu-popupinfo-max-height 20)
 
     :init
     (global-corfu-mode)
@@ -830,7 +836,8 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
       (unless (bound-and-true-p vertico--input)
         (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
         (corfu-mode 1)))
-    :hook (minibuffer-setup . corfu-enable-always-in-minibuffer))
+    :hook ((minibuffer-setup . corfu-enable-always-in-minibuffer)
+           (corfu-mode . corfu-popupinfo-mode)))
 #+END_SRC
 
 *** Kind icon
@@ -850,32 +857,6 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
     :hook (nuance/after-theme-change . kind-icon-reset-cache))
 #+end_src
-
-*** Corfu-doc
-
-#+begin_src emacs-lisp
-  (use-package corfu-doc
-    ;; NOTE 2022-02-05: At the time of writing, `corfu-doc' is not yet on melpa
-    :straight (corfu-doc :type git :host github :repo "galeo/corfu-doc")
-    :after corfu
-    :hook (corfu-mode . corfu-doc-mode)
-    :bind (:map corfu-map
-                ;; This is a manual toggle for the documentation popup.
-                ([remap corfu-show-documentation] . corfu-doc-toggle) ; Remap the default doc command
-                ;; Scroll in the documentation window
-                ("M-n" . corfu-doc-scroll-up)
-                ("M-p" . corfu-doc-scroll-down))
-    :custom
-    (corfu-doc-delay 0.5)
-    (corfu-doc-max-width 70)
-    (corfu-doc-max-height 20)
-
-    ;; NOTE 2022-02-05: I've also set this in the `corfu' use-package to be
-    ;; extra-safe that this is set when corfu-doc is loaded. I do not want
-    ;; documentation shown in both the echo area and in the `corfu-doc' popup.
-    (corfu-echo-documentation nil))
-#+end_src
-
 
 ** Default to regexp search
 
