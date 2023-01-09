@@ -1407,6 +1407,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 #+begin_src emacs-lisp
   (global-set-key (kbd "s-}") 'tab-next)
   (global-set-key (kbd "s-{") 'tab-previous)
+  (global-set-key (kbd "C-x T") 'tab-switch)
 #+end_src
 
 * Packages
