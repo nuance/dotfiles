@@ -1784,7 +1784,8 @@ Optimize GC usage
     :custom
     ((bazel-mode-buildifier-before-save t)
      (bazel-mode-buildifier-command "~/go/bin/buildifier"))
-    )
+    :config
+    (remove-hook 'project-find-functions #'bazel-find-project))
 #+END_SRC
 
 ** Markdown
