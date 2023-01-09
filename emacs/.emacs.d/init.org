@@ -543,11 +543,13 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (defvar nuance/after-theme-change-hook nil "Hook called after theme has changed")
 
-  (use-package modus-themes
-    :custom (modus-themes-org-blocks 'gray-background)
+  (use-package doom-themes
     :config
-    (defvar light-theme 'modus-operandi)
-    (defvar dark-theme 'modus-vivendi)
+    (defvar light-theme 'doom-one-light)
+    (defvar dark-theme 'doom-rouge)
+
+    (defvar nuance/current-theme 'light)
+    (add-to-list 'savehist-additional-variables 'nuance/current-theme)
 
     (defun nuance/apply-theme (appearance)
       "Load theme, taking current system APPEARANCE into consideration."
@@ -557,8 +559,8 @@ I'd like to toggle between light & dark themes.
         ('light (load-theme light-theme t) (nuance/xterm-bg-update "#ffffff"))
         ('dark (load-theme dark-theme t) (nuance/xterm-bg-update "#010000"))))
 
-    (defun dark () (interactive) (nuance/apply-theme 'dark))
-    (defun light () (interactive) (nuance/apply-theme 'light))
+    (defun dark () (interactive) (setq nuance/current-theme 'dark) (nuance/apply-theme 'dark))
+    (defun light () (interactive) (setq nuance/current-theme 'light) (nuance/apply-theme 'light))
 
     (add-hook 'ns-system-appearance-change-functions #'nuance/apply-theme)
     (nuance/apply-theme 'light))
