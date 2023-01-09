@@ -1015,12 +1015,17 @@ Incremental search thats multiple-cursors-friendly.
   (global-set-key (kbd "M-j") 'previous-window)
   (global-set-key (kbd "M-k") 'other-window)
 
-  (use-package ace-window
-    :custom (aw-scope 'frame)
+  (use-package emacs
     :config
+    (defun nuance/window-order (a b)
+      (let ((a-left (window-pixel-left a))
+            (b-left (window-pixel-left b))
+            (a-top (window-pixel-top a))
+            (b-top (window-pixel-top b)))
+        (if (= a-top b-top) (< a-left b-left) (< a-top b-top))))
+
     (defun switch-to-nth-window (window-num)
-      (let ((window (nth window-num (aw-window-list))))
-        (when window (select-window window))))
+      (select-window (elt (sort (window-list) #'nuance/window-order) window-num)))
     :bind (
            ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
            ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
