@@ -660,6 +660,7 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
           completion-category-defaults nil
           completion-category-overrides
           '((file (styles orderless))
+            (consult-xref (styles orderless))
             (nuance/dynamic (styles . (basic)))
             (nuance/dynamic-file (styles . (basic))))))
 #+end_src
