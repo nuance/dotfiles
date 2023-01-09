@@ -1166,7 +1166,7 @@ between both flymake & flycheck errors.
     :straight nil
     :config
     (defvar nuance/dotfiles-base-dir (expand-file-name "~/dotfiles"))
-    (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d")))
+    (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d") ,(expand-file-name "~/.config")))
 
     (defun project-find-dotfiles-dir (dir)
       (when (-any (lambda (p) (or (f-same? p dir) (f-ancestor-of? p dir))) nuance/dotfiles-dirs)
