@@ -368,29 +368,13 @@ And test it like:
 ** Restore state between relaunches
 
 #+begin_src emacs-lisp
-  (setq savehist-save-minibuffer-history nil
-        desktop-files-not-to-save "^$")
+  (setq savehist-save-minibuffer-history nil)
   (savehist-mode 1)
   (add-to-list 'savehist-additional-variables 'compile-command)
   (add-to-list 'savehist-additional-variables 'xref--history)
 
   (recentf-mode 1)
   (save-place-mode 1)
-#+end_src
-
-*** desktop
-
-#+begin_src emacs-lisp
-  (if (not (daemonp))
-      (desktop-save-mode 1)
-    (defun restore-desktop (frame)
-      "Restores desktop and cancels hook after first frame opens.
-       So the daemon can run at startup and it'll still work"
-      (with-selected-frame frame
-        (desktop-save-mode 1)
-        (desktop-read)
-        (remove-hook 'after-make-frame-functions 'restore-desktop)))
-    (add-hook 'after-make-frame-functions 'restore-desktop))
 #+end_src
 
 ** Kill / yank
