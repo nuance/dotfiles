@@ -12,6 +12,9 @@ compile: org
 update: org
 	emacs --batch --eval "(setq byte-compile-current-file t)" --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(nuance/update-versions)"
 
+freeze: org
+	emacs --batch --eval "(setq byte-compile-current-file t)" --load ~/.emacs.d/early-init.el --load ~/.emacs.d/init.el --exec "(straight-freeze-versions)"
+
 clean:
 	rm -rf straight/build straight/build-cache.el
 	rm -rf eln-cache
