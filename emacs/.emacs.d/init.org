@@ -453,7 +453,7 @@ And test it like:
   (if (boundp 'toggle-frame-fullscreen) (toggle-frame-fullscreen))
   (if (boundp 'scroll-bar-mode) (scroll-bar-mode 0))
   (if (boundp 'tool-bar-mode) (tool-bar-mode 0))
-  (if (boundp 'menu-bar-mode) (menu-bar-mode 0))
+  (menu-bar-mode (if (eq system-type 'darwin) t 0))
   (modify-all-frames-parameters '((internal-border-width . 0)))
 #+END_SRC
 
