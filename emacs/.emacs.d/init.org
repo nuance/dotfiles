@@ -1520,7 +1520,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
              (org-startup-folded t)
              (org-pretty-entities t)
              (org-src-tab-acts-natively t)
-             (org-src-window-setup 'current-window)
+             (org-src-window-setup 'plain)
              (org-element-use-cache nil)
              (org-element-cache-persistent nil))
     :config (setq org-capture-templates '())
@@ -1531,6 +1531,12 @@ A simple xref backend using rg. Inspired by the gxref implementation.
         (unless (member (list link desc) org-stored-links)
           (push (list link desc) org-stored-links))))
 
+    (setq org-refile-targets
+          `((nil :maxlevel . 9)
+            (,(directory-files-recursively "~/org" "^[^.].*[.]org$") :maxlevel . 3)
+            (org-agenda-files :maxlevel . 3)))
+    (setq org-outline-path-complete-in-steps nil)
+    (setq org-refile-use-outline-path 'file)
     :hook
     ((org-mode . visual-line-mode)
      (org-mode . (lambda ()
