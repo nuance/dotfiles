@@ -1668,6 +1668,7 @@ Optimize GC usage
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
+  (use-package eldoc-box :hook ((prog-mode org-mode) . eldoc-box-hover-mode))
 #+END_SRC
 
 ** which-key
