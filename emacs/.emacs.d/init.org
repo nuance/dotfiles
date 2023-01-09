@@ -743,7 +743,6 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
 #+begin_src emacs-lisp
   (use-package embark
-    :demand t
     :init (setq prefix-help-command #'embark-prefix-help-command)
     :bind
     ("C-." . embark-act)
@@ -753,10 +752,6 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
     (:map minibuffer-local-map ("C-;" . embark-export)))
 
   (use-package embark-consult
-    :after (embark consult)
-    :demand t ; only necessary if you have the hook below
-    ;; if you want to have consult previews as you move around an
-    ;; auto-updating embark collect buffer
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
@@ -773,25 +768,14 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
         (_ (apply results-fn (list string))))))
 #+end_src
 
-*** Posframe
-
-I've used mini-popup, mini-frame, and vertico-posframe, all of which I've found a little buggy.
-
-#+begin_src emacs-lisp
-  (use-package vertico-posframe
-    :if (window-system)
-    :custom ((vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
-             (vertico-posframe-truncate-lines nil))
-    :config (vertico-posframe-mode 1))
-
-#+end_src
-
 ** Completion
 
 *** Corfu
 
 #+BEGIN_SRC emacs-lisp
   (use-package corfu
+    :straight (corfu :files (:defaults "extensions/*")
+                     :includes (corfu-popupinfo))
     :bind (:map corfu-map
                 ("C-n" . corfu-next)
                 ("C-p" . corfu-previous)
