@@ -522,7 +522,7 @@ Show isearch hit information in mode-line.
 
 #+begin_src emacs-lisp
   (defun nuance/osc-command (code body)
-    (when (not (window-system))
+    (when (not (or noninteractive (window-system)))
       (let ((cmd (concat "\033]" code  ";" body "\007")))
         (send-string-to-terminal cmd))))
 
