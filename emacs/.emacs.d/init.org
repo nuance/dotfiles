@@ -709,7 +709,8 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
            ("M-y" . consult-yank-pop)
            ("<help> a" . consult-apropos))
     :custom ((consult-async-input-throttle 0.05)
-             (consult-async-input-debounce 0.1))
+             (consult-async-input-debounce 0.1)
+             (consult-project-function nil))
     :init
     (fset 'multi-occur #'consult-multi-occur)
     ;; Use Consult to select xref locations with preview
