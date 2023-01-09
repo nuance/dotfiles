@@ -1240,7 +1240,7 @@ between both flymake & flycheck errors.
       (let* ((default-directory (project-root project))
              (prompt (format "%s: " (nuance/project-name project)))
              (builder (lambda (input) (nuance/find-by-name-builder project input)))
-             (initial  (concat (nuance/project-find-by-name-initial project) (thing-at-point 'word)))
+             (initial (concat (nuance/project-find-by-name-initial project) (thing-at-point 'filename)))
              (path (nuance/find-by-name prompt builder initial)))
         (xref-push-marker-stack)
         (find-file path)))
