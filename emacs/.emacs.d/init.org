@@ -1704,6 +1704,8 @@ Optimize GC usage
   (use-package prog-mode
     :straight nil
     :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun-or-region)))
+
+  (put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
 ** JSON
