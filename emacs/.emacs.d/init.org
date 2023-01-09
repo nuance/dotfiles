@@ -1092,12 +1092,21 @@ Auto-revert to new tags file
 
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
+    :demand t
     :hook (vterm-mode . goto-address-mode)
     :custom (vterm-max-scrollback 20000)
     :config
-    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
+    (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
 
-  (use-package vterm-toggle :bind ("s-T" . vterm-toggle))
+    (defun project-vterm ()
+      (interactive)
+      (let* ((default-directory (project-root (project-current t)))
+             (vterm-buffer-name (project-prefixed-buffer-name "vterm"))
+             (vterm-buffer (get-buffer vterm-buffer-name)))
+        (if (and vterm-buffer (not current-prefix-arg))
+            (pop-to-buffer vterm-buffer  (bound-and-true-p display-comint-buffer-action))
+          (vterm))))
+    :bind ("s-T" . project-vterm))
 #+END_SRC
 
 ** Scroll through errors
