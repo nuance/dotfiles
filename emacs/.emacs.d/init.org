@@ -1169,7 +1169,7 @@ between both flymake & flycheck errors.
 
     (add-hook 'project-find-functions #'project-find-dotfiles-dir)
 
-    (defun nuance/project-name (project)
+    (cl-defgeneric nuance/project-name (project)
       "Return a nice version of the project name"
       (file-name-base (directory-file-name (file-local-name (project-root project)))))
     :bind (("s-," . (lambda () (interactive) (find-file (concat user-emacs-directory "init.org"))))
