@@ -703,6 +703,16 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
     (setq enable-recursive-minibuffers t))
 #+end_src
 
+**** mini-frame
+
+#+begin_src emacs-lisp
+  (use-package mini-frame
+    :custom (mini-frame-show-parameters '((left . 0.5)
+                                          (top . 0.01)
+                                          (width . 0.7)))
+    :config (mini-frame-mode))
+#+end_src
+
 *** Consult
 
 #+begin_src emacs-lisp
