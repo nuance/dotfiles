@@ -563,7 +563,14 @@ I'd like to toggle between light & dark themes.
     (defun light () (interactive) (setq nuance/current-theme 'light) (nuance/apply-theme 'light))
 
     (add-hook 'ns-system-appearance-change-functions #'nuance/apply-theme)
-    (nuance/apply-theme 'light))
+    (nuance/apply-theme 'dark)
+    :hook
+    (mac-effective-appearance-change
+     . (lambda ()
+         (nuance/apply-theme
+          (pcase (plist-get (mac-application-state) :appearance)
+            ("NSAppearanceNameDarkAqua" 'dark)
+            ("NSAppearanceNameAqua" 'light))))))
 #+END_SRC
 
 *** Solaire
