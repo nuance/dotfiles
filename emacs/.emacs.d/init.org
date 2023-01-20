@@ -1427,6 +1427,13 @@ A simple xref backend using rg. Inspired by the gxref implementation.
   (global-set-key (kbd "C-x T") 'tab-switch)
 #+end_src
 
+** Global Mark Ring
+
+#+begin_src emacs-lisp
+  (setq global-mark-ring-max 1024)
+  (global-set-key (kbd "s-.") #'consult-global-mark)
+#+end_src
+
 * Packages
 ** Magit
 #+BEGIN_SRC emacs-lisp
@@ -1573,8 +1580,7 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     ((org-mode . visual-line-mode)
      (org-mode . (lambda ()
                    (org-content 2)
-                   (define-key org-mode-map (kbd "C-c g") 'nuance/store-chrome-link)
-                   (define-key org-mode-map (kbd "s-.") 'org-toggle-narrow-to-subtree)))
+                   (define-key org-mode-map (kbd "C-c g") 'nuance/store-chrome-link)))
      (before-save . (lambda () (when (eq major-mode 'org-mode) (indent-region (buffer-end -1) (buffer-end 1))))))
     :bind
     (("C-c c" . org-capture)
@@ -1733,10 +1739,6 @@ Optimize GC usage
     "Narrow to a region or the current function."
     (interactive "*r")
     (if (buffer-narrowed-p) (widen) (if (region-active-p) (narrow-to-region beg end) (narrow-to-defun))))
-
-  (use-package prog-mode
-    :straight nil
-    :bind (:map prog-mode-map ("s-." . nuance/toggle-narrow-to-defun-or-region)))
 
   (put 'narrow-to-region 'disabled nil)
 #+END_SRC
