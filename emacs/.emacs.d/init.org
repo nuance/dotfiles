@@ -1452,14 +1452,6 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     :bind ("C-x g" . (lambda () (interactive) (nuance/status (project-current)))))
 #+end_src
 
-*** delta
-
-#+begin_src emacs-lisp
-  (use-package magit-delta
-    :if (executable-find "delta")
-    :hook (magit-mode . magit-delta-mode))
-#+end_src
-
 ** Diff Highlight
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
@@ -1553,7 +1545,6 @@ A simple xref backend using rg. Inspired by the gxref implementation.
 
 #+begin_src emacs-lisp
   (use-package org
-    :straight org-contrib
     :demand t
     :custom ((org-special-ctrl-a/e t)
              (org-startup-folded t)
