@@ -175,7 +175,9 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 #+BEGIN_SRC emacs-lisp
   (custom-set-variables
    '(mac-command-modifier (quote super))
-   '(mac-option-modifier (quote meta)))
+   '(mac-option-modifier (quote meta))
+   '(mac-pass-command-to-system nil)
+   '(mac-pass-control-to-system nil))
 
   (let
       ((unbind-keys
@@ -545,7 +547,7 @@ I'd like to toggle between light & dark themes.
 
   (use-package doom-themes
     :config
-    (defvar light-theme 'doom-one-light)
+    (defvar light-theme 'doom-solarized-light)
     (defvar dark-theme 'doom-rouge)
 
     (defvar nuance/current-theme 'light)
@@ -583,16 +585,18 @@ I'd like to toggle between light & dark themes.
 ** Fonts
 
 #+BEGIN_SRC emacs-lisp
+  (setq nuance/font-size 100)
+
   (set-face-attribute 'default nil
                       :family "IBM Plex Mono"
-                      :height 110)
+                      :height nuance/font-size)
   (set-face-attribute 'fixed-pitch nil
                       :family "IBM Plex Mono")
   (set-face-attribute 'variable-pitch nil
                       :family "IBM Plex Sans")
 
-  (set-face-attribute 'mode-line nil :height 110)
-  (set-face-attribute 'mode-line-inactive nil :height 110)
+  (set-face-attribute 'mode-line nil :height nuance/font-size)
+  (set-face-attribute 'mode-line-inactive nil :height nuance/font-size);
 
   (use-package all-the-icons :if (display-graphic-p))
 #+END_SRC
@@ -707,9 +711,12 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
 #+begin_src emacs-lisp
   (use-package mini-frame
-    :custom (mini-frame-show-parameters '((left . 0.5)
-                                          (top . 0.01)
-                                          (width . 0.7)))
+    :custom ((mini-frame-show-parameters '((left . 0.5)
+                                           (top . 0.01)
+                                           (width . 0.7)
+                                           (fullscreen . nil)
+                                           (no-accept-focus . t)))
+             (display-hourglass nil))
     :config (mini-frame-mode))
 #+end_src
 
@@ -912,9 +919,8 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
-
-    :bind (("C-c f" . 'er/expand-region)
-           ("C-c F" . 'er/contract-region)))
+    :bind (("s-h" . 'er/expand-region)
+           ("s-H" . 'er/contract-region)))
 #+END_SRC
 
 *** Multiple cursors
@@ -1010,9 +1016,9 @@ Incremental search thats multiple-cursors-friendly.
     (interactive "*r")
     (indent-rigidly start end (- tab-width)))
 
-  (defun indent (start end)
-    (interactive "*r")
-    (indent-rigidly start end tab-width))
+  (defun indent (start end)d
+         (interactive "*r")
+         (indent-rigidly start end tab-width))
 
   (global-set-key (kbd "s-[") 'dedent)
   (global-set-key (kbd "s-]") 'indent)
@@ -1123,7 +1129,13 @@ Auto-revert to new tags file
         (if (and vterm-buffer (not current-prefix-arg))
             (pop-to-buffer vterm-buffer  (bound-and-true-p display-comint-buffer-action))
           (vterm))))
-    :bind ("s-T" . project-vterm))
+
+    ;; unbind function keys
+    (cl-loop for num from 1 to 12 do (unbind-key (kbd (format "<f%d>" num)) vterm-mode-map))
+    :bind (("s-T" . project-vterm)
+           :map vterm-mode-map
+           ("<wheel-up>" . (lambda () (interactive) (vterm-send-key "<up>")))
+           ("<wheel-down>" . (lambda () (interactive) (vterm-send-key "<down>")))))
 #+END_SRC
 
 ** Scroll through errors
@@ -1246,8 +1258,7 @@ between both flymake & flycheck errors.
                    (`(,arg . ,opts) (consult--command-split input))
                    (`(,re . ,hl) (funcall consult--regexp-compiler arg 'basic t)))
         (when re
-          (list :command (split-string-and-unquote cmd)
-                :highlight hl))))
+          (cons (split-string-and-unquote cmd) hl))))
 
     (defun project-find-file-in (filename dirs project &optional include-all)
       "Search for regexp with find in DIR with INITIAL input.
@@ -1530,8 +1541,11 @@ A simple xref backend using rg. Inspired by the gxref implementation.
     ;; The depth of -10 places this before eglot's willSave notification,
     ;; so that that notification reports the actual contents that will be saved.
     (defun nuance/eglot-format-buffer-on-save ()
-      (add-hook 'before-save-hook #'nuance/eglot-organize-imports -11 t)
-      (add-hook 'before-save-hook #'eglot-format-buffer -10 t))
+      (add-hook 'before-save-hook (lambda () (unless nuance/skip-format-on-save (nuance/eglot-organize-imports))) -11 t)
+      (add-hook 'before-save-hook (lambda () (unless nuance/skip-format-on-save (eglot-format-buffer))) -10 t))
+
+    (define-minor-mode nuance/skip-format-on-save
+      "Don't call eglot format / organize imports when enabled")
 
     :hook
     (((python-mode c++-mode c-mode go-mode rust-mode) . eglot-ensure)
@@ -1836,7 +1850,7 @@ Launch a server if not currently running.
 
 #+BEGIN_SRC emacs-lisp
   (setq server-use-tcp t)
-  (setq server-port 40000)
+  (setq server-port 42069)
   (setq server-auth-key "emacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskey")
 
   (when (not noninteractive) (server-start))
