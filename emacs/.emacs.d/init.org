@@ -284,6 +284,8 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
   ;; filepath manipulation
   (use-package f)
+
+  (use-package compat)
 #+END_SRC
 
 ** Encrypted authinfo
@@ -391,6 +393,12 @@ And test it like:
 
 #+begin_src emacs-lisp
   (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+#+end_src
+
+** Easy async-shell-command
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c x") #'with-editor-async-shell-command)
 #+end_src
 
 * UI Appearance
