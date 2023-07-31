@@ -1865,6 +1865,37 @@ Optimize GC usage
   (use-package edit-indirect)
 #+END_SRC
 
+** treesit
+#+begin_src emacs-lisp
+  ;; `M-x combobulate' (or `C-c o o') to start using Combobulate
+  (use-package treesit
+    :straight nil
+    :preface
+    (defun mp-setup-install-grammars ()
+      "Install Tree-sitter grammars if they are absent."
+      (interactive)
+      (dolist (grammar
+               '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
+                 (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+                 (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+                 (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
+        (add-to-list 'treesit-language-source-alist grammar)
+        (unless (treesit-language-available-p (car grammar))
+          (treesit-install-language-grammar (car grammar)))))
+
+    (dolist (mapping '((c-mode . c-ts-mode)
+                       (c++-mode . c++-ts-mode)
+                       (go-mode . go-ts-mode)
+                       (python-mode . python-ts-mode)))
+      (add-to-list 'major-mode-remap-alist mapping))
+
+    :config
+    (mp-setup-install-grammars))
+
+  (use-package combobulate
+    :straight '(combobulate :type git :host github :repo "mickeynp/combobulate")
+    :hook ((python-ts-mode . combobulate-mode)))
+#+end_src
 * Private.el
 I'd like to keep a few settings private, so we load a =private.el= if it exists after the init-file has loaded. Create a private straight.el profile to cordon off dependencies.
 
