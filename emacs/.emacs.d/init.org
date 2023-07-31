@@ -2,6 +2,7 @@
 #+AUTHOR: Matthew Jones
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
+#+PROPERTY: header-args:elisp :lexical t
 
 * Configurations
 ** Lexical binding
