@@ -1027,9 +1027,9 @@ Incremental search thats multiple-cursors-friendly.
     (interactive "*r")
     (indent-rigidly start end (- tab-width)))
 
-  (defun indent (start end)d
-         (interactive "*r")
-         (indent-rigidly start end tab-width))
+  (defun indent (start end)
+    (interactive "*r")
+    (indent-rigidly start end tab-width))
 
   (global-set-key (kbd "s-[") 'dedent)
   (global-set-key (kbd "s-]") 'indent)
@@ -1112,7 +1112,27 @@ Mimic standard macos window / tab management commands
 *** scratch
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "s-n") #'ielm)
+  (use-package ielm
+    :config
+    (defun nuance/ielm-init-history ()
+      (let ((path (expand-file-name "ielm/history" user-emacs-directory)))
+        (make-directory (file-name-directory path) t)
+        (setq-local comint-input-ring-file-name path))
+      (setq-local comint-input-ring-size 10000)
+      (setq-local comint-input-ignoredups t)
+      (comint-read-input-ring))
+
+    (defun nuance/ielm-write-history (&rest _args)
+      (with-file-modes #o600
+        (comint-write-input-ring)))
+
+    (advice-add 'ielm-send-input :after 'nuance/ielm-write-history)
+
+    :hook (ielm-mode . nuance/ielm-init-history)
+    :bind (("s-n" . ielm)
+           :map ielm-map
+           ("C-l" . comint-clear-buffer)
+           ("C-r" . consult-history)))
 #+end_src
 
 ** CTags
@@ -1138,7 +1158,7 @@ Auto-revert to new tags file
              (vterm-buffer-name (project-prefixed-buffer-name "vterm"))
              (vterm-buffer (get-buffer vterm-buffer-name)))
         (if (and vterm-buffer (not current-prefix-arg))
-            (pop-to-buffer vterm-buffer  (bound-and-true-p display-comint-buffer-action))
+            (pop-to-buffer vterm-buffer (bound-and-true-p display-comint-buffer-action))
           (vterm))))
 
     ;; unbind function keys
