@@ -397,6 +397,36 @@ And test it like:
   (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 #+end_src
 
+** Buffer Rules
+
+Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Mastering Emacs - Demystifying Emacs's Window Manager]]
+
+#+begin_src emacs-lisp
+  (setq switch-to-buffer-obey-display-actions nil)
+  (setq switch-to-buffer-in-dedicated-window 'pop)
+  (setq window-sides-slots '(1 1 1 1))
+  (global-set-key (kbd "C-x !") 'window-toggle-side-windows)
+  (global-set-key (kbd "<f1>") 'window-toggle-side-windows)
+  (global-set-key (kbd "<f2>") 'balance-windows)
+
+  (defun nuance/display-buffer-in-bottom-drawer (buffer-name)
+    (add-to-list 'display-buffer-alist
+                 `(,buffer-name (display-buffer-reuse-window display-buffer-in-side-window)
+                                (side . bottom)
+                                (slot . 0)
+                                (window-parameters . ((no-delete-other-windows . t)))
+                                (window-height . 25)
+                                (preserve-size . (nil . t)))))
+#+end_src
+
+*** Compilation buffer on bottom
+
+#+begin_src emacs-lisp
+  (nuance/display-buffer-in-bottom-drawer "*compilation*")
+  (nuance/display-buffer-in-bottom-drawer "*detached-compilation*")
+  (nuance/display-buffer-in-bottom-drawer "*Messages*")
+#+end_src
+
 ** Easy async-shell-command
 
 #+begin_src emacs-lisp
@@ -625,35 +655,6 @@ I'd like to toggle between light & dark themes.
 #+begin_src emacs-lisp
   (use-package mixed-pitch
     :hook (text-mode . mixed-pitch-mode))
-#+end_src
-
-** Buffer Rules
-
-Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Mastering Emacs - Demystifying Emacs's Window Manager]]
-
-#+begin_src emacs-lisp
-  (setq switch-to-buffer-obey-display-actions t)
-  (setq switch-to-buffer-in-dedicated-window 'pop)
-  (setq window-sides-slots '(1 1 1 1))
-  (global-set-key (kbd "C-x !") 'window-toggle-side-windows)
-  (global-set-key (kbd "<f1>") 'window-toggle-side-windows)
-  (global-set-key (kbd "<f2>") 'balance-windows)
-
-  (defun nuance/display-buffer-in-bottom-drawer (buffer-name)
-    (add-to-list 'display-buffer-alist
-                 `(,buffer-name (display-buffer-reuse-window display-buffer-in-side-window)
-                                (side . bottom)
-                                (slot . 0)
-                                (window-parameters . ((no-delete-other-windows . t)))
-                                (window-height . 25)
-                                (preserve-size . (nil . t)))))
-#+end_src
-
-*** Compilation buffer on bottom
-
-#+begin_src emacs-lisp
-  (nuance/display-buffer-in-bottom-drawer "*compilation*")
-  (nuance/display-buffer-in-bottom-drawer "*Messages*")
 #+end_src
 
 * UI Interaction
