@@ -1594,12 +1594,35 @@ Include yasnippet for eglot usage.
 
     (define-minor-mode nuance/skip-format-on-save
       "Don't call eglot format / organize imports when enabled")
+    (defun eglot-rename
+        (newname)
+      "Rename the current symbol to NEWNAME."
+      (interactive
+       (list
+        (read-from-minibuffer
+         (format "Rename `%s' to: "
+                 (or
+                  (thing-at-point 'symbol t)
+                  "unknown symbol"))
+         (thing-at-point 'symbol t) nil nil nil
+         (symbol-name
+          (symbol-at-point)))))
+      (eglot--server-capable-or-lose :renameProvider)
+      (eglot--apply-workspace-edit
+       (eglot--request
+        (eglot--current-server-or-lose)
+        :textDocument/rename
+        (append
+         (eglot--TextDocumentPositionParams)
+         (list ':newName newname)))
+       current-prefix-arg))
 
     :hook
     (((python-mode c++-mode c-mode go-mode rust-mode) . eglot-ensure)
      (eglot-managed-mode . nuance/eglot-format-buffer-on-save))
     :bind (:map eglot-mode-map
-                ("C-c r" . eglot-rename)))
+                ("C-c r" . eglot-rename)
+                ("C-c f" . eglot-format)))
 #+END_SRC
 
 ** Org
