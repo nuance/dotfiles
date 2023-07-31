@@ -1169,6 +1169,20 @@ Auto-revert to new tags file
            ("<wheel-down>" . (lambda () (interactive) (vterm-send-key "<down>")))))
 #+END_SRC
 
+** eshell
+
+#+begin_src elisp
+  (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
+        eshell-prompt-function
+        (lambda nil
+          (concat
+           (if (string= (eshell/pwd) (getenv "HOME"))
+               "~" (eshell/basename (eshell/pwd)))
+           (if (= (user-uid) 0) "#" "$")
+           " ")))
+#+end_src
+
+
 ** Scroll through errors
 
 This is really poorly structured, but flymake doesn't provide a
