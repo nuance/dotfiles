@@ -1555,10 +1555,13 @@ A simple xref backend using rg. Inspired by the gxref implementation.
          :post (progn (tempel-done) (org-edit-src-code)))
 #+end_src
 
+*** yasnippet
+
+Include yasnippet for eglot usage.
+
 #+begin_src emacs-lisp
-  (use-package eglot-tempel
-    :straight (eglot-tempel :host github :repo "fejfighter/eglot-tempel")
-    :after eglot)
+  (use-package yasnippet
+    :hook (prog-mode . yas-minor-mode))
 #+end_src
 
 ** LSP
