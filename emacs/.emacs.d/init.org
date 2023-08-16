@@ -56,6 +56,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
         tab-bar-show nil
         frame-title-format "%b - emacs"
         frame-resize-pixelwise t
+        window-resize-pixelwise t
         default-frame-alist `((ns-transparent-titlebar . t)
                               (width . 170)
                               (height . 50)))
@@ -738,6 +739,7 @@ I'd like to toggle between light & dark themes.
     :demand t
 
     :bind (("s-o" . (lambda () (interactive) (consult-line (dwim-default-text))))
+           ("s-i" . consult-imenu)
            ("s-O" . consult-imenu-multi)
            ("s-l" . consult-goto-line)
            ("s-t" . consult-buffer)
@@ -1906,7 +1908,7 @@ Optimize GC usage
 #+END_SRC
 
 ** treesit
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;; `M-x combobulate' (or `C-c o o') to start using Combobulate
   (use-package treesit
     :straight nil
