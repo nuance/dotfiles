@@ -42,10 +42,12 @@ yabai -m config                                 \
     left_padding                 0              \
     right_padding                0              \
     window_gap                   6              \
-    layout                       bsp
+    layout                       float
 
 yabai -m rule --add app="^Raycast$" manage=off
 yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^gSoftwareUpdate$" manage=off
 
 yabai -m signal --add event=display_added action=~/dotfiles/yabai/display_rules.py label=display_added_rules
 yabai -m signal --add event=display_removed action=~/dotfiles/yabai/display_rules.py label=display_remove_rules

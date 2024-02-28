@@ -1,2 +1,11 @@
-private.org
-straight/versions/private.el
+*.el
+history
+places
+recentf
+server
+templates
+tramp
+transient
+eln-cache
+projects
+auto-save-list

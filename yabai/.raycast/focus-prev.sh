@@ -8,4 +8,4 @@
 # Optional parameters:
 # @raycast.icon 🤖
 
-yabai -m window --focus prev || yabai -m window --focus last_node
+yabai -m window --focus prev &> /dev/null || yabai -m window --focus last

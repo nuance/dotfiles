@@ -10,4 +10,4 @@
 
 #!/bin/bash
 
-/opt/homebrew/bin/brew services restart yabai
+yabai --restart-service

@@ -17,6 +17,7 @@ freeze: org
 
 clean:
 	rm -rf straight/build straight/build-cache.el
+	rm -rf tree-sitter
 	rm -rf eln-cache
 
 deepclean: clean

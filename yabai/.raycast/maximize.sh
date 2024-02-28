@@ -8,10 +8,10 @@
 # Optional parameters:
 # @raycast.icon 🤖
 
-app_name=$(yabai -m query --windows --window | jq .app || echo)
+app_name=$((yabai -m query --windows --window 2> /dev/null || echo "{\"app\": \"\"}" ) | jq .app)
 
-if [ "$app_name" == "" ] || [ "$app_name" == '"Emacs"' ]; then
-    /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -e "(toggle-frame-fullscreen)" > /dev/null 2>&1
+if [ "$app_name" == '""' ] || [ "$app_name" == '"Emacs"' ]; then
+    /opt/homebrew/bin/emacsclient -e "(toggle-frame-fullscreen)" > /dev/null 2>&1
 else
     yabai -m window --toggle zoom-fullscreen
 fi

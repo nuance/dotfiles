@@ -1,4 +1,4 @@
-[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+[[ $TERM == "dumb" || $TERM == "tramp" ]] && unsetopt zle && PS1='$ ' && return
 
 typeset -U path cdpath fpath manpath
 
@@ -12,6 +12,8 @@ export EDITOR="emacsclient"
 export PROMPT="%F{green}%1~%f %(?.%F{green}.%F{red}[%?] )$%f "
 export PYTHONIOENCODING="UTF-8"
 export SSH_AUTH_SOCK="/Users/matt/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+
+setopt shwordsplit
 
 HISTSIZE="10000"
 SAVEHIST="10000"
@@ -60,8 +62,8 @@ EOF
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Aliases
-alias e='$EDITOR'
-alias en='$EDITOR -n'
+alias e='eval $EDITOR'
+alias en='eval $EDITOR -n'
 alias g='git'
 alias gg='git grep'
 alias onepage='head -n $(echo "$(tput lines) - 2" | bc)'

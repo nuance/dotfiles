@@ -2,10 +2,10 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Yabai: Focus Next
+# @raycast.title Raycast
 # @raycast.mode silent
 
 # Optional parameters:
 # @raycast.icon 🤖
 
-yabai -m window --focus next &> /dev/null || yabai -m window --focus first
+open raycast://

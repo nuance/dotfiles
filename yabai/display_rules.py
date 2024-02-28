@@ -17,5 +17,5 @@ if __name__ == '__main__':
         for space in display_spaces:
             subprocess.check_call(["/opt/homebrew/bin/yabai", "-m", "space", f"{space['index']}", "--layout", layout])
 
-    change_string = "\n".join(changes)
-    subprocess.check_call(["/usr/bin/osascript", "-e", f"display notification \"{change_string}\" with title \"Yabai Layout\""])
+    # change_string = "\n".join(changes)
+    # subprocess.check_call(["/usr/bin/osascript", "-e", f"display notification \"{change_string}\" with title \"Yabai Layout\""])
