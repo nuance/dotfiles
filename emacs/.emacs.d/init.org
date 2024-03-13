@@ -433,12 +433,6 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
   (nuance/display-buffer-in-bottom-drawer "*Messages*")
 #+end_src
 
-** Easy async-shell-command
-
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-c x") #'with-editor-async-shell-command)
-#+end_src
-
 * UI Appearance
 ** UI Interaction
 
@@ -1144,13 +1138,6 @@ Mimic standard macos window / tab management commands
            ("C-r" . consult-history)))
 #+end_src
 
-** CTags
-
-Auto-revert to new tags file
-#+BEGIN_SRC emacs-lisp
-  (setq tags-revert-without-query 1)
-#+END_SRC
-
 ** vterm
 
 #+BEGIN_SRC emacs-lisp
@@ -1196,7 +1183,7 @@ Auto-revert to new tags file
 
 This is really poorly structured, but flymake doesn't provide a
 next-error-function implementation, so define a wrapper that navigates
-between both flymake & flycheck errors.
+between both flymake errors.
 
 #+begin_src emacs-lisp
   (defun nuance/maybe-point (func)
@@ -1210,9 +1197,6 @@ between both flymake & flycheck errors.
       (when (and (boundp 'flymake-mode) flymake-mode)
         (when-let ((p (nuance/maybe-point #'flymake-goto-next-error)))
           (push p points)))
-      (when (and (boundp 'flycheck-mode) flycheck-mode)
-        (when-let ((p (nuance/maybe-point #'flycheck-next-error)))
-          (push p points)))
       (when-let ((p (nuance/maybe-point #'next-error)))
         (push p points))
       (unless (null points) (goto-char (apply 'min points)))))
@@ -1223,9 +1207,6 @@ between both flymake & flycheck errors.
           (points))
       (when (and (boundp 'flymake-mode) flymake-mode)
         (when-let ((p (nuance/maybe-point #'flymake-goto-prev-error)))
-          (push p points)))
-      (when (and (boundp 'flycheck-mode) flycheck-mode)
-        (when-let ((p (nuance/maybe-point #'flycheck-previous-error)))
           (push p points)))
       (when-let ((p (nuance/maybe-point #'previous-error)))
         (push p points))
@@ -1358,85 +1339,6 @@ between both flymake & flycheck errors.
     :bind (("s-f" . nuance/find-by-content)))
 #+end_src
 
-** Custom xref definition
-
-A simple xref backend using rg. Inspired by the gxref implementation.
-
-#+begin_src emacs-lisp
-  (require 'cl-lib)
-  (require 'xref)
-
-  (defun nuance/rg-xref--find-regexp (pattern)
-    (let* ((project (project-current))
-           (pr (project-root project))
-           (default-directory pr)
-           (matches (split-string
-                     (shell-command-to-string (format "rg --vimgrep --max-columns %d --color=never -e '%s' | head -n %d" (frame-width) pattern (* 5 nuance/completion-candidates))) "\n" t)))
-      (mapcar
-       (lambda (m)
-         (let* ((parts (split-string m ":"))
-                (path (concat default-directory (car parts)))
-                (line (string-to-number (cadr parts)))
-                (column (1- (string-to-number (caddr parts)))))
-           (xref-make m (xref-make-file-location path line column)))) matches)))
-
-  (defun nuance/rg-xref-backend ()
-    "My ripgrep + project.el xref backend"
-    (when (project-current)
-      'nuance/rg-xref))
-
-  (cl-defmethod xref-backend-identifier-at-point ((_backend (eql nuance/rg-xref)))
-    "Return the relevant identifier at point.
-
-        The return value must be a string, or nil meaning no identifier
-        at point found.
-
-        If it's hard to determine the identifier precisely (e.g., because
-        it's a method call on unknown type), the implementation can
-        return a simple string (such as symbol at point) marked with a
-        special text property which e.g. `xref-backend-definitions' would
-        recognize and then delegate the work to an external process."
-    (let ((current-symbol (symbol-at-point)))
-      (when current-symbol
-        (symbol-name current-symbol))))
-
-  (defun nuance/rg-xref-definition-regexp (pattern)
-    (format "(((def|class)\\s+%s[(:])|(\\b%s\\b.*\\s+=))" pattern pattern))
-
-  (cl-defmethod xref-backend-definitions ((_backend (eql nuance/rg-xref)) ident)
-    "Find definitions of IDENTIFIER.
-
-            The result must be a list of xref objects.  If IDENTIFIER
-            contains sufficient information to determine a unique definition,
-            return only that definition. If there are multiple possible
-            definitions, return all of them.  If no definitions can be found,
-            return nil."
-    (nuance/rg-xref--find-regexp (nuance/rg-xref-definition-regexp ident)))
-
-  (cl-defmethod xref-backend-references ((_backend (eql nuance/rg-xref)) ident)
-    "Find references of IDENTIFIER.
-              The result must be a list of xref objects.  If no references can
-              be found, return nil."
-    (nuance/rg-xref--find-regexp (format "[^a-zA-Z0-9]%s[^a-zA-Z0-9]" ident)))
-
-  (cl-defmethod xref-backend-apropos ((_backend (eql nuance/rg-xref)) pattern)
-    "Find all symbols that match PATTERN string.
-          The second argument has the same meaning as in `apropos'.
-
-          If BACKEND is implemented in Lisp, it can use
-          `xref-apropos-regexp' to convert the pattern to regexp."
-    (nuance/rg-xref--find-regexp (nuance/rg-xref-definition-regexp pattern)))
-
-  (cl-defmethod
-    xref-backend-identifier-completion-table ((_backend (eql nuance/rg-xref)))
-    "Return the completion table for identifiers.
-
-                I haven't used this method directly before (it seems to only serve as an aid for prompts when there's no symbol at point), so this is a no-op for now."
-    '())
-
-  (add-to-list 'xref-backend-functions 'nuance/rg-xref-backend)
-#+end_src
-
 ** Open links
 
 #+begin_src emacs-lisp
@@ -1458,33 +1360,10 @@ A simple xref backend using rg. Inspired by the gxref implementation.
   (global-set-key (kbd "s-r") 'revert-buffer)
 #+end_src
 
-** Casing
-
-#+begin_src emacs-lisp
-  (use-package string-inflection
-    :bind (:map prog-mode-map ("C-c i" . string-inflection-cycle)))
-#+end_src
-
 ** Terminal Mouse
 
 #+begin_src emacs-lisp
   (when (not (window-system)) (xterm-mouse-mode))
-#+end_src
-
-** MacOS links
-
-#+begin_src emacs-lisp
-  (defun nuance/chrome-url-title ()
-    (let*
-        ((applescript (concat
-                       "tell application \"Chrome\"\n"
-                       " set theUrl to get URL of active tab of first window\n"
-                       " set theTitle to get title of active tab of first window\n"
-                       " return (get theUrl) & \"::split::\" & theTitle\n"
-                       "end tell\n"))
-         (raw-result (do-applescript applescript))
-         (split (split-string (substring raw-result 1 -1) "::split::")))
-      (cons (elt split 0) (elt split 1))))
 #+end_src
 
 ** Tabs
@@ -1650,12 +1529,6 @@ Include yasnippet for eglot usage.
              (org-element-cache-persistent nil))
     :config (setq org-capture-templates '())
 
-    (defun nuance/store-chrome-link ()
-      (interactive)
-      (pcase-let ((`(,link . ,desc) (nuance/chrome-url-title)))
-        (unless (member (list link desc) org-stored-links)
-          (push (list link desc) org-stored-links))))
-
     (setq org-refile-targets
           `((nil :maxlevel . 9)
             (,(directory-files-recursively "~/org" "^[^.].*[.]org$") :maxlevel . 3)
@@ -1665,8 +1538,7 @@ Include yasnippet for eglot usage.
     :hook
     ((org-mode . visual-line-mode)
      (org-mode . (lambda ()
-                   (org-content 2)
-                   (define-key org-mode-map (kbd "C-c g") 'nuance/store-chrome-link)))
+                   (org-content 2)))
      (before-save . (lambda () (when (eq major-mode 'org-mode) (indent-region (buffer-end -1) (buffer-end 1))))))
     :bind
     (("C-c c" . org-capture)
@@ -1953,6 +1825,7 @@ interactive entrypoints:
   (global-set-key (kbd "C-c l") #'nuance/nv2-refer)
   (global-set-key (kbd "C-c e") #'nuance/nv2-discuss)
 #+end_src
+
 ** LLM
 
 *** ollama
@@ -2026,27 +1899,11 @@ Optimize GC usage
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-** Visual undo
-
-#+begin_src emacs-lisp
-  (use-package vundo
-    :custom (vundo-glyph-alist vundo-unicode-symbols)
-    :bind ("C-c v" . vundo))
-#+end_src
-
 * File-type support
+
 ** Toggleable function narrowing
 
 #+BEGIN_SRC emacs-lisp
-  (defun nuance/toggle-narrow-to-defun ()
-    (interactive)
-    (if (buffer-narrowed-p) (widen) (narrow-to-defun)))
-
-  (defun nuance/toggle-narrow-to-defun-or-region  (beg end)
-    "Narrow to a region or the current function."
-    (interactive "*r")
-    (if (buffer-narrowed-p) (widen) (if (region-active-p) (narrow-to-region beg end) (narrow-to-defun))))
-
   (put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
@@ -2169,6 +2026,7 @@ Optimize GC usage
     :straight '(combobulate :type git :host github :repo "mickeynp/combobulate")
     :hook ((python-ts-mode . combobulate-mode)))
 #+end_src
+
 * Private.el
 I'd like to keep a few settings private, so we load a =private.el= if it exists after the init-file has loaded.
 
