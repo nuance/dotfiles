@@ -65,6 +65,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars) default-frame-alist)
+  (push '(internal-border-width . 0) default-frame-alist)
 
   ;; Resizing the Emacs frame can be a terribly expensive part of changing the
   ;; font. By inhibiting this, we easily halve startup times with fonts that are
@@ -323,60 +324,6 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (ffap-bindings)
 #+end_src
 
-** URL Handler
-
-Handle emacs:// urls, forwarded by a script application:
-
-#+begin_src applescript :tangle no
-on open location URL
-	do shell script "/Users/matt/.nix-profile/bin/emacsclient --eval '(nuance/handle-url \"" & URL & "\")"
-end open location
-#+end_src
-
-With the following added to the Info.plist:
-
-#+begin_src xml :tangle no
-  <key>CFBundleURLTypes</key>
-  <array>
-    <dict>
-      <key>CFBundleURLName</key>
-      <string>EmacsClientCapture</string>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>org-protocol</string>
-      </array>
-    </dict>
-  </array>
-#+end_src
-
-#+begin_src emacs-lisp
-  (setq nuance/url-handlers nil)
-  (defun nuance/handle-url (url)
-    (let* ((parsed (url-generic-parse-url url))
-           (method (url-host parsed))
-           (args (url-parse-query-string (cdr (url-path-and-query parsed))))
-           (handler (alist-get method nuance/url-handlers nil nil 'equal)))
-      (if handler
-          (funcall handler args)
-        (warn "unknown url handler: %s" method))))
-#+end_src
-
-Add a handler like:
-
-#+begin_src emacs-lisp
-  (add-to-list
-   'nuance/url-handlers
-   (cons "find-file"
-         (lambda (parts)
-           (find-file (car (alist-get "path" parts nil nil 'equal))))))
-#+end_src
-
-And test it like:
-
-#+begin_src bash :tangle no
-  open "emacs://find-file?path=/tmp/foobar"
-#+end_src
-
 ** Restore state between relaunches
 
 #+begin_src emacs-lisp
@@ -495,9 +442,6 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 #+BEGIN_SRC emacs-lisp
   (if (boundp 'toggle-frame-fullscreen) (toggle-frame-fullscreen))
   (if (boundp 'scroll-bar-mode) (scroll-bar-mode 0))
-  (if (boundp 'tool-bar-mode) (tool-bar-mode 0))
-  (menu-bar-mode (if (eq system-type 'darwin) t 0))
-  (modify-all-frames-parameters '((internal-border-width . 0)))
 #+END_SRC
 
 ** Mode-line
@@ -1049,7 +993,7 @@ Incremental search thats multiple-cursors-friendly.
 *** Window navigation
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-j") 'previous-window)
+  (global-set-key (kbd "M-j") (lambda () (interactive) (other-window -1)))
   (global-set-key (kbd "M-k") 'other-window)
 
   (use-package emacs
@@ -1144,7 +1088,8 @@ Mimic standard macos window / tab management commands
   (use-package vterm
     :demand t
     :hook (vterm-mode . goto-address-mode)
-    :custom (vterm-max-scrollback 20000)
+    :custom ((vterm-max-scrollback 20000)
+             (vterm-always-compile-module t))
     :config
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
 
@@ -1178,7 +1123,6 @@ Mimic standard macos window / tab management commands
            " ")))
 #+end_src
 
-
 ** Scroll through errors
 
 This is really poorly structured, but flymake doesn't provide a
@@ -1210,7 +1154,7 @@ between both flymake errors.
           (push p points)))
       (when-let ((p (nuance/maybe-point #'previous-error)))
         (push p points))
-      (unless (null points) (goto-char (apply 'min points)))))
+      (unless (null points) (goto-char (apply 'max points)))))
 
   (bind-key (kbd "M-n") 'nuance/next-error)
   (bind-key (kbd "M-p") 'nuance/previous-error)
@@ -1382,7 +1326,9 @@ between both flymake errors.
 #+end_src
 
 * Packages
+
 ** Magit
+
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :commands magit-status magit-blame-addition
@@ -1400,9 +1346,9 @@ between both flymake errors.
 #+end_src
 
 ** Diff Highlight
+
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
-
     :config
     (global-diff-hl-mode)
     (diff-hl-margin-mode)
@@ -1416,34 +1362,6 @@ between both flymake errors.
 #+begin_src emacs-lisp
   (use-package ediff
     :custom ((ediff-window-setup-function 'ediff-setup-windows-plain)))
-#+end_src
-
-** Snippets
-
-#+begin_src emacs-lisp
-  (use-package tempel
-    :demand t
-    :init
-    (defun tempel-setup-capf () (setq-local completion-at-point-functions (cons #'tempel-complete completion-at-point-functions)))
-    :bind (:map tempel-map ("TAB" . tempel-next))
-    :hook ((prog-mode . tempel-setup-capf)
-           (text-mode . tempel-setup-capf)))
-#+end_src
-
-#+begin_src emacs-lisp :tangle ~/.emacs.d/templates
-  ;; -*- mode: lisp -*-
-
-  org-mode
-
-  (quote "#+begin_quote" n> r> n> "#+end_quote")
-  (example "#+begin_example" n> r> n> "#+end_example")
-  (center "#+begin_center" n> r> n> "#+end_center")
-  (comment "#+begin_comment" n> r> n> "#+end_comment")
-  (verse "#+begin_verse" n> r> n> "#+end_verse")
-  (src "#+begin_src " p n> r> n> "#+end_src")
-  (task "*************** TODO " p n>)
-  (elisp "#+begin_src emacs-lisp" n> r> n "#+end_src"
-         :post (progn (tempel-done) (org-edit-src-code)))
 #+end_src
 
 *** yasnippet
@@ -1851,14 +1769,6 @@ interactive entrypoints:
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+END_SRC
 
-** GC Magic Hack
-
-Optimize GC usage
-
-#+BEGIN_SRC emacs-lisp
-  (use-package gcmh :config (gcmh-mode t))
-#+END_SRC
-
 ** ElDoc
 
 #+BEGIN_SRC emacs-lisp
@@ -1992,40 +1902,6 @@ Optimize GC usage
 
   (use-package edit-indirect)
 #+END_SRC
-
-** treesit
-#+begin_src emacs-lisp
-  (use-package treesit
-    :straight nil
-    :preface
-    (defun mp-setup-install-grammars ()
-      "Install Tree-sitter grammars if they are absent."
-      (interactive)
-      (dolist (grammar
-               '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
-                 (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-                 (go . ("https://github.com/tree-sitter/tree-sitter-go"))
-                 (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
-        (add-to-list 'treesit-language-source-alist grammar)
-        (unless (treesit-language-available-p (car grammar))
-          (treesit-install-language-grammar (car grammar)))))
-
-    (dolist (mapping '((c-mode . c-ts-mode)
-                       (c++-mode . c++-ts-mode)
-                       (go-mode . go-ts-mode)
-                       (python-mode . python-ts-mode)))
-      (add-to-list 'major-mode-remap-alist mapping))
-
-    :config
-    (mp-setup-install-grammars))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-  ;; `M-x combobulate' (or `C-c o o') to start using Combobulate
-  (use-package combobulate
-    :straight '(combobulate :type git :host github :repo "mickeynp/combobulate")
-    :hook ((python-ts-mode . combobulate-mode)))
-#+end_src
 
 * Private.el
 I'd like to keep a few settings private, so we load a =private.el= if it exists after the init-file has loaded.
