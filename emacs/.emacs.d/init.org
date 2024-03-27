@@ -669,6 +669,7 @@ I'd like to toggle between light & dark themes.
   (use-package vertico-posframe
     :config
     (vertico-posframe-mode 1)
+    (add-hook 'window-size-change-functions #'vertico-posframe-cleanup)
     :custom
     (vertico-posframe-font "IBM Plex Mono 13")
     :custom-face
