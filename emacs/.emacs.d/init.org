@@ -365,7 +365,7 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
   (defun nuance/display-buffer-in-bottom-drawer (buffer-name)
     (add-to-list 'display-buffer-alist
                  `(,buffer-name (display-buffer-reuse-window display-buffer-in-side-window)
-                                (side . bottom)
+                                (side . right)
                                 (slot . 0)
                                 (window-parameters . ((no-delete-other-windows . t)))
                                 (window-height . 25)
@@ -449,7 +449,27 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 Minimal mode-line.
 
 #+begin_src emacs-lisp
-  (use-package mood-line :hook (after-init . mood-line-mode))
+  (use-package mood-line :hook (after-init . mood-line-mode)
+    :custom (mood-line-format
+             '((" "
+                (mood-line-segment-buffer-status)
+                " "
+                (mood-line-segment-buffer-name)
+                " "
+                (if-let ((c (mood-line-segment-anzu)))
+                    (concat c " "))
+                (if-let ((c (mood-line-segment-multiple-cursors)))
+                    (concat c " "))
+                (mood-line-segment-cursor-position)
+                " "
+                (mood-line-segment-scroll)
+                "")
+               ((mood-line-segment-major-mode)
+                " "
+                (mood-line-segment-misc-info)
+                " "
+                (mood-line-segment-process)
+                " "))))
 #+end_src
 
 Show isearch hit information in mode-line.
@@ -475,7 +495,7 @@ Show isearch hit information in mode-line.
 
     (defun nuance/buffer-name ()
       (cond
-       ((and (project-current) (buffer-file-name)) (format "[%s] %s" (nuance/project-name (project-current)) (nuance/project-relative-shrunk-path (project-current) (buffer-file-name))))
+       ((and (project-current) (buffer-file-name)) (format "[%s] %s" (project-name (project-current)) (nuance/project-relative-shrunk-path (project-current) (buffer-file-name))))
        ((buffer-file-name) (shrink-path-file (buffer-file-name)))
        (t (buffer-name))))
 
@@ -528,8 +548,6 @@ Show isearch hit information in mode-line.
 I'd like to toggle between light & dark themes.
 
 #+BEGIN_SRC emacs-lisp
-  (defvar nuance/after-theme-change-hook nil "Hook called after theme has changed")
-
   (use-package doom-themes
     :config
     (defvar light-theme 'doom-solarized-light)
@@ -541,7 +559,6 @@ I'd like to toggle between light & dark themes.
     (defun nuance/apply-theme (appearance)
       "Load theme, taking current system APPEARANCE into consideration."
       (mapc #'disable-theme custom-enabled-themes)
-      (run-hooks 'nuance/after-theme-change-hook)
       (pcase appearance
         ('light (load-theme light-theme t) (nuance/xterm-bg-update "#ffffff"))
         ('dark (load-theme dark-theme t) (nuance/xterm-bg-update "#010000"))))
@@ -669,7 +686,8 @@ I'd like to toggle between light & dark themes.
   (use-package vertico-posframe
     :config
     (vertico-posframe-mode 1)
-    (add-hook 'window-size-change-functions #'vertico-posframe-cleanup)
+    ;;    (defun cleanup-non-posframe (&optional frame) (unless (string-equal "posframe" (frame-parameter frame 'title)) (message "cleanup vertico frame %s" (frame-parameters frame)) (vertico-posframe-cleanup)))
+    ;;    (add-hook 'window-size-change-functions #'cleanup-non-posframe)
     :custom
     (vertico-posframe-font "IBM Plex Mono 13")
     :custom-face
@@ -826,7 +844,6 @@ I'd like to toggle between light & dark themes.
 #+begin_src emacs-lisp
   (use-package kind-icon
     :demand t
-    :if (not (eq (window-system) 'mac))
     :custom
     (kind-icon-use-icons t)
     (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
@@ -884,7 +901,7 @@ I'd like to toggle between light & dark themes.
 
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
-    :custom (mc/always-run-for-all t)
+    :custom ((mc/always-run-for-all t) (hum/lines-to-expand 2))
     :config
     (add-to-list 'mc/unsupported-minor-modes 'eldoc-mode)
 
@@ -1089,7 +1106,7 @@ Mimic standard macos window / tab management commands
   (use-package vterm
     :demand t
     :hook (vterm-mode . goto-address-mode)
-    :custom ((vterm-max-scrollback 20000)
+    :custom ((vterm-max-scrollback 0)
              (vterm-always-compile-module t))
     :config
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
@@ -1174,7 +1191,7 @@ between both flymake errors.
   (use-package memoize)
 
   (use-package project
-    :straight nil
+    :straight t
     :config
     (defvar nuance/dotfiles-base-dir (expand-file-name "~/dotfiles"))
     (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d") ,(expand-file-name "~/.config")))
@@ -1194,10 +1211,6 @@ between both flymake errors.
        (or dirs (project-roots project))))
 
     (add-hook 'project-find-functions #'project-find-dotfiles-dir)
-
-    (cl-defgeneric nuance/project-name (project)
-      "Return a nice version of the project name"
-      (file-name-base (directory-file-name (file-local-name (project-root project)))))
     :bind (("s-," . (lambda () (interactive) (find-file (concat user-emacs-directory "init.org"))))
            ("s-<" . (lambda () (interactive) (find-file (concat user-emacs-directory "private.org"))))))
 #+end_src
@@ -1249,7 +1262,7 @@ between both flymake errors.
     See `consult-grep' for more details regarding the asynchronous search."
       (interactive "P")
       (let* ((default-directory (project-root project))
-             (prompt (format "%s: " (nuance/project-name project)))
+             (prompt (format "%s: " (project-name project)))
              (builder (lambda (input) (nuance/find-by-name-builder project input)))
              (initial (concat (nuance/project-find-by-name-initial project) (thing-at-point 'filename)))
              (path (nuance/find-by-name prompt builder initial)))
@@ -1282,6 +1295,29 @@ between both flymake errors.
       (nuance/find-by-content-dispatch (project-current)))
 
     :bind (("s-f" . nuance/find-by-content)))
+#+end_src
+
+** Find alternatives
+
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom (find-sibling-rules
+             `(
+               ;; Source -> source
+               (,(rx (group (+ (not "/")))
+                     "." (or "c" "cc" "h" "py" "go" "org" "el")
+                     string-end)
+                ,(rx (regex "\\1")
+                     "."  (or "c" "cc" "h" "py" "go" "org" "el")
+                     string-end))
+               ;; Source -> test
+               (,(rx (group (+? (not "/"))) (? "_test")
+                     "." (group (or "c" "cc" "h" "py" "go"))
+                     string-end)
+                ,(rx (regex "\\1") (? "_test")
+                     "." (regex "\\2")
+                     string-end))))
+    :bind ("s-y" . find-sibling-file))
 #+end_src
 
 ** Open links
@@ -1390,7 +1426,8 @@ Include yasnippet for eglot usage.
                                                              (unusedparams . t)
                                                              (unusedwrite . t)))
                                                 (matcher . "Fuzzy"))))
-     eglot-events-buffer-size 0)
+     eglot-events-buffer-size 0
+     eglot-sync-connect 0)
 
     (defun nuance/eglot-organize-imports ()
       (ignore-errors (eglot-code-action-organize-imports (point-min))))
@@ -1765,9 +1802,14 @@ interactive entrypoints:
     ((tramp-inline-compress-start-size (* 64 1024))
      (tramp-default-method "ssh")
      (tramp-terminal-type "tramp")
-     (remote-file-name-inhibit-locks t))
+     (remote-file-name-inhibit-locks t)
+     (tramp-use-ssh-controlmaster-options nil)
+     (tramp-verbose 0))
     :config
-    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+    (add-to-list 'tramp-connection-properties (list (format "/%s:" tramp-default-method) "direct-async-process" t))
+    (add-to-list 'tramp-sh-file-name-handler-alist `(file-truename . ,#'identity))
+    :hook (compilation-mode . (lambda () (add-to-list 'tramp-sh-file-name-handler-alist `(file-truename . ,#'identity)))))
 #+END_SRC
 
 ** ElDoc
