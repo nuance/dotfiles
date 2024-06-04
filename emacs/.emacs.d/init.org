@@ -1501,281 +1501,137 @@ Include yasnippet for eglot usage.
      ("C-c l" . org-store-link)))
 #+end_src
 
-*** org-nvalt
+*** org-nv2
 
-My personal take on an nvalt replacement in emacs / org-mode.
+My personal note taking app, now with some basic llm powers.
 
-cmd-k - find or create a note (global)
-cmd-l - insert a link to note (creating a note if it doesn't currently exist; wrapping the region with the link if it is active) (org-mode)
+#+begin_src elisp
+  (setq nuance/nv2-path (expand-file-name "~/org/nv"))
 
-#+begin_src emacs-lisp
-  (defvar nuance/nv-notes-dir "~/org/nv" "Location to store notes")
+  (defun nuance/nv2--create-note (name)
+    "Create a new note, returning the resulting path."
+    (let ((path (f-join nuance/nv2-path
+                        (concat
+                         (replace-regexp-in-string " +" "_" (downcase name))
+                         ".org"))))
+      (find-file path)
+      (insert (format "#+TITLE: %s\n" (capitalize name)))
+      (org-time-stamp '(16))
+      (insert "\n\n")
+      (org-mode)
+      (save-buffer)
+      path))
 
-  (defun nuance/nv--notes-path () "Absolute path to notes location" (expand-file-name nuance/nv-notes-dir))
+  (cl-defstruct nuance/nv2-result path title)
 
-  (defun nuance/nv--note-path
-      (name)
-    (f-join default-directory
-            (concat
-             (replace-regexp-in-string " +" "_"
-                                       (downcase name))
-             ".org")))
+  (defun nuance/nv2-result-body (note)
+    (f-read-text (nuance/nv2-result-path note)))
 
-  (defun nuance/nv--create-note (name) "Find or create a note based on a match string."
-         ;; create a new file using the default template
-         (let ((path (nuance/nv--note-path name)))
-           (find-file path)
-           (insert (format "#+TITLE: %s\n" (capitalize name)))
-           (org-time-stamp '(16))
-           (insert "\n\n")
-           (org-mode)
-           (auto-save-mode)
-           path))
+  (defun nuance/nv2-result-from-path (path)
+    (make-nuance/nv2-result :path path :title (nuance/nv2--get-org-title-from-file path)))
 
-  (defun nuance/nv--find-note (prompt)
-    (let* ((default-directory (file-name-directory (nuance/nv--notes-path)))
-           (selection (completing-read
-                       (concat prompt ": ")
-                       (nuance/complete-dynamic
-                        (lambda (q)
-                          (let* ((tokens (split-string q " " t))
-                                 (pattern (format "((%s).*){%d}" (s-join "|" tokens) (length tokens)))
-                                 (cmd (format "rg --vimgrep --max-columns %d --color=never --smart-case '%s' | head -n %d" (* 10 (frame-width)) pattern (* 5 nuance/completion-candidates)))
-                                 (results (shell-command-to-string cmd)))
-                            (append (list q) (split-string results "\n" t)))))
-                       nil nil (dwim-default-text)))
-           (parts (split-string selection ":")))
-      (if (length> parts 1)
-          ;; open the requested file / line / col and unfold at point
-          (let ((path (f-join default-directory (car parts)))
-                (line (string-to-number (cadr parts)))
-                (column (string-to-number (caddr parts))))
-            `(t . (,path ,line ,column)))
-        `(nil . (,selection)))))
+  (defun nuance/nv2-result-to-string (note)
+    (format "(make-nuance/nv2-result-from-path %S)" (nuance/nv2-result-path note)))
 
-  (defun nuance/nv-find-note ()
-    "Find or create a note."
-    (interactive)
-    (let* ((default-directory (nuance/nv--notes-path))
-           (selection (nuance/nv--find-note "nv")))
-      (if (car selection)
-          ;; open the requested file / line / col and unfold at point
-          (let ((path (cadr selection))
-                (line (caddr selection))
-                (column (cadddr selection)))
-            (find-file path)
-            (goto-char (point-min))
-            (forward-line (1- line))
-            (forward-char (1- column))
-            ;; expose the current node if we're in a (potentially folded) outline / org file
-            (when (derived-mode-p 'outline-mode) (outline-show-entry)))
-        (nuance/nv--create-note (cadr selection)))))
+  (defun nuance/nv2--get-org-title-from-file (path)
+    "Return the title of the Org-mode document specified by PATH."
+    (with-temp-buffer
+      (insert-file-contents path)
+      (let* ((data (org-element-parse-buffer 'element))
+             (title (org-element-map data 'keyword
+                      (lambda (el)
+                        (when (string= (org-element-property :key el) "TITLE")
+                          (org-element-property :value el)))
+                      nil t)))
+        (or title path))))
 
-  (defun nuance/nv-daily-note () "Find or create a daily note."
-         (interactive)
-         (let*
-             ((default-directory (f-join (nuance/nv--notes-path) "daily"))
-              (date (format-time-string "%Y-%m-%d"))
-              (path (nuance/nv--note-path date)))
-           (if
-               (file-exists-p path)
-               (find-file path)
-             (nuance/nv--create-note date))))
+  (defun nuance/nv2--dates-in-file (path)
+    "List all dates in the Org file specified by PATH."
+    (with-temp-buffer
+      (insert-file-contents path)
+      (let* ((parsed-data (org-element-parse-buffer))
+             (timestamps (org-element-map parsed-data 'timestamp
+                           (lambda (timestamp)
+                             (org-element-property :raw-value timestamp)))))
+        timestamps)))
 
-  (require 'calendar)
-
-  (defun nuance/nv--subtract-days (date days)
-    "Subtract DAYS from DATE."
-    (calendar-gregorian-from-absolute (- (calendar-absolute-from-gregorian date) days)))
-
-  (defun nuance/nv--format-date-iso (date)
-    "Format a DATE in YYYY-MM-DD format."
-    (format "%04d-%02d-%02d" (nth 2 date) (nth 0 date) (nth 1 date)))
-
-  (defun nuance/nv--dates-from-range (start-date end-date)
-    "Returns a list of dates (as strings) between the provided calendar dates."
-    (let* ((num-days (1+ (- (calendar-absolute-from-gregorian end-date) (calendar-absolute-from-gregorian start-date))))
-           (dates-list '()))
-      (dotimes (i num-days dates-list)
-        (push (nuance/nv--format-date-iso (calendar-gregorian-from-absolute (+ (calendar-absolute-from-gregorian start-date) i))) dates-list))
-      (nreverse dates-list)))
-
-  (defun nuance/nv--dates-of-previous-week ()
-    "Returns a list of dates (as strings) for the previous week in YYYY-MM-DD format."
-    (let* ((current-date (calendar-current-date))
-           (current-day-of-week (calendar-day-of-week current-date))
-           (start-of-week (nuance/nv--subtract-days current-date (+ current-day-of-week 7)))
-           (end-of-week (nuance/nv--subtract-days current-date (1+ current-day-of-week))))
-      (nuance/nv--dates-from-range start-of-week end-of-week)))
-
-  (defun nuance/nv--daily-notes (dates)
-    "Returns a list of paths of notes from the provided date range."
-    (let* ((paths (mapcar #'nuance/nv--note-path dates))
-           (notes (seq-remove (lambda (path) (not (file-exists-p path))) paths)))
-      notes))
-
-  (defun nuance/nv--last-week-notes-prompt ()
-    "Returns a llm prompt containing the bodies of the last week of notes."
-    (let* ((note-bodies (with-temp-buffer
-                          (dolist (path (nuance/nv--daily-notes (nuance/nv--dates-of-previous-week)))
-                            (insert-file-contents path))
-                          (buffer-string)))
-           (preamble "Given notes from the last week, taken in emacs org mode, starting with BEGIN_NOTES and ending with END_NOTES.\nBEGIN_NOTES\n")
-           (postnote "END_NOTES\n\nWrite an org mode summary of up to ten things accomplished last week and a recommendation of up to ten things to accomplish this week. Don't provide any extra information or justification for each item (e.g. just a title is fine). Title the last week section 'Last Week' and this week section 'This Week'. Provide references to the date associated with each accomplishment from last week."))
-      (s-concat preamble note-bodies postnote)))
-
-  (defun nuance/nv--date-range-notes-prompt (start-date end-date)
-    "Returns a llm prompt containing the bodies of the requested date range."
-    (let* ((note-bodies (with-temp-buffer
-                          (dolist (path (nuance/nv--daily-notes (nuance/nv--dates-from-range start-date end-date)))
-                            (insert-file-contents path))
-                          (buffer-string)))
-           (preamble (s-concat "Given notes from the range " (nuance/nv--format-date-iso start-date) " to " (nuance/nv--format-date-iso end-date) ", taken in emacs org mode, starting with BEGIN_NOTES and ending with END_NOTES.\nBEGIN_NOTES\n"))
-           (postnote "END_NOTES\n\nWrite an org mode summary of the most important up to ten things accomplished in this date range and a recommendation of the next up to ten things to accomplish. Don't provide any extra information or justification for each item (e.g. just a title is fine). Title the accomplished section 'Previously' and this week section 'Next'. Provide references to the date associated with each accomplishment."))
-      (s-concat preamble note-bodies postnote)))
-
-  (defun nuance/nv--weekly-note-name nil "Returns a string representing the current week in the format YYYY-Qq-ww."
-         (let*
-             ((date-info (decode-time (current-time)))
-              (year (nth 5 date-info))
-              (month (nth 4 date-info))
-              (day (nth 3 date-info))
-              (quarter (1+ (floor (/ month 3))))
-              (week (1+ (/ (- (+ day (- (calendar-day-of-week date-info) 1)) 1) 7))))
-           (format "%d-Q%d-%02d" year quarter week)))
-  (defun nuance/nv-weekly-note ()
-    "Find or create a weekly note for a given date."
-    (interactive)
-    (let*
-        ((default-directory (f-join (nuance/nv--notes-path) "weekly"))
-         (name (nuance/nv--weekly-note-name))
-         (path (nuance/nv--note-path name)))
-      (if
-          (file-exists-p path)
-          (find-file path)
-        (nuance/nv--create-note name))))
-
-  (defun nuance/nv-link-note ()
-    "Insert a link to a note, creating the note if it currently does not exist. Title is either the current region or the name of the note."
-    (interactive)
-    (let* ((default-directory (nuance/nv--notes-path))
-           (selection (nuance/nv--find-note "link"))
-           (target (if (car selection) (cdr selection) (list (save-window-excursion (nuance/nv--create-note selection)) 0 0)))
-           (link (format "%s::%d" (car target) (cadr target)))
-           (title (file-name-base (car target))))
-      (if (region-active-p)
-          (progn (kill-region (region-beginning) (region-end)) (insert (format "[[%s][" link)) (yank) (insert "]]"))
-        (insert (format "[[%s][%s]]" link title)))))
-
-  (defun nuance/nv-chat-note ()
-    "Prompt for context notes and start a chat session with context notes + prompt, inserting at current point as a quote."
-    (interactive)
-    (let* ((default-directory (nuance/nv--notes-path))
-           (selection (nuance/nv--find-note "link"))
-           (context "")
-           (current-note "")
-           (prompt (read-from-minibuffer "prompt: "))
-           (success-fn (lambda (response) (insert (format "#+BEGIN_QUOTE\n%s\n#+END_QUOTE" response))))
-           (failure-fn (lambda (response) (message "failure: %s" response))))
-      (llm-chat-async nuance/llm-provider (llm-make-simple-chat-prompt (format "Given org-mode context `%s` and the current note (in org-mode) `%s`, generate markdown-formatted output to the prompt `%s`" context current-note prompt)) success-fn failure-fn)))
-
-  (global-set-key (kbd "s-k") 'nuance/nv-find-note)
-  (global-set-key (kbd "s-K") 'nuance/nv-daily-note)
-  (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-l") 'nuance/nv-link-note)))
-  (add-hook 'org-mode-hook (lambda () (define-key org-mode-map (kbd "s-e") 'nuance/nv-chat-note)))
-#+end_src
-
-*** org-nvalt redux
-
-**** brainstorming
-Types of notes:
-- named notes
-- dated notes (corresponding to a day, a week, a month, a quarter etc.)
-- dialogs (a note with org-babel blocks containing responses, with links to context notes at the start)
-
-Notes are freeform org mode, so they can contain tags, links etc.
-
-org-babel blocks are used to chat inside a note at any point - the llm should receive the note, any linked notes, and the conversation up to that point
-
-Entrypoints:
-- navigate by name
-- navigate by search (matching on text / embedding etc.)
-- navigate by date range (matching all notes with dates overlapping with the query range)
-
-=> these are all the same, eg all navigating on text, text could be "note title," "note contents," "description,"  or "<date>"
-
-basic commands:
-- s-k: search notes (supports embark, defaults to region if selected, opens link at point if in a link)
-- s-l: insert reference (generates link on region)
-- s-e: llm superpower: chat with note (and possibly linked notes?). if in consult, chat with selected note(s).
-
-Creating a new note should follow customizable templates:
-- all notes should have a title and creation date (defaulting to today, but could be the date associated with the note if it's a dated note). The filename should be the title (as filenames are basically unimportant).
-- a hook for populating the body of the note; e.g. a new weekly retro note should be able to query a llm to generate a body based on the notes from that week.
-
-Should visiting a note tag it with a visit date?
-Should editing to a note tag it with an edit date?
-
-interactive entrypoints:
-- search notes (s-k)
-  - (0) create a new note (default options: named, today, last week)
-  - (1) select an existing note to navigate to it
-  - (2) initiate chat with results or selection (s-e) (triggers dialog note creation)
-- insert reference (s-l) - triggers search, result is inserted into buffer rather than visited, if a new note is created open it otherwise remain
-- insert dialog (s-e) - inserts an appropriately constructed org-babel block; trigger the dialog
-
-**** ux sketch
-
-#+begin_src elisp :tangle no
-  (defun nuance/nv2--create-note (name &optional after-create-fn)
-    "Create a new note with an optional callback.")
-
-  (defun nuance/nv2--make-result (path title snippet)
-    `(,path ,title ,snippet))
-
-  (defun nuance/nv2--result-path (note)
-    (nth 0 note))
-
-  (defun nuance/nv2--result-title (note)
-    (nth 1 note))
-
-  (defun nuance/nv2--result-snippet (note)
-    (nth 2 note))
+  (defun nuance/nv2--search-matcher (query)
+    "Construct a callable matcher that takes a file path and returns a nuance/nv2-result or nil."
+    (cond ((length= query 0) (lambda (path) nil))
+          ((s-prefix? "<" query)
+           (lambda (path)
+             (if-let* ((timestamps (nuance/nv2--dates-in-file path))
+                       (query-date (substring query 1))
+                       (matches (seq-filter (lambda (dt) (s-contains-p query-date dt)) timestamps)))
+                 (nuance/nv2-result-from-path path))))
+          ((s-prefix? ":" query) (lambda (path) (nuance/nv2-result-from-path path)))
+          (t (lambda (path) (if (s-contains? query path) (nuance/nv2-result-from-path path) (let ((body (f-read-text path))) (when (s-contains? query body) (nuance/nv2-result-from-path path))))))))
 
   (defun nuance/nv2--execute-search (text)
-    "Return a list of nuance/nv2--result.
-      Query syntax:
-       'text' - match text
-       ':text' - match embedding
-       '<date>' - match dates
-    "
-    `(,text ,text ,text))
+    "Return a list of nuance/nv2-result.
+                Query syntax:
+                 'text' - match text
+                 ':text' - match embedding
+                 '<date>' - match dates
+              "
+    (file-cache-add-directory-recursively nuance/nv2-path (rx (one-or-more anychar) ".org"))
+    (let* ((query (nuance/nv2--search-matcher text))
+           (all-notes (find-lisp-find-files nuance/nv2-path (rx (one-or-more anychar) ".org")))
+           (matches (remove nil (mapcar query all-notes))))
+      (mapcar #'nuance/nv2-result-path matches)))
 
   (defun nuance/nv2--query ()
     "Run a query session, returning zero or one result."
-    (completing-read
-     ": "
-     (nuance/complete-dynamic #'nuance/nv2--execute-search)
-     nil
-     nil
-     (dwim-default-text)))
+    (if-let ((path (completing-read
+                    ": "
+                    (nuance/complete-dynamic #'nuance/nv2--execute-search)
+                    nil
+                    nil
+                    (dwim-default-text))))
+        (if (f-exists? path)
+            (nuance/nv2-result-from-path path)
+          (nuance/nv2-result-from-path (nuance/nv2--create-note path)))))
+
+  (defun nuance/nv2--query-many ()
+    "Run a query session, returning zero or more results."
+    (if-let ((result (nuance/nv2--query)))
+        (list result)))
 
   (defun nuance/nv2-navigate ()
     "Display a filterable list of notes."
     (interactive)
     (let ((selection (nuance/nv2--query)))
-      selection))
+      (find-file (nuance/nv2-result-path selection))))
 
   (defun nuance/nv2-refer ()
     "Insert a reference to the result of a search."
     (interactive)
     (if-let ((note (nuance/nv2--query)))
-        (insert "[[" (nuance/nv2--result-title note) "]]")))
+        (insert "[[" (nuance/nv2-result-path note) "][" (nuance/nv2-result-title note) "]]")))
 
   (defun nuance/nv2-discuss ()
     "Insert a chat block in an existing note."
     (interactive)
-    (insert "CHAT END_CHAT"))
+    (let* ((notes-source (if (region-active-p)
+                             `(region . (,(region-beginning) ,(region-end)))
+                           `(notes . ,(nuance/nv2--query-many))))
+           (source (car notes-source))
+           (data (cdr notes-source))
+           (prompt (read-string "> ")))
+
+      (insert "#+begin_src emacs-lisp\n")
+      (cond
+       ((equal source 'region) (insert (format "(nuance/nv2--chat-region %S %S %S)\n" prompt (car data) (cadr data))))
+       ((equal source 'notes) (insert (format "(nuance/nv2--chat-notes %S (list %s))\n" prompt (mapconcat (lambda (note) (nuance/nv2-result-to-string note)) data)))))
+      (insert "#+end_src\n")))
+
+  (defun nuance/nv2--chat-region (prompt start end)
+    (let ((prompt-context (format "Given selected text: ```%s\n%s```" major-mode (buffer-substring-no-properties start end))))
+      (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
+
+  (defun nuance/nv2--chat-notes (prompt notes)
+    (let* ((prompt-context (if notes (concat "Given selected sources:\n" (mapconcat (lambda (note) (format "```%s\n%s\n```\n" (nuance/nv2-result-path note) (nuance/nv2-result-body note))) notes)))))
+      (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
 
   (global-set-key (kbd "C-c k") #'nuance/nv2-navigate)
   (global-set-key (kbd "C-c l") #'nuance/nv2-refer)
@@ -1790,7 +1646,16 @@ interactive entrypoints:
   (use-package llm
     :config
     (require 'llm-ollama)
-    (setq nuance/llm-provider (make-llm-ollama :chat-model "gemma:7b-instruct" :embedding-model "gemma:7b-instruct")))
+    (setq nuance/llm-provider (make-llm-ollama :chat-model "gemma:instruct" :embedding-model "gemma:instruct"))
+
+    (defun nuance/llm-chat-buffer ()
+      (interactive)
+      (let ((scope (if (region-active-p) "region" "buffer"))
+            (contents (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end))
+                        (buffer-substring-no-properties (point-min) (point-max)))))
+        (message "%s" (llm-chat nuance/llm-provider
+                                (llm-make-simple-chat-prompt
+                                 (format "%s\nGiven the following emacs %s with major mode `%s` contents:\n\n```%s```" (read-string "> ") scope major-mode contents)))))))
 #+end_src
 
 ** Tramp
