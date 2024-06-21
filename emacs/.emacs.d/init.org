@@ -305,22 +305,24 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
   (global-set-key (kbd "<f1>") 'window-toggle-side-windows)
   (global-set-key (kbd "<f2>") 'balance-windows)
 
-  (defun nuance/display-buffer-in-bottom-drawer (buffer-name)
+  (defun nuance/display-buffer-in-minor-drawer (buffer-name)
     (add-to-list 'display-buffer-alist
                  `(,buffer-name (display-buffer-reuse-window display-buffer-in-side-window)
                                 (side . right)
                                 (slot . 0)
                                 (window-parameters . ((no-delete-other-windows . t)))
                                 (window-height . 25)
+                                (window-width . 80)
+                                (window-min-width . 80)
                                 (preserve-size . (nil . t)))))
 #+end_src
 
 *** Compilation buffer on bottom
 
 #+begin_src emacs-lisp
-  (nuance/display-buffer-in-bottom-drawer "*compilation*")
-  (nuance/display-buffer-in-bottom-drawer "*detached-compilation*")
-  (nuance/display-buffer-in-bottom-drawer "*Messages*")
+  (nuance/display-buffer-in-minor-drawer "*compilation*")
+  (nuance/display-buffer-in-minor-drawer "*detached-compilation*")
+  (nuance/display-buffer-in-minor-drawer "*Messages*")
 #+end_src
 
 * UI Appearance
