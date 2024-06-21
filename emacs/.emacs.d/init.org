@@ -1624,7 +1624,7 @@ My personal note taking app, now with some basic llm powers.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
-  (use-package eldoc-box :hook ((prog-mode org-mode) . eldoc-box-hover-mode))
+  (use-package eldoc-box :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
 ** which-key
