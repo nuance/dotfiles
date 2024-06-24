@@ -1242,6 +1242,82 @@ between both flymake errors.
     :bind (("s-f" . nuance/find-by-content)))
 #+end_src
 
+*** Find changed
+
+#+begin_src emacs-lisp
+  (use-package project
+    :straight t
+    :config
+    (cl-defgeneric nuance/project-list-changed (project)
+      "Default find-changed implementation for projects using magit."
+      (unless (magit-inside-worktree-p) (user-error "Non git-managed projects unsupported."))
+
+      (let ((status (magit-git-lines "status" "--porcelain"))
+            (latest-commit-files )
+            (result '()))
+        (if status
+            (mapcar (lambda (file) (substring file 3)) status)
+          (magit-git-lines "diff-tree" "--no-commit-id" "--name-only" "-r" "HEAD"))))
+
+    (defun nuance/project-find-changed ()
+      "Find modified files."
+      (interactive)
+      (if-let ((default-directory (project-root (project-current)))
+               (paths (nuance/project-list-changed (project-current)))
+               (selection (consult--read paths :prompt "Changed: " :sort nil :require-match t :category 'file)))
+          (find-file (f-join (project-root (project-current)) selection))))
+
+    :bind (("s-g" . nuance/project-find-changed)))
+#+end_src
+
+*** Find changed by content
+
+#+begin_src emacs-lisp
+  (use-package project
+    :straight t
+    :config
+    (cl-defgeneric nuance/project-list-changed-content (project)
+      "Default find-changed-content implementation for projects using magit."
+      (unless (magit-inside-worktree-p) (user-error "Non git-managed projects unsupported."))
+
+      (let* ((diff-output (magit-git-lines "diff" "-U0" "--no-color"))
+             (result '())
+             current-file
+             current-line)
+        (dolist (line diff-output (nreverse result))
+          (cond
+           ;; New file
+           ((string-prefix-p "+++ b/" line)
+            (setq current-file (substring line 6)))
+           ;; Hunk header
+           ((string-match (rx line-start "@@ -" (group-n 1 (one-or-more digit)) (optional "," (one-or-more digit))  " +" (group-n 2 (one-or-more digit)) (optional "," (one-or-more digit)) " @@") line)
+            (setq current-line (string-to-number (match-string 2 line))))
+           ;; Added line
+           ((string-prefix-p "+ " line)
+            (when (and current-file current-line)
+              (push (format "%s:%d:%s" current-file current-line line) result))
+            (setq current-line (1+ current-line)))
+           ;; Removed line
+           ((string-prefix-p "- " line)
+            (when (and current-file current-line)
+              (push (format "%s:%d:%s" current-file current-line line) result)))))))
+
+    (defun nuance/project-find-changed-content ()
+      "Find modified files by filtering diff output."
+      (interactive)
+      (if-let ((default-directory (project-root (project-current)))
+               (paths (nuance/project-list-changed-content (project-current)))
+               (selection (consult--read paths :prompt "Changed: " :sort nil :require-match t :category 'file))
+               (path (nth 0 (split-string selection ":")))
+               (line (string-to-number (nth 1 (split-string selection ":")))))
+          (progn
+            (find-file path)
+            (goto-char (point-min))
+            (forward-line (1- line)))))
+
+    :bind (("s-G" . nuance/project-find-changed-content)))
+#+end_src
+
 ** Find alternatives
 
 #+begin_src emacs-lisp
