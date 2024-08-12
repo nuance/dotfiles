@@ -50,9 +50,11 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   ;; Defer garbage collection further back in the startup process
   (setq gc-cons-threshold most-positive-fixnum)
 
-  (setq ns-use-thin-smoothing t
+  (set-language-environment "UTF-8")
+  (setq default-input-method nil
+        load-prefer-newer t
+        ns-use-thin-smoothing t
         ns-use-proxy-icon nil
-
         tab-bar-show nil
         frame-title-format "%b - emacs"
         frame-resize-pixelwise t
@@ -65,12 +67,36 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars) default-frame-alist)
+  (push '(horizontal-scroll-bars) default-frame-alist)
   (push '(internal-border-width . 0) default-frame-alist)
 
+  (setq tool-bar-mode nil
+        scroll-bar-mode nil)
+  (when (bound-and-true-p tooltip-mode)
+    (tooltip-mode -1))
+
+  (setq use-file-dialog nil)
+  (setq use-dialog-box nil)
+
+  (unless (memq window-system '(mac ns))
+    ;; (menu-bar-mode -1)
+    (setq menu-bar-mode nil))
+
+  (when (fboundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1))
   ;; Resizing the Emacs frame can be a terribly expensive part of changing the
   ;; font. By inhibiting this, we easily halve startup times with fonts that are
   ;; larger than the system default.
   (setq frame-inhibit-implied-resize t)
+
+  (setq auto-mode-case-fold nil)
+
+  ;; Disable bidirectional text scanning for a modest performance boost.
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
+
+  ;; Give up some bidirectional functionality for slightly faster re-display.
+  (setq bidi-inhibit-bpa t)
 
   ;; Ignore X resources; its settings would be redundant with the other settings
   ;; in this file and can conflict with later config (particularly where the
@@ -131,9 +157,8 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
           ((native-comp-deferred-compilation t)
            (native-comp-async-jobs-number (cl-parse-integer (s-trim (shell-command-to-string "getconf _NPROCESSORS_ONLN")))))
         (native-compile-async "~/.emacs.d/straight/build" 'recursively)
-        (while
-            (and comp-files-queue (> (comp-async-runnings) 0))
-          (progn (message "comp-files-queue: %s | comp-async-runnings: %d" (and comp-files-queue (length comp-files-queue)) (comp-async-runnings))
+        (while comp-files-queue
+          (progn (message "comp-files-queue: %s" (and comp-files-queue (length comp-files-queue)))
                  (sleep-for 1))))))
 #+end_src
 
@@ -203,8 +228,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
 
-  (setq load-prefer-newer t
-        save-place-file (concat user-emacs-directory "places")
+  (setq save-place-file (concat user-emacs-directory "places")
         backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
         backup-inhibited t
         sentence-end-double-space nil       ; No double space
@@ -264,6 +288,7 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 ** FFAP
 
 #+begin_src emacs-lisp
+  (setq ffap-machine-p-known 'reject)
   (ffap-bindings)
 #+end_src
 
@@ -784,6 +809,10 @@ I'd like to toggle between light & dark themes.
            (corfu-mode . corfu-popupinfo-mode)))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package cape)
+#+END_SRC
+
 *** Kind icon
 
 #+begin_src emacs-lisp
@@ -881,6 +910,44 @@ Incremental search thats multiple-cursors-friendly.
     :after phi-search
     :after multiple-cursors
     :bind (:map mc/keymap ([remap query-replace] . phi-replace-query)))
+#+END_SRC
+
+**** Symbol-overlay
+
+#+BEGIN_SRC emacs-lisp
+  (use-package symbol-overlay
+    :after multiple-cursors
+    :config
+    (set-face-attribute 'symbol-overlay-default-face nil
+                        :background (face-attribute 'default :background)
+                        :foreground (face-attribute 'default :foreground)
+                        :weight 'bold)
+
+    (defun ar/mc-mark-all-symbol-overlays ()
+      "Mark all symbol overlays using multiple cursors."
+      (interactive)
+      (mc/remove-fake-cursors)
+      (if (or (region-active-p) (not (thing-at-point 'symbol t)))
+          (mc/mark-all-dwim)
+
+        (when-let* ((overlays (symbol-overlay-get-list 0))
+                    (point (point))
+                    (point-overlay (seq-find
+                                    (lambda (overlay)
+                                      (and (<= (overlay-start overlay) point)
+                                           (<= point (overlay-end overlay))))
+                                    overlays))
+                    (offset (- point (overlay-start point-overlay))))
+          (setq deactivate-mark t)
+          (mapc (lambda (overlay)
+                  (unless (eq overlay point-overlay)
+                    (mc/save-excursion
+                     (goto-char (+ (overlay-start overlay) offset))
+                     (mc/create-fake-cursor-at-point))))
+                overlays)
+          (mc/maybe-multiple-cursors-mode))))
+    :hook (prog-mode . symbol-overlay-mode)
+    :bind ("s-D" . ar/mc-mark-all-symbol-overlays))
 #+END_SRC
 
 *** MWIM
@@ -1076,14 +1143,71 @@ Mimic standard macos window / tab management commands
 ** eshell
 
 #+begin_src elisp
-  (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
-        eshell-prompt-function
-        (lambda nil
-          (concat
-           (if (string= (eshell/pwd) (getenv "HOME"))
-               "~" (eshell/basename (eshell/pwd)))
-           (if (= (user-uid) 0) "#" "$")
-           " ")))
+  (use-package eshell
+    :ensure nil
+    :hook ((eshell-mode . nuance/eshell-setup))
+    :config
+    (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
+          eshell-prompt-function
+          (lambda nil
+            (concat
+             (if (string= (eshell/pwd) (getenv "HOME"))
+                 "~" (eshell/basename (eshell/pwd)))
+             (if (= (user-uid) 0) "#" "$")
+             " ")))
+
+    (defun nuance/eshell-setup ()
+      (define-key eshell-hist-mode-map (kbd "C-r") 'consult-history)
+      (define-key eshell-hist-mode-map (kbd "s-o") 'consult-outline)
+      (setq-local outline-regexp eshell-prompt-regexp
+                  completion-styles '(basic)
+                  corfu-count 3
+                  completion-at-point-functions '(pcomplete-completions-at-point cape-file cape-history)))
+
+    (defun nuance/eshell-history-filter (input)
+      "Do not save on the following:
+           - empty lines
+           - commands that start with a space, `cd`, `ls`/`l`"
+      (and
+       (eshell-input-filter-default input)
+       (eshell-input-filter-initial-space input)
+       (not (string-prefix-p "cd " input))
+       (not (string-prefix-p "ls " input))))
+
+    (defun eshell/cat-with-syntax-highlighting (filename)
+      "Like cat(1) but with syntax highlighting.
+  Stole from aweshell"
+      (let ((existing-buffer (get-file-buffer filename))
+            (buffer (find-file-noselect filename)))
+        (eshell-print
+         (with-current-buffer buffer
+           (if (fboundp 'font-lock-ensure)
+               (font-lock-ensure)
+             (with-no-warnings
+               (font-lock-fontify-buffer)))
+           (let ((contents (buffer-string)))
+             (remove-text-properties 0 (length contents) '(read-only nil) contents)
+             contents)))
+        (unless existing-buffer
+          (kill-buffer buffer))
+        nil))
+    (advice-add 'eshell/cat :override #'eshell/cat-with-syntax-highlighting)
+
+    :custom
+    (eshell-scroll-to-bottom-on-input t)
+    (eshell-highlight-prompt nil)
+    (eshell-history-size 1024)
+    (eshell-hist-ignoredups t)
+    (eshell-input-filter 'nuance/eshell-history-filter)
+    (eshell-cd-on-directory t)
+    (eshell-list-files-after-cd nil)
+    (eshell-pushd-dunique t)
+    (eshell-last-dir-unique t)
+    (eshell-last-dir-ring-size 32))
+
+  (use-package eshell-syntax-highlighting
+    :straight t
+    :config (eshell-syntax-highlighting-global-mode t))
 #+end_src
 
 ** Scroll through errors
@@ -1142,8 +1266,8 @@ between both flymake errors.
     (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d") ,(expand-file-name "~/.config")))
 
     (defun project-find-dotfiles-dir (dir)
-      (when (-any (lambda (p) (or (f-same? p dir) (f-ancestor-of? p dir))) nuance/dotfiles-dirs))
-      (cons 'dotfiles-dir nuance/dotfiles-base-dir))
+      (when (-any (lambda (p) (or (f-same? p dir) (f-ancestor-of? p dir))) nuance/dotfiles-dirs)
+        (cons 'dotfiles-dir nuance/dotfiles-base-dir)))
     (memoize 'project-find-dotfiles-dir)
 
     (cl-defmethod project-root ((project (head dotfiles-dir)))
@@ -1174,15 +1298,17 @@ between both flymake errors.
         (format "fd --hidden --no-ignore --color=never --max-results=%d \"%s\" %s" (* 5 nuance/completion-candidates) pattern (project-root project))))
 
     (cl-defgeneric nuance/project-find-by-name-initial (project) "" nil "")
+    (cl-defgeneric nuance/project-find-by-name-path (project result)
+      (f-relative (concat (file-remote-p default-directory) (string-remove-prefix "./" x)) default-directory))
 
     (defvar nuance/find-by-name-history nil)
     (add-to-list 'savehist-additional-variables 'nuance/find-by-name-history)
 
     :config
-    (defun nuance/find-by-name (prompt builder initial)
+    (defun nuance/find-by-name (project prompt builder initial)
       (consult--read
        (consult--async-command builder
-         (consult--async-map (lambda (x) (f-relative (concat (file-remote-p default-directory) (string-remove-prefix "./" x)) default-directory)))
+         (consult--async-map (lambda (x) (nuance/project-find-by-name-path project x)))
          (consult--async-highlight builder)
          :file-handler t) ;; allow tramp
        :prompt prompt
@@ -1210,7 +1336,7 @@ between both flymake errors.
              (prompt (format "%s: " (project-name project)))
              (builder (lambda (input) (nuance/find-by-name-builder project input)))
              (initial (concat (nuance/project-find-by-name-initial project) (thing-at-point 'filename)))
-             (path (nuance/find-by-name prompt builder initial)))
+             (path (nuance/find-by-name project prompt builder initial)))
         (xref-push-marker-stack)
         (find-file path)))
 
@@ -1434,7 +1560,7 @@ Include yasnippet for eglot usage.
 ** LSP
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
-
+    :demand t
     :config
     (setq-default
      eglot-workspace-configuration '((:gopls . ((usePlaceholders . t)
@@ -1447,7 +1573,7 @@ Include yasnippet for eglot usage.
                                                              (unusedparams . t)
                                                              (unusedwrite . t)))
                                                 (matcher . "Fuzzy"))))
-     eglot-events-buffer-size 0
+     eglot-events-buffer-size 10000
      eglot-sync-connect 0)
 
     (defun nuance/eglot-organize-imports ()
@@ -1590,11 +1716,11 @@ My personal note taking app, now with some basic llm powers.
 
   (defun nuance/nv2--execute-search (text)
     "Return a list of nuance/nv2-result.
-                Query syntax:
-                 'text' - match text
-                 ':text' - match embedding
-                 '<date>' - match dates
-              "
+                  Query syntax:
+                   'text' - match text
+                   ':text' - match embedding
+                   '<date>' - match dates
+                "
     (file-cache-add-directory-recursively nuance/nv2-path (rx (one-or-more anychar) ".org"))
     (let* ((query (nuance/nv2--search-matcher text))
            (all-notes (find-lisp-find-files nuance/nv2-path (rx (one-or-more anychar) ".org")))
@@ -1679,6 +1805,13 @@ My personal note taking app, now with some basic llm powers.
                                  (format "%s\nGiven the following emacs %s with major mode `%s` contents:\n\n```%s```" (read-string "> ") scope major-mode contents)))))))
 #+end_src
 
+*** shell-maker
+
+#+BEGIN_SRC emacs-lisp
+  (use-package shell-maker
+    :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+#+END_SRC
+
 ** Tramp
 
 #+BEGIN_SRC emacs-lisp
@@ -1693,7 +1826,6 @@ My personal note taking app, now with some basic llm powers.
      (tramp-verbose 0))
     :config
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-    (add-to-list 'tramp-connection-properties (list (format "/%s:" tramp-default-method) "direct-async-process" t))
     (add-to-list 'tramp-sh-file-name-handler-alist `(file-truename . ,#'identity))
     :hook (compilation-mode . (lambda () (add-to-list 'tramp-sh-file-name-handler-alist `(file-truename . ,#'identity)))))
 #+END_SRC

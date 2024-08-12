@@ -7,7 +7,7 @@ bindkey -e
 
 # Environment variables
 export CLICOLOR="1"
-export EMACS_SERVER_FILE="$HOME/.emacs.d/server"
+export EMACS_SERVER_FILE="$HOME/.emacs-server"
 export EDITOR="emacsclient"
 export PROMPT="%F{green}%1~%f %(?.%F{green}.%F{red}[%?] )$%f "
 export PYTHONIOENCODING="UTF-8"

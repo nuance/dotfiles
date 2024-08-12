@@ -1,6 +1,6 @@
 all: git zsh
 
-.PHONY: alacritty defaults emacs git ssh yabai zsh
+.PHONY: defaults emacs git ssh yabai zsh
 
 alacritty:
 	cd alacritty/.config/alacritty && python3 keybindings.py
