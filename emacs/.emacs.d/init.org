@@ -1447,6 +1447,14 @@ between both flymake errors.
     :bind (("s-G" . nuance/project-find-changed-content)))
 #+end_src
 
+*** Code URL
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :config (cl-defgeneric nuance/buffer-url (project) (interactive) (error "nuance/buffer-url unimplemented"))
+    :bind ("s-u" . (lambda () (interactive) (nuance/buffer-url (project-current)))))
+#+END_SRC
+
 ** Find alternatives
 
 #+begin_src emacs-lisp
