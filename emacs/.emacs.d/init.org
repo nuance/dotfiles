@@ -946,8 +946,11 @@ Incremental search thats multiple-cursors-friendly.
                      (mc/create-fake-cursor-at-point))))
                 overlays)
           (mc/maybe-multiple-cursors-mode))))
+
     :hook (prog-mode . symbol-overlay-mode)
-    :bind ("s-D" . ar/mc-mark-all-symbol-overlays))
+    :bind (("s-D" . ar/mc-mark-all-symbol-overlays)
+           ("M-n" . symbol-overlay-jump-next)
+           ("M-p" . symbol-overlay-jump-prev)))
 #+END_SRC
 
 *** MWIM
@@ -1243,8 +1246,8 @@ between both flymake errors.
         (push p points))
       (unless (null points) (goto-char (apply 'max points)))))
 
-  (bind-key (kbd "M-n") 'nuance/next-error)
-  (bind-key (kbd "M-p") 'nuance/previous-error)
+  (bind-key (kbd "M-N") 'nuance/next-error)
+  (bind-key (kbd "M-P") 'nuance/previous-error)
 #+end_src
 
 ** Show flymake errors
