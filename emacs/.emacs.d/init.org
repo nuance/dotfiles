@@ -1658,6 +1658,13 @@ Include yasnippet for eglot usage.
     (("C-c c" . org-capture)
      ("C-c l" . org-store-link)))
 #+end_src
+*** Poly-org
+
+For better inline code editing.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package poly-org)
+#+END_SRC
 
 *** org-nv2
 
