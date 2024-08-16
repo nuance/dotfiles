@@ -1793,7 +1793,20 @@ Include yasnippet for eglot usage.
 For better inline code editing.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package poly-org)
+  (use-package poly-org
+    :config
+    (add-hook 'polymode-init-inner-hook
+              (lambda ()
+                (let* ((fix-pitch (face-attribute 'fixed-pitch :family))
+                       (fix-font (face-attribute 'fixed-pitch :font))
+                       (fix-height (face-attribute 'fixed-pitch :height))
+                       (bg (face-attribute 'org-block-begin-line :background))
+                       (props `(:background ,bg
+                                            :extend t
+                                            :height ,fix-height
+                                            :family ,fix-pitch
+                                            :font ,fix-font)))
+                  (oset pm/chunkmode adjust-face props)))))
 #+END_SRC
 
 *** org-nv2
