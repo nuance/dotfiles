@@ -1,7 +1,7 @@
 #+TITLE: Emacs configuration file
 #+AUTHOR: Matthew Jones
 #+BABEL: :cache yes
-#+PROPERTY: header-args :tangle yes
+#+PROPERTY: header-args :tangle "~/.emacs.d/init.el"
 #+PROPERTY: header-args:elisp :lexical t
 
 * Configurations
@@ -14,7 +14,7 @@ header. The first line of the configuration is as follows:
   ;;; -*- lexical-binding: t -*-
 #+END_SRC
 
-#+begin_src emacs-lisp :tangle "early-init.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/early-init.el"
   ;;; -*- lexical-binding: t -*-
 #+end_src
 
@@ -30,13 +30,12 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 =org=-document after changes.
 
 #+BEGIN_SRC emacs-lisp
+  (defvar tangle-sources (list (expand-file-name (concat user-emacs-directory "init.org")) (expand-file-name (concat user-emacs-directory "private.org"))))
+
   (defun tangle-init ()
     "If the current buffer is 'init.org' the code-blocks are
   tangled, and the tangled file is compiled."
-    (when (or (equal (buffer-file-name)
-                     (expand-file-name (concat user-emacs-directory "init.org")))
-              (equal (buffer-file-name)
-                     (expand-file-name (concat user-emacs-directory "private.org"))))
+    (when (-any (lambda (path) (equal (buffer-file-name) path)) tangle-sources)
       ;; Avoid running hooks when tangling.
       (let ((prog-mode-hook nil))
         (org-babel-tangle))))
@@ -46,7 +45,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 
 * early-init
 
-#+begin_src emacs-lisp :tangle "early-init.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/early-init.el"
   ;; Defer garbage collection further back in the startup process
   (setq gc-cons-threshold most-positive-fixnum)
 
@@ -60,6 +59,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
         frame-resize-pixelwise t
         window-resize-pixelwise t
         default-frame-alist `((ns-transparent-titlebar . t)
+                              (ns-appearance . 'dark)
                               (width . 170)
                               (height . 50)))
 
@@ -131,7 +131,7 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 
 ** startup
 
-#+begin_src emacs-lisp :tangle "early-init.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/early-init.el"
   (setq straight-check-for-modifications '(find-when-checking check-on-save))
 #+end_src
 
@@ -260,8 +260,6 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
   ;; filepath manipulation
   (use-package f)
-
-  (use-package compat)
 #+END_SRC
 
 ** Encrypted authinfo
@@ -1123,7 +1121,7 @@ Mimic standard macos window / tab management commands
   (use-package vterm
     :demand t
     :hook (vterm-mode . goto-address-mode)
-    :custom ((vterm-max-scrollback 0)
+    :custom ((vterm-max-scrollback 16384)
              (vterm-always-compile-module t))
     :config
     (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
@@ -1453,7 +1451,7 @@ between both flymake errors.
 
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
-    :config (cl-defgeneric nuance/buffer-url (project) (interactive) (error "nuance/buffer-url unimplemented"))
+    :config (cl-defgeneric nuance/buffer-url (project) (error "nuance/buffer-url unimplemented"))
     :bind ("s-u" . (lambda () (interactive) (nuance/buffer-url (project-current)))))
 #+END_SRC
 
@@ -1789,53 +1787,8 @@ My personal note taking app, now with some basic llm powers.
     (if-let ((note (nuance/nv2--query)))
         (insert "[[" (nuance/nv2-result-path note) "][" (nuance/nv2-result-title note) "]]")))
 
-  (defun nuance/nv2-discuss ()
-    "Insert a chat block in an existing note."
-    (interactive)
-    (let* ((notes-source (if (region-active-p)
-                             `(region . (,(region-beginning) ,(region-end)))
-                           `(notes . ,(nuance/nv2--query-many))))
-           (source (car notes-source))
-           (data (cdr notes-source))
-           (prompt (read-string "> ")))
-
-      (insert "#+begin_src emacs-lisp\n")
-      (cond
-       ((equal source 'region) (insert (format "(nuance/nv2--chat-region %S %S %S)\n" prompt (car data) (cadr data))))
-       ((equal source 'notes) (insert (format "(nuance/nv2--chat-notes %S (list %s))\n" prompt (mapconcat (lambda (note) (nuance/nv2-result-to-string note)) data)))))
-      (insert "#+end_src\n")))
-
-  (defun nuance/nv2--chat-region (prompt start end)
-    (let ((prompt-context (format "Given selected text: ```%s\n%s```" major-mode (buffer-substring-no-properties start end))))
-      (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
-
-  (defun nuance/nv2--chat-notes (prompt notes)
-    (let* ((prompt-context (if notes (concat "Given selected sources:\n" (mapconcat (lambda (note) (format "```%s\n%s\n```\n" (nuance/nv2-result-path note) (nuance/nv2-result-body note))) notes)))))
-      (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
-
   (global-set-key (kbd "C-c k") #'nuance/nv2-navigate)
   (global-set-key (kbd "C-c l") #'nuance/nv2-refer)
-  (global-set-key (kbd "C-c e") #'nuance/nv2-discuss)
-#+end_src
-
-** LLM
-
-*** ollama
-
-#+begin_src emacs-lisp
-  (use-package llm
-    :config
-    (require 'llm-ollama)
-    (setq nuance/llm-provider (make-llm-ollama :chat-model "gemma:instruct" :embedding-model "gemma:instruct"))
-
-    (defun nuance/llm-chat-buffer ()
-      (interactive)
-      (let ((scope (if (region-active-p) "region" "buffer"))
-            (contents (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end))
-                        (buffer-substring-no-properties (point-min) (point-max)))))
-        (message "%s" (llm-chat nuance/llm-provider
-                                (llm-make-simple-chat-prompt
-                                 (format "%s\nGiven the following emacs %s with major mode `%s` contents:\n\n```%s```" (read-string "> ") scope major-mode contents)))))))
 #+end_src
 
 ** Tramp
@@ -1986,8 +1939,6 @@ My personal note taking app, now with some basic llm powers.
     :hook
     (('markdown-mode .'variable-pitch-mode)
      ('markdown-mode . 'visual-line-mode)))
-
-  (use-package edit-indirect)
 #+END_SRC
 
 ** OpenSCAD
