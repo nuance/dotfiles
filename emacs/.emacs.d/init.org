@@ -41,72 +41,72 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
       (let ((prog-mode-hook nil))
         (org-babel-tangle))))
 
-(add-hook 'after-save-hook 'tangle-init)
+  (add-hook 'after-save-hook 'tangle-init)
 #+END_SRC
 
 * early-init
 
 #+begin_src emacs-lisp :tangle "early-init.el"
   ;; Defer garbage collection further back in the startup process
-(setq gc-cons-threshold most-positive-fixnum)
+  (setq gc-cons-threshold most-positive-fixnum)
 
-(set-language-environment "UTF-8")
-(setq default-input-method nil
-      load-prefer-newer t
-      ns-use-thin-smoothing t
-      ns-use-proxy-icon nil
-      tab-bar-show nil
-      frame-title-format "%b - emacs"
-      frame-resize-pixelwise t
-      window-resize-pixelwise t
-      default-frame-alist `((ns-transparent-titlebar . t)
-                            (width . 170)
-                            (height . 50)))
+  (set-language-environment "UTF-8")
+  (setq default-input-method nil
+        load-prefer-newer t
+        ns-use-thin-smoothing t
+        ns-use-proxy-icon nil
+        tab-bar-show nil
+        frame-title-format "%b - emacs"
+        frame-resize-pixelwise t
+        window-resize-pixelwise t
+        default-frame-alist `((ns-transparent-titlebar . t)
+                              (width . 170)
+                              (height . 50)))
 
-;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(horizontal-scroll-bars) default-frame-alist)
-(push '(internal-border-width . 0) default-frame-alist)
+  ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
+  (push '(menu-bar-lines . 0) default-frame-alist)
+  (push '(tool-bar-lines . 0) default-frame-alist)
+  (push '(vertical-scroll-bars) default-frame-alist)
+  (push '(horizontal-scroll-bars) default-frame-alist)
+  (push '(internal-border-width . 0) default-frame-alist)
 
-(setq tool-bar-mode nil
-      scroll-bar-mode nil)
-(when (bound-and-true-p tooltip-mode)
-  (tooltip-mode -1))
+  (setq tool-bar-mode nil
+        scroll-bar-mode nil)
+  (when (bound-and-true-p tooltip-mode)
+    (tooltip-mode -1))
 
-(setq use-file-dialog nil)
-(setq use-dialog-box nil)
+  (setq use-file-dialog nil)
+  (setq use-dialog-box nil)
 
-(unless (memq window-system '(mac ns))
-  ;; (menu-bar-mode -1)
-  (setq menu-bar-mode nil))
+  (unless (memq window-system '(mac ns))
+    ;; (menu-bar-mode -1)
+    (setq menu-bar-mode nil))
 
-(when (fboundp 'horizontal-scroll-bar-mode)
-  (horizontal-scroll-bar-mode -1))
-;; Resizing the Emacs frame can be a terribly expensive part of changing the
-;; font. By inhibiting this, we easily halve startup times with fonts that are
-;; larger than the system default.
-(setq frame-inhibit-implied-resize t)
+  (when (fboundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1))
+  ;; Resizing the Emacs frame can be a terribly expensive part of changing the
+  ;; font. By inhibiting this, we easily halve startup times with fonts that are
+  ;; larger than the system default.
+  (setq frame-inhibit-implied-resize t)
 
-(setq auto-mode-case-fold nil)
+  (setq auto-mode-case-fold nil)
 
-;; Disable bidirectional text scanning for a modest performance boost.
-(setq-default bidi-display-reordering 'left-to-right
-              bidi-paragraph-direction 'left-to-right)
+  ;; Disable bidirectional text scanning for a modest performance boost.
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
 
-;; Give up some bidirectional functionality for slightly faster re-display.
-(setq bidi-inhibit-bpa t)
+  ;; Give up some bidirectional functionality for slightly faster re-display.
+  (setq bidi-inhibit-bpa t)
 
-;; Ignore X resources; its settings would be redundant with the other settings
-;; in this file and can conflict with later config (particularly where the
-;; cursor color is concerned).
-(advice-add #'x-apply-session-resources :override #'ignore)
+  ;; Ignore X resources; its settings would be redundant with the other settings
+  ;; in this file and can conflict with later config (particularly where the
+  ;; cursor color is concerned).
+  (advice-add #'x-apply-session-resources :override #'ignore)
 
-(setq comp-deferred-compilation-deny-list ".*")
-(setq native-comp-deferred-compilation nil
-      native-comp-async-report-warnings-errors nil)
-(setq package-enable-at-startup t)
+  (setq comp-deferred-compilation-deny-list ".*")
+  (setq native-comp-deferred-compilation nil
+        native-comp-async-report-warnings-errors nil)
+  (setq package-enable-at-startup t)
 #+end_src
 
 * Straight.el
@@ -115,18 +115,18 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 
 #+BEGIN_SRC emacs-lisp
   (setq straight-repository-branch "develop")
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 6))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
 #+END_SRC
 
 ** startup
@@ -139,8 +139,8 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
 
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
-(setq use-package-verbose t)
+  (setq straight-use-package-by-default t)
+  (setq use-package-verbose t)
 #+END_SRC
 
 ** Package management
@@ -150,16 +150,16 @@ the =after-save-hook= ensuring to always tangle and byte-compile the
     (interactive)
     (straight-pull-all))
 
-(defun nuance/native-compile ()
-  (interactive)
-  (when (featurep 'native-compile)
-    (let
-        ((native-comp-deferred-compilation t)
-         (native-comp-async-jobs-number (cl-parse-integer (s-trim (shell-command-to-string "getconf _NPROCESSORS_ONLN")))))
-      (native-compile-async "~/.emacs.d/straight/build" 'recursively)
-      (while comp-files-queue
-        (progn (message "comp-files-queue: %s" (and comp-files-queue (length comp-files-queue)))
-               (sleep-for 1))))))
+  (defun nuance/native-compile ()
+    (interactive)
+    (when (featurep 'native-compile)
+      (let
+          ((native-comp-deferred-compilation t)
+           (native-comp-async-jobs-number (cl-parse-integer (s-trim (shell-command-to-string "getconf _NPROCESSORS_ONLN")))))
+        (native-compile-async "~/.emacs.d/straight/build" 'recursively)
+        (while comp-files-queue
+          (progn (message "comp-files-queue: %s" (and comp-files-queue (length comp-files-queue)))
+                 (sleep-for 1))))))
 #+end_src
 
 * Performance optimizations
@@ -172,7 +172,7 @@ Mostly adapted from [[https://github.com/zzamboni/dot-emacs/blob/master/init.org
   (setq
    nuance/file-name-handler-alist file-name-handler-alist
    file-name-handler-alist nil)
-(add-hook 'after-init-hook (lambda () (setq file-name-handler-alist nuance/file-name-handler-alist)))
+  (add-hook 'after-init-hook (lambda () (setq file-name-handler-alist nuance/file-name-handler-alist)))
 #+END_SRC
 
 ** Report startup performance
@@ -213,12 +213,12 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
    '(mac-pass-command-to-system nil)
    '(mac-pass-control-to-system nil))
 
-(map-keymap
- (lambda (event binding)
-   (let ((key-desc (key-description (vector event))))
-     (when (string-match-p "\\bs-" key-desc)
-       (global-unset-key (vector event)))))
- global-map)
+  (map-keymap
+   (lambda (event binding)
+     (let ((key-desc (key-description (vector event))))
+       (when (string-match-p "\\bs-" key-desc)
+         (global-unset-key (vector event)))))
+   global-map)
 #+END_SRC
 
 * Niceities
@@ -226,13 +226,13 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)
+  (set-default-coding-systems 'utf-8)
 
-(setq save-place-file (concat user-emacs-directory "places")
-      backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
-      backup-inhibited t
-      sentence-end-double-space nil       ; No double space
-      vc-follow-symlinks nil)
+  (setq save-place-file (concat user-emacs-directory "places")
+        backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
+        backup-inhibited t
+        sentence-end-double-space nil       ; No double space
+        vc-follow-symlinks nil)
 #+END_SRC
 
 ** Disable custom
@@ -253,15 +253,15 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+BEGIN_SRC emacs-lisp
   ;; functional helpers
-(use-package dash)
+  (use-package dash)
 
-;; string manipulation
-(use-package s)
+  ;; string manipulation
+  (use-package s)
 
-;; filepath manipulation
-(use-package f)
+  ;; filepath manipulation
+  (use-package f)
 
-(use-package compat)
+  (use-package compat)
 #+END_SRC
 
 ** Encrypted authinfo
@@ -289,27 +289,27 @@ I don't really want all the default super bindings (I'd prefer a simpler emacs e
 
 #+begin_src emacs-lisp
   (setq ffap-machine-p-known 'reject)
-(ffap-bindings)
+  (ffap-bindings)
 #+end_src
 
 ** Restore state between relaunches
 
 #+begin_src emacs-lisp
   (setq savehist-save-minibuffer-history nil)
-(savehist-mode 1)
-(add-to-list 'savehist-additional-variables 'compile-command)
-(add-to-list 'savehist-additional-variables 'xref--history)
+  (savehist-mode 1)
+  (add-to-list 'savehist-additional-variables 'compile-command)
+  (add-to-list 'savehist-additional-variables 'xref--history)
 
-(recentf-mode 1)
-(save-place-mode 1)
+  (recentf-mode 1)
+  (save-place-mode 1)
 #+end_src
 
 ** Kill / yank
 
 #+begin_src emacs-lisp
   (customize-set-variable 'kill-do-not-save-duplicates t)
-;; raycast will send s-v to trigger a paste
-(global-set-key (kbd "s-v") 'yank)
+  ;; raycast will send s-v to trigger a paste
+  (global-set-key (kbd "s-v") 'yank)
 #+end_src
 
 ** Executable bit
@@ -324,30 +324,30 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
 #+begin_src emacs-lisp
   (setq switch-to-buffer-obey-display-actions nil)
-(setq switch-to-buffer-in-dedicated-window 'pop)
-(setq window-sides-slots '(1 1 1 1))
-(global-set-key (kbd "C-x !") 'window-toggle-side-windows)
-(global-set-key (kbd "<f1>") 'window-toggle-side-windows)
-(global-set-key (kbd "<f2>") 'balance-windows)
+  (setq switch-to-buffer-in-dedicated-window 'pop)
+  (setq window-sides-slots '(1 1 1 1))
+  (global-set-key (kbd "C-x !") 'window-toggle-side-windows)
+  (global-set-key (kbd "<f1>") 'window-toggle-side-windows)
+  (global-set-key (kbd "<f2>") 'balance-windows)
 
-(defun nuance/display-buffer-in-minor-drawer (buffer-name)
-  (add-to-list 'display-buffer-alist
-               `(,buffer-name (display-buffer-reuse-window display-buffer-in-side-window)
-                              (side . right)
-                              (slot . 0)
-                              (window-parameters . ((no-delete-other-windows . t)))
-                              (window-height . 25)
-                              (window-width . 80)
-                              (window-min-width . 80)
-                              (preserve-size . (nil . t)))))
+  (defun nuance/display-buffer-in-minor-drawer (buffer-name)
+    (add-to-list 'display-buffer-alist
+                 `(,buffer-name (display-buffer-reuse-window display-buffer-in-side-window)
+                                (side . right)
+                                (slot . 0)
+                                (window-parameters . ((no-delete-other-windows . t)))
+                                (window-height . 25)
+                                (window-width . 80)
+                                (window-min-width . 80)
+                                (preserve-size . (nil . t)))))
 #+end_src
 
 *** Compilation buffer on bottom
 
 #+begin_src emacs-lisp
   (nuance/display-buffer-in-minor-drawer "*compilation*")
-(nuance/display-buffer-in-minor-drawer "*detached-compilation*")
-(nuance/display-buffer-in-minor-drawer "*Messages*")
+  (nuance/display-buffer-in-minor-drawer "*detached-compilation*")
+  (nuance/display-buffer-in-minor-drawer "*Messages*")
 #+end_src
 
 * UI Appearance
@@ -357,11 +357,11 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
   (if (boundp 'use-short-answers)
       (setq use-short-answers t)
     (advice-add 'yes-or-no-p :override #'y-or-n-p))
-(setq apropos-do-all t
-      echo-keystrokes 0.1               ; Show keystrokes asap
-      inhibit-startup-message t         ; No splash screen please
-      initial-scratch-message nil       ; Clean scratch buffer
-      initial-major-mode 'emacs-lisp-mode)
+  (setq apropos-do-all t
+        echo-keystrokes 0.1               ; Show keystrokes asap
+        inhibit-startup-message t         ; No splash screen please
+        initial-scratch-message nil       ; Clean scratch buffer
+        initial-major-mode 'emacs-lisp-mode)
 #+END_SRC
 
 ** Bell
@@ -370,16 +370,16 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
   (setq visible-bell t
         inhibit-startup-echo-area-message t)
 
-(use-package mode-line-bell
-  :demand t
-  :config (mode-line-bell-mode))
+  (use-package mode-line-bell
+    :demand t
+    :config (mode-line-bell-mode))
 #+END_SRC
 
 ** Cursor
 
 #+BEGIN_SRC emacs-lisp
   (setq cursor-type 'hbar)
-(blink-cursor-mode 0)
+  (blink-cursor-mode 0)
 #+END_SRC
 
 ** Scrolling
@@ -393,12 +393,12 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 ** Highlight line
 #+begin_src emacs-lisp
   (global-hl-line-mode t)
-(defun pulse-line (&rest _)
-  "Pulse the current line."
-  (pulse-momentary-highlight-one-line (point)))
+  (defun pulse-line (&rest _)
+    "Pulse the current line."
+    (pulse-momentary-highlight-one-line (point)))
 
-(dolist (command '(scroll-up-command scroll-down-command recenter-top-bottom other-window))
-  (advice-add command :after #'pulse-line))
+  (dolist (command '(scroll-up-command scroll-down-command recenter-top-bottom other-window))
+    (advice-add command :after #'pulse-line))
 #+end_src
 
 ** Line spacing
@@ -411,9 +411,9 @@ Largely based on [[https://www.masteringemacs.org/article/demystifying-emacs-win
 
 #+BEGIN_SRC emacs-lisp
   (if (boundp 'toggle-frame-fullscreen) (toggle-frame-fullscreen))
-(if (boundp 'scroll-bar-mode) (scroll-bar-mode 0))
+  (if (boundp 'scroll-bar-mode) (scroll-bar-mode 0))
 
-(when (eq (window-system) 'mac) (tool-bar-mode 1) (tool-bar-mode 0))
+  (when (eq (window-system) 'mac) (tool-bar-mode 1) (tool-bar-mode 0))
 #+END_SRC
 
 ** Mode-line
@@ -507,13 +507,13 @@ Show isearch hit information in mode-line.
       (let ((cmd (concat "\033]" code  ";" body "\007")))
         (send-string-to-terminal cmd))))
 
-(defun nuance/xterm-title-update ()
-  (nuance/osc-command "2" (format-mode-line frame-title-format)))
+  (defun nuance/xterm-title-update ()
+    (nuance/osc-command "2" (format-mode-line frame-title-format)))
 
-(defun nuance/xterm-bg-update (color)
-  (nuance/osc-command "11" color))
+  (defun nuance/xterm-bg-update (color)
+    (nuance/osc-command "11" color))
 
-(add-hook 'post-command-hook 'nuance/xterm-title-update)
+  (add-hook 'post-command-hook 'nuance/xterm-title-update)
 #+end_src
 
 ** Light / Dark theme toggle
@@ -561,18 +561,18 @@ I'd like to toggle between light & dark themes.
 #+BEGIN_SRC emacs-lisp
   (setq nuance/font-size 100)
 
-(set-face-attribute 'default nil
-                    :family "IBM Plex Mono"
-                    :height nuance/font-size)
-(set-face-attribute 'fixed-pitch nil
-                    :family "IBM Plex Mono")
-(set-face-attribute 'variable-pitch nil
-                    :family "IBM Plex Sans")
+  (set-face-attribute 'default nil
+                      :family "IBM Plex Mono"
+                      :height nuance/font-size)
+  (set-face-attribute 'fixed-pitch nil
+                      :family "IBM Plex Mono")
+  (set-face-attribute 'variable-pitch nil
+                      :family "IBM Plex Sans")
 
-(set-face-attribute 'mode-line nil :height nuance/font-size)
-(set-face-attribute 'mode-line-inactive nil :height nuance/font-size);
+  (set-face-attribute 'mode-line nil :height nuance/font-size)
+  (set-face-attribute 'mode-line-inactive nil :height nuance/font-size);
 
-(use-package all-the-icons :if (display-graphic-p))
+  (use-package all-the-icons :if (display-graphic-p))
 #+END_SRC
 
 ** Set titlebar color
@@ -636,20 +636,20 @@ I'd like to toggle between light & dark themes.
     (vertico-cycle t)
     (vertico-buffer-display-action '(display-buffer-in-side-window (window-height . 12) (side . top))))
 
-;; A few more useful configurations...
-(use-package emacs
-  :init
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  ;; A few more useful configurations...
+  (use-package emacs
+    :init
+    ;; Do not allow the cursor in the minibuffer prompt
+    (setq minibuffer-prompt-properties
+          '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  (setq read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+    ;; Vertico commands are hidden in normal buffers.
+    (setq read-extended-command-predicate #'command-completion-default-include-p)
 
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t))
+    ;; Enable recursive minibuffers
+    (setq enable-recursive-minibuffers t))
 #+end_src
 
 **** posframe
@@ -722,9 +722,9 @@ I'd like to toggle between light & dark themes.
     ;; DWIM inside the minibuffer is pretty much always export
     (:map minibuffer-local-map ("C-;" . embark-export)))
 
-(use-package embark-consult
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+  (use-package embark-consult
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
 *** Dynamic completion helper
@@ -766,49 +766,49 @@ I'd like to toggle between light & dark themes.
     ;; want to perform completion
   (tab-always-indent 'complete)
   (c-tab-always-indent 'complete)
-    (completion-cycle-threshold nil)      ; Always show candidates in menu
+  (completion-cycle-threshold nil)      ; Always show candidates in menu
 
-    (corfu-auto t)
-    (corfu-auto-prefix 0)
-    (corfu-auto-delay 0)
+  (corfu-auto t)
+  (corfu-auto-prefix 0)
+  (corfu-auto-delay 0)
 
-    (corfu-min-width 80)
-    (corfu-max-width 160)     ; Always have the same width
-    (corfu-count 28)
-    (corfu-scroll-margin 4)
-    (corfu-cycle nil)
+  (corfu-min-width 80)
+  (corfu-max-width 160)     ; Always have the same width
+  (corfu-count 28)
+  (corfu-scroll-margin 4)
+  (corfu-cycle nil)
 
-    (corfu-echo-documentation nil)        ; Already use corfu-doc
-    (corfu-separator ?\s)                 ; Necessary for use with orderless
-    (corfu-quit-no-match 'separator)
+  (corfu-echo-documentation nil)        ; Already use corfu-doc
+  (corfu-separator ?\s)                 ; Necessary for use with orderless
+  (corfu-quit-no-match 'separator)
 
-    (corfu-preview-current 'insert)       ; Preview current candidate?
-    (corfu-preselect-first t)             ; Preselect first candidate?
-    (corfu-popupinfo-delay 0.5)
-    (corfu-popupinfo-max-width 70)
-    (corfu-popupinfo-max-height 20)
+  (corfu-preview-current 'insert)       ; Preview current candidate?
+  (corfu-preselect-first t)             ; Preselect first candidate?
+  (corfu-popupinfo-delay 0.5)
+  (corfu-popupinfo-max-width 70)
+  (corfu-popupinfo-max-height 20)
 
-    :init
-    (global-corfu-mode)
-    :config
+  :init
+  (global-corfu-mode)
+  :config
 
-    (defun corfu-move-to-minibuffer ()
-      (interactive)
-      (let ((completion-extra-properties corfu--extra)
-            completion-cycle-threshold completion-cycling)
-        (apply #'consult-completion-in-region completion-in-region--data)))
+  (defun corfu-move-to-minibuffer ()
+    (interactive)
+    (let ((completion-extra-properties corfu--extra)
+          completion-cycle-threshold completion-cycling)
+      (apply #'consult-completion-in-region completion-in-region--data)))
 
-    ;; Enable Corfu more generally for every minibuffer, as long as no other
-    ;; completion UI is active. If you use Mct or Vertico as your main minibuffer
-    ;; completion UI. From
-    ;; https://github.com/minad/corfu#completing-with-corfu-in-the-minibuffer
-    (defun corfu-enable-always-in-minibuffer ()
-      "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-      (unless (bound-and-true-p vertico--input)
-        (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
-        (corfu-mode 1)))
-    :hook ((minibuffer-setup . corfu-enable-always-in-minibuffer)
-           (corfu-mode . corfu-popupinfo-mode)))
+  ;; Enable Corfu more generally for every minibuffer, as long as no other
+  ;; completion UI is active. If you use Mct or Vertico as your main minibuffer
+  ;; completion UI. From
+  ;; https://github.com/minad/corfu#completing-with-corfu-in-the-minibuffer
+  (defun corfu-enable-always-in-minibuffer ()
+    "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+    (unless (bound-and-true-p vertico--input)
+      (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
+      (corfu-mode 1)))
+  :hook ((minibuffer-setup . corfu-enable-always-in-minibuffer)
+         (corfu-mode . corfu-popupinfo-mode)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -907,11 +907,11 @@ Incremental search thats multiple-cursors-friendly.
     :after multiple-cursors
     :custom ((phi-search-case-sensitive 'guess)))
 
-(use-package phi-replace
-  :straight nil
-  :after phi-search
-  :after multiple-cursors
-  :bind (:map mc/keymap ([remap query-replace] . phi-replace-query)))
+  (use-package phi-replace
+    :straight nil
+    :after phi-search
+    :after multiple-cursors
+    :bind (:map mc/keymap ([remap query-replace] . phi-replace-query)))
 #+END_SRC
 
 **** Symbol-overlay
@@ -975,8 +975,8 @@ Incremental search thats multiple-cursors-friendly.
           (comment-or-uncomment-region beg end)
         (comment-line 1))))
 
-(global-set-key (kbd "C-\\") 'comment-line-or-region)
-(global-set-key (kbd "s-/") 'comment-line-or-region)
+  (global-set-key (kbd "C-\\") 'comment-line-or-region)
+  (global-set-key (kbd "s-/") 'comment-line-or-region)
 #+END_SRC
 
 *** Select whole buffer
@@ -993,14 +993,14 @@ Incremental search thats multiple-cursors-friendly.
     :bind (("s-B" . compile) ("s-b" . recompile))
     :custom ((compilation-scroll-output t)))
 
-(use-package ansi-color
-  :straight nil
-  :config
-  (defun colorize-compilation-buffer ()
-    (read-only-mode)
-    (ansi-color-apply-on-region compilation-filter-start (point))
-    (read-only-mode))
-  :hook ('compilation-filter . #'colorize-compilation-buffer))
+  (use-package ansi-color
+    :straight nil
+    :config
+    (defun colorize-compilation-buffer ()
+      (read-only-mode)
+      (ansi-color-apply-on-region compilation-filter-start (point))
+      (read-only-mode))
+    :hook ('compilation-filter . #'colorize-compilation-buffer))
 #+END_SRC
 
 *** Indent / Dedent
@@ -1009,12 +1009,12 @@ Incremental search thats multiple-cursors-friendly.
     (interactive "*r")
     (indent-rigidly start end (- tab-width)))
 
-(defun indent (start end)
-  (interactive "*r")
-  (indent-rigidly start end tab-width))
+  (defun indent (start end)
+    (interactive "*r")
+    (indent-rigidly start end tab-width))
 
-(global-set-key (kbd "s-[") 'dedent)
-(global-set-key (kbd "s-]") 'indent)
+  (global-set-key (kbd "s-[") 'dedent)
+  (global-set-key (kbd "s-]") 'indent)
 #+END_SRC
 
 *** Guess indentation settings
@@ -1029,36 +1029,36 @@ Incremental search thats multiple-cursors-friendly.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-j") (lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "M-k") 'other-window)
+  (global-set-key (kbd "M-k") 'other-window)
 
-(use-package emacs
-  :config
-  (defun nuance/window-order (a b)
-    (let ((a-left (window-pixel-left a))
-          (b-left (window-pixel-left b))
-          (a-top (window-pixel-top a))
-          (b-top (window-pixel-top b)))
-      (if (= a-top b-top) (< a-left b-left) (< a-top b-top))))
+  (use-package emacs
+    :config
+    (defun nuance/window-order (a b)
+      (let ((a-left (window-pixel-left a))
+            (b-left (window-pixel-left b))
+            (a-top (window-pixel-top a))
+            (b-top (window-pixel-top b)))
+        (if (= a-top b-top) (< a-left b-left) (< a-top b-top))))
 
-  (defun switch-to-nth-window (window-num)
-    (select-window (elt (sort (window-list) #'nuance/window-order) window-num)))
-  :bind (
-         ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
-         ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
-         ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
-         ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
-         ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
-         ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
-         ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
-         ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
-         ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))))
+    (defun switch-to-nth-window (window-num)
+      (select-window (elt (sort (window-list) #'nuance/window-order) window-num)))
+    :bind (
+           ("s-1" . (lambda () (interactive) (switch-to-nth-window 0)))
+           ("s-2" . (lambda () (interactive) (switch-to-nth-window 1)))
+           ("s-3" . (lambda () (interactive) (switch-to-nth-window 2)))
+           ("s-4" . (lambda () (interactive) (switch-to-nth-window 3)))
+           ("s-5" . (lambda () (interactive) (switch-to-nth-window 4)))
+           ("s-6" . (lambda () (interactive) (switch-to-nth-window 5)))
+           ("s-7" . (lambda () (interactive) (switch-to-nth-window 6)))
+           ("s-8" . (lambda () (interactive) (switch-to-nth-window 7)))
+           ("s-9" . (lambda () (interactive) (switch-to-nth-window 8)))))
 #+END_SRC
 
 *** Upcase / downcase
 
 #+BEGIN_SRC emacs-lisp
   (put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
+  (put 'downcase-region 'disabled nil)
 #+END_SRC
 
 *** Electric pair
@@ -1071,7 +1071,7 @@ Incremental search thats multiple-cursors-friendly.
 
 #+BEGIN_SRC emacs-lisp
   (customize-set-variable 'global-auto-revert-not-file-buffers t)
-(global-auto-revert-mode t)
+  (global-auto-revert-mode t)
 #+END_SRC
 
 *** window management
@@ -1080,15 +1080,15 @@ Mimic standard macos window / tab management commands
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "s-w") (lambda () (interactive) (kill-buffer nil)))
-(global-set-key (kbd "s-W") (lambda () (interactive) (kill-buffer nil) (delete-window)))
-(global-set-key (kbd "s-N") 'make-frame)
-(global-set-key (kbd "s-W") 'delete-frame)
-(global-set-key (kbd "s-s") 'save-buffer)
+  (global-set-key (kbd "s-W") (lambda () (interactive) (kill-buffer nil) (delete-window)))
+  (global-set-key (kbd "s-N") 'make-frame)
+  (global-set-key (kbd "s-W") 'delete-frame)
+  (global-set-key (kbd "s-s") 'save-buffer)
 #+END_SRC
 
 #+begin_src emacs-lisp
   (winner-mode t)
-(global-set-key (kbd "C-c 0") 'winner-undo)
+  (global-set-key (kbd "C-c 0") 'winner-undo)
 #+end_src
 
 *** scratch
@@ -1210,9 +1210,9 @@ Mimic standard macos window / tab management commands
     (eshell-last-dir-unique t)
     (eshell-last-dir-ring-size 32))
 
-(use-package eshell-syntax-highlighting
-  :straight t
-  :config (eshell-syntax-highlighting-global-mode t))
+  (use-package eshell-syntax-highlighting
+    :straight t
+    :config (eshell-syntax-highlighting-global-mode t))
 #+end_src
 
 ** Scroll through errors
@@ -1226,30 +1226,30 @@ between both flymake errors.
     (let ((here (point)))
       (save-excursion (ignore-errors (call-interactively func)) (unless (eq (point) here) (point)))))
 
-(defun nuance/next-error ()
-  (interactive)
-  (let ((here (point))
-        (points))
-    (when (and (boundp 'flymake-mode) flymake-mode)
-      (when-let ((p (nuance/maybe-point #'flymake-goto-next-error)))
-        (push p points)))
-    (when-let ((p (nuance/maybe-point #'next-error)))
-      (push p points))
-    (unless (null points) (goto-char (apply 'min points)))))
+  (defun nuance/next-error ()
+    (interactive)
+    (let ((here (point))
+          (points))
+      (when (and (boundp 'flymake-mode) flymake-mode)
+        (when-let ((p (nuance/maybe-point #'flymake-goto-next-error)))
+          (push p points)))
+      (when-let ((p (nuance/maybe-point #'next-error)))
+        (push p points))
+      (unless (null points) (goto-char (apply 'min points)))))
 
-(defun nuance/previous-error ()
-  (interactive)
-  (let ((here (point))
-        (points))
-    (when (and (boundp 'flymake-mode) flymake-mode)
-      (when-let ((p (nuance/maybe-point #'flymake-goto-prev-error)))
-        (push p points)))
-    (when-let ((p (nuance/maybe-point #'previous-error)))
-      (push p points))
-    (unless (null points) (goto-char (apply 'max points)))))
+  (defun nuance/previous-error ()
+    (interactive)
+    (let ((here (point))
+          (points))
+      (when (and (boundp 'flymake-mode) flymake-mode)
+        (when-let ((p (nuance/maybe-point #'flymake-goto-prev-error)))
+          (push p points)))
+      (when-let ((p (nuance/maybe-point #'previous-error)))
+        (push p points))
+      (unless (null points) (goto-char (apply 'max points)))))
 
-(bind-key (kbd "M-N") 'nuance/next-error)
-(bind-key (kbd "M-P") 'nuance/previous-error)
+  (bind-key (kbd "M-N") 'nuance/next-error)
+  (bind-key (kbd "M-P") 'nuance/previous-error)
 #+end_src
 
 ** Show flymake errors
@@ -1264,29 +1264,29 @@ between both flymake errors.
 #+begin_src emacs-lisp
   (use-package memoize)
 
-(use-package project
-  :straight t
-  :config
-  (defvar nuance/dotfiles-base-dir (expand-file-name "~/dotfiles"))
-  (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d") ,(expand-file-name "~/.config")))
+  (use-package project
+    :straight t
+    :config
+    (defvar nuance/dotfiles-base-dir (expand-file-name "~/dotfiles"))
+    (defvar nuance/dotfiles-dirs `(,nuance/dotfiles-base-dir ,(expand-file-name "~/.emacs.d") ,(expand-file-name "~/.config")))
 
-  (defun project-find-dotfiles-dir (dir)
-    (when (-any (lambda (p) (or (f-same? p dir) (f-ancestor-of? p dir))) nuance/dotfiles-dirs)
-      (cons 'dotfiles-dir nuance/dotfiles-base-dir)))
-  (memoize 'project-find-dotfiles-dir)
+    (defun project-find-dotfiles-dir (dir)
+      (when (-any (lambda (p) (or (f-same? p dir) (f-ancestor-of? p dir))) nuance/dotfiles-dirs)
+        (cons 'dotfiles-dir nuance/dotfiles-base-dir)))
+    (memoize 'project-find-dotfiles-dir)
 
-  (cl-defmethod project-root ((project (head dotfiles-dir)))
-    (cdr project))
+    (cl-defmethod project-root ((project (head dotfiles-dir)))
+      (cdr project))
 
-  (cl-defmethod project-files ((project (head dotfiles-dir)) &optional dirs)
-    "Implementation of `project-files' for dotfiles projects."
-    (cl-mapcan
-     (lambda (dir) (cl-call-next-method))
-     (or dirs (project-roots project))))
+    (cl-defmethod project-files ((project (head dotfiles-dir)) &optional dirs)
+      "Implementation of `project-files' for dotfiles projects."
+      (cl-mapcan
+       (lambda (dir) (cl-call-next-method))
+       (or dirs (project-roots project))))
 
-  (add-hook 'project-find-functions #'project-find-dotfiles-dir)
-  :bind (("s-," . (lambda () (interactive) (find-file (concat user-emacs-directory "init.org"))))
-         ("s-<" . (lambda () (interactive) (find-file (concat user-emacs-directory "private.org"))))))
+    (add-hook 'project-find-functions #'project-find-dotfiles-dir)
+    :bind (("s-," . (lambda () (interactive) (find-file (concat user-emacs-directory "init.org"))))
+           ("s-<" . (lambda () (interactive) (find-file (concat user-emacs-directory "private.org"))))))
 #+end_src
 
 *** Find by name
@@ -1511,7 +1511,7 @@ between both flymake errors.
 
 #+begin_src emacs-lisp
   (setq global-mark-ring-max 1024)
-(global-set-key (kbd "s-.") #'consult-global-mark)
+  (global-set-key (kbd "s-.") #'consult-global-mark)
 #+end_src
 
 * Packages
@@ -1643,11 +1643,10 @@ Include yasnippet for eglot usage.
             (org-agenda-files :maxlevel . 3)))
     (setq org-outline-path-complete-in-steps nil)
     (setq org-refile-use-outline-path 'file)
+
     :hook
     ((org-mode . visual-line-mode)
-     (org-mode . (lambda ()
-                   (org-content 2)))
-     (before-save . (lambda () (when (eq major-mode 'org-mode) (indent-region (buffer-end -1) (buffer-end 1))))))
+     (org-mode . (lambda () (org-content 2))))
     :bind
     (("C-c c" . org-capture)
      ("C-c l" . org-store-link)))
@@ -1659,6 +1658,13 @@ For better inline code editing.
 #+BEGIN_SRC emacs-lisp
   (use-package poly-org
     :config
+
+    (defun nuance/reindent-poly-mode ()
+      (save-excursion
+        (goto-char 0)
+        (while (not (equal (point) (point-max)))
+          (end-of-line) (forward-char 1) (indent-according-to-mode))))
+
     (add-hook 'polymode-init-inner-hook
               (lambda ()
                 (let* ((fix-pitch (face-attribute 'fixed-pitch :family))
@@ -1670,7 +1676,9 @@ For better inline code editing.
                                             :height ,fix-height
                                             :family ,fix-pitch
                                             :font ,fix-font)))
-                  (oset pm/chunkmode adjust-face props)))))
+                  (oset pm/chunkmode adjust-face props))))
+
+    (add-hook 'polymode-run-these-before-save-functions-in-other-buffers #'nuance/reindent-poly-mode))
 #+END_SRC
 
 *** org-nv2
@@ -1680,134 +1688,134 @@ My personal note taking app, now with some basic llm powers.
 #+begin_src elisp
   (setq nuance/nv2-path (expand-file-name "~/org/nv"))
 
-(defun nuance/nv2--create-note (name)
-  "Create a new note, returning the resulting path."
-  (let ((path (f-join nuance/nv2-path
-                      (concat
-                       (replace-regexp-in-string " +" "_" (downcase name))
-                       ".org"))))
-    (find-file path)
-    (insert (format "#+TITLE: %s\n" (capitalize name)))
-    (org-time-stamp '(16))
-    (insert "\n\n")
-    (org-mode)
-    (save-buffer)
-    path))
+  (defun nuance/nv2--create-note (name)
+    "Create a new note, returning the resulting path."
+    (let ((path (f-join nuance/nv2-path
+                        (concat
+                         (replace-regexp-in-string " +" "_" (downcase name))
+                         ".org"))))
+      (find-file path)
+      (insert (format "#+TITLE: %s\n" (capitalize name)))
+      (org-time-stamp '(16))
+      (insert "\n\n")
+      (org-mode)
+      (save-buffer)
+      path))
 
-(cl-defstruct nuance/nv2-result path title)
+  (cl-defstruct nuance/nv2-result path title)
 
-(defun nuance/nv2-result-body (note)
-  (f-read-text (nuance/nv2-result-path note)))
+  (defun nuance/nv2-result-body (note)
+    (f-read-text (nuance/nv2-result-path note)))
 
-(defun nuance/nv2-result-from-path (path)
-  (make-nuance/nv2-result :path path :title (nuance/nv2--get-org-title-from-file path)))
+  (defun nuance/nv2-result-from-path (path)
+    (make-nuance/nv2-result :path path :title (nuance/nv2--get-org-title-from-file path)))
 
-(defun nuance/nv2-result-to-string (note)
-  (format "(make-nuance/nv2-result-from-path %S)" (nuance/nv2-result-path note)))
+  (defun nuance/nv2-result-to-string (note)
+    (format "(make-nuance/nv2-result-from-path %S)" (nuance/nv2-result-path note)))
 
-(defun nuance/nv2--get-org-title-from-file (path)
-  "Return the title of the Org-mode document specified by PATH."
-  (with-temp-buffer
-    (insert-file-contents path)
-    (let* ((data (org-element-parse-buffer 'element))
-           (title (org-element-map data 'keyword
-                    (lambda (el)
-                      (when (string= (org-element-property :key el) "TITLE")
-                        (org-element-property :value el)))
-                    nil t)))
-      (or title path))))
+  (defun nuance/nv2--get-org-title-from-file (path)
+    "Return the title of the Org-mode document specified by PATH."
+    (with-temp-buffer
+      (insert-file-contents path)
+      (let* ((data (org-element-parse-buffer 'element))
+             (title (org-element-map data 'keyword
+                      (lambda (el)
+                        (when (string= (org-element-property :key el) "TITLE")
+                          (org-element-property :value el)))
+                      nil t)))
+        (or title path))))
 
-(defun nuance/nv2--dates-in-file (path)
-  "List all dates in the Org file specified by PATH."
-  (with-temp-buffer
-    (insert-file-contents path)
-    (let* ((parsed-data (org-element-parse-buffer))
-           (timestamps (org-element-map parsed-data 'timestamp
-                         (lambda (timestamp)
-                           (org-element-property :raw-value timestamp)))))
-      timestamps)))
+  (defun nuance/nv2--dates-in-file (path)
+    "List all dates in the Org file specified by PATH."
+    (with-temp-buffer
+      (insert-file-contents path)
+      (let* ((parsed-data (org-element-parse-buffer))
+             (timestamps (org-element-map parsed-data 'timestamp
+                           (lambda (timestamp)
+                             (org-element-property :raw-value timestamp)))))
+        timestamps)))
 
-(defun nuance/nv2--search-matcher (query)
-  "Construct a callable matcher that takes a file path and returns a nuance/nv2-result or nil."
-  (cond ((length= query 0) (lambda (path) nil))
-        ((s-prefix? "<" query)
-         (lambda (path)
-           (if-let* ((timestamps (nuance/nv2--dates-in-file path))
-                     (query-date (substring query 1))
-                     (matches (seq-filter (lambda (dt) (s-contains-p query-date dt)) timestamps)))
-               (nuance/nv2-result-from-path path))))
-        ((s-prefix? ":" query) (lambda (path) (nuance/nv2-result-from-path path)))
-        (t (lambda (path) (if (s-contains? query path) (nuance/nv2-result-from-path path) (let ((body (f-read-text path))) (when (s-contains? query body) (nuance/nv2-result-from-path path))))))))
+  (defun nuance/nv2--search-matcher (query)
+    "Construct a callable matcher that takes a file path and returns a nuance/nv2-result or nil."
+    (cond ((length= query 0) (lambda (path) nil))
+          ((s-prefix? "<" query)
+           (lambda (path)
+             (if-let* ((timestamps (nuance/nv2--dates-in-file path))
+                       (query-date (substring query 1))
+                       (matches (seq-filter (lambda (dt) (s-contains-p query-date dt)) timestamps)))
+                 (nuance/nv2-result-from-path path))))
+          ((s-prefix? ":" query) (lambda (path) (nuance/nv2-result-from-path path)))
+          (t (lambda (path) (if (s-contains? query path) (nuance/nv2-result-from-path path) (let ((body (f-read-text path))) (when (s-contains? query body) (nuance/nv2-result-from-path path))))))))
 
-(defun nuance/nv2--execute-search (text)
-  "Return a list of nuance/nv2-result.
+  (defun nuance/nv2--execute-search (text)
+    "Return a list of nuance/nv2-result.
                   Query syntax:
                    'text' - match text
                    ':text' - match embedding
                    '<date>' - match dates
                 "
-  (file-cache-add-directory-recursively nuance/nv2-path (rx (one-or-more anychar) ".org"))
-  (let* ((query (nuance/nv2--search-matcher text))
-         (all-notes (find-lisp-find-files nuance/nv2-path (rx (one-or-more anychar) ".org")))
-         (matches (remove nil (mapcar query all-notes))))
-    (mapcar #'nuance/nv2-result-path matches)))
+    (file-cache-add-directory-recursively nuance/nv2-path (rx (one-or-more anychar) ".org"))
+    (let* ((query (nuance/nv2--search-matcher text))
+           (all-notes (find-lisp-find-files nuance/nv2-path (rx (one-or-more anychar) ".org")))
+           (matches (remove nil (mapcar query all-notes))))
+      (mapcar #'nuance/nv2-result-path matches)))
 
-(defun nuance/nv2--query ()
-  "Run a query session, returning zero or one result."
-  (if-let ((path (completing-read
-                  ": "
-                  (nuance/complete-dynamic #'nuance/nv2--execute-search)
-                  nil
-                  nil
-                  (dwim-default-text))))
-      (if (f-exists? path)
-          (nuance/nv2-result-from-path path)
-        (nuance/nv2-result-from-path (nuance/nv2--create-note path)))))
+  (defun nuance/nv2--query ()
+    "Run a query session, returning zero or one result."
+    (if-let ((path (completing-read
+                    ": "
+                    (nuance/complete-dynamic #'nuance/nv2--execute-search)
+                    nil
+                    nil
+                    (dwim-default-text))))
+        (if (f-exists? path)
+            (nuance/nv2-result-from-path path)
+          (nuance/nv2-result-from-path (nuance/nv2--create-note path)))))
 
-(defun nuance/nv2--query-many ()
-  "Run a query session, returning zero or more results."
-  (if-let ((result (nuance/nv2--query)))
-      (list result)))
+  (defun nuance/nv2--query-many ()
+    "Run a query session, returning zero or more results."
+    (if-let ((result (nuance/nv2--query)))
+        (list result)))
 
-(defun nuance/nv2-navigate ()
-  "Display a filterable list of notes."
-  (interactive)
-  (let ((selection (nuance/nv2--query)))
-    (find-file (nuance/nv2-result-path selection))))
+  (defun nuance/nv2-navigate ()
+    "Display a filterable list of notes."
+    (interactive)
+    (let ((selection (nuance/nv2--query)))
+      (find-file (nuance/nv2-result-path selection))))
 
-(defun nuance/nv2-refer ()
-  "Insert a reference to the result of a search."
-  (interactive)
-  (if-let ((note (nuance/nv2--query)))
-      (insert "[[" (nuance/nv2-result-path note) "][" (nuance/nv2-result-title note) "]]")))
+  (defun nuance/nv2-refer ()
+    "Insert a reference to the result of a search."
+    (interactive)
+    (if-let ((note (nuance/nv2--query)))
+        (insert "[[" (nuance/nv2-result-path note) "][" (nuance/nv2-result-title note) "]]")))
 
-(defun nuance/nv2-discuss ()
-  "Insert a chat block in an existing note."
-  (interactive)
-  (let* ((notes-source (if (region-active-p)
-                           `(region . (,(region-beginning) ,(region-end)))
-                         `(notes . ,(nuance/nv2--query-many))))
-         (source (car notes-source))
-         (data (cdr notes-source))
-         (prompt (read-string "> ")))
+  (defun nuance/nv2-discuss ()
+    "Insert a chat block in an existing note."
+    (interactive)
+    (let* ((notes-source (if (region-active-p)
+                             `(region . (,(region-beginning) ,(region-end)))
+                           `(notes . ,(nuance/nv2--query-many))))
+           (source (car notes-source))
+           (data (cdr notes-source))
+           (prompt (read-string "> ")))
 
-    (insert "#+begin_src emacs-lisp\n")
-    (cond
-     ((equal source 'region) (insert (format "(nuance/nv2--chat-region %S %S %S)\n" prompt (car data) (cadr data))))
-     ((equal source 'notes) (insert (format "(nuance/nv2--chat-notes %S (list %s))\n" prompt (mapconcat (lambda (note) (nuance/nv2-result-to-string note)) data)))))
-    (insert "#+end_src\n")))
+      (insert "#+begin_src emacs-lisp\n")
+      (cond
+       ((equal source 'region) (insert (format "(nuance/nv2--chat-region %S %S %S)\n" prompt (car data) (cadr data))))
+       ((equal source 'notes) (insert (format "(nuance/nv2--chat-notes %S (list %s))\n" prompt (mapconcat (lambda (note) (nuance/nv2-result-to-string note)) data)))))
+      (insert "#+end_src\n")))
 
-(defun nuance/nv2--chat-region (prompt start end)
-  (let ((prompt-context (format "Given selected text: ```%s\n%s```" major-mode (buffer-substring-no-properties start end))))
-    (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
+  (defun nuance/nv2--chat-region (prompt start end)
+    (let ((prompt-context (format "Given selected text: ```%s\n%s```" major-mode (buffer-substring-no-properties start end))))
+      (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
 
-(defun nuance/nv2--chat-notes (prompt notes)
-  (let* ((prompt-context (if notes (concat "Given selected sources:\n" (mapconcat (lambda (note) (format "```%s\n%s\n```\n" (nuance/nv2-result-path note) (nuance/nv2-result-body note))) notes)))))
-    (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
+  (defun nuance/nv2--chat-notes (prompt notes)
+    (let* ((prompt-context (if notes (concat "Given selected sources:\n" (mapconcat (lambda (note) (format "```%s\n%s\n```\n" (nuance/nv2-result-path note) (nuance/nv2-result-body note))) notes)))))
+      (llm-chat nuance/llm-provider (llm-make-simple-chat-prompt (concat prompt prompt-context)))))
 
-(global-set-key (kbd "C-c k") #'nuance/nv2-navigate)
-(global-set-key (kbd "C-c l") #'nuance/nv2-refer)
-(global-set-key (kbd "C-c e") #'nuance/nv2-discuss)
+  (global-set-key (kbd "C-c k") #'nuance/nv2-navigate)
+  (global-set-key (kbd "C-c l") #'nuance/nv2-refer)
+  (global-set-key (kbd "C-c e") #'nuance/nv2-discuss)
 #+end_src
 
 ** LLM
@@ -1829,13 +1837,6 @@ My personal note taking app, now with some basic llm powers.
                                 (llm-make-simple-chat-prompt
                                  (format "%s\nGiven the following emacs %s with major mode `%s` contents:\n\n```%s```" (read-string "> ") scope major-mode contents)))))))
 #+end_src
-
-*** shell-maker
-
-#+BEGIN_SRC emacs-lisp
-  (use-package shell-maker
-    :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
-#+END_SRC
 
 ** Tramp
 
@@ -1859,7 +1860,7 @@ My personal note taking app, now with some basic llm powers.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eldoc :hook ((prog-mode org-mode) . eldoc-mode))
-(use-package eldoc-box :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
+  (use-package eldoc-box :hook ((prog-mode org-mode) . eldoc-box-hover-at-point-mode))
 #+END_SRC
 
 ** which-key
@@ -1929,12 +1930,12 @@ My personal note taking app, now with some basic llm powers.
     :straight nil
     :config
   (defun my/c-indent-complete ()
-      (interactive)
-      (let ((p (point)))
-      (c-indent-line-or-region)
-        (when (= p (point))
-          (call-interactively 'complete-symbol))))
-    :mode ("\\.h|\\.cpp" . c++-mode)
+    (interactive)
+    (let ((p (point)))
+    (c-indent-line-or-region)
+    (when (= p (point))
+      (call-interactively 'complete-symbol))))
+  :mode ("\\.h|\\.cpp" . c++-mode)
   :bind (:map c-mode-base-map ("TAB" .  my/c-indent-complete)))
 #+END_SRC
 
@@ -1986,7 +1987,16 @@ My personal note taking app, now with some basic llm powers.
     (('markdown-mode .'variable-pitch-mode)
      ('markdown-mode . 'visual-line-mode)))
 
-(use-package edit-indirect)
+  (use-package edit-indirect)
+#+END_SRC
+
+** OpenSCAD
+
+#+BEGIN_SRC emacs-lisp
+  (use-package scad-mode
+    :config
+    (add-to-list 'eglot-server-programs '(scad-mode . ("/Users/matt/.cargo/bin/openscad-lsp" "--stdio")))
+    :hook (scad-mode . eglot-ensure))
 #+END_SRC
 
 * Private.el
@@ -2004,8 +2014,8 @@ Launch a server if not currently running.
 
 #+BEGIN_SRC emacs-lisp
   (setq server-use-tcp t)
-(setq server-port 42069)
-(setq server-auth-key "emacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskey")
+  (setq server-port 42069)
+  (setq server-auth-key "emacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskeyemacskey")
 
-(when (not noninteractive) (server-start))
+  (when (not noninteractive) (server-start))
 #+END_SRC
