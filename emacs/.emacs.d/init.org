@@ -1527,7 +1527,6 @@ between both flymake errors.
 ** Magit
 
 #+BEGIN_SRC emacs-lisp
-  (use-package seq :ensure t)
   (use-package transient :ensure t)
   (use-package magit :ensure t
     :commands magit-status magit-blame-addition
@@ -1694,6 +1693,9 @@ For better inline code editing.
 My personal note taking app, now with some basic llm powers.
 
 #+begin_src elisp
+
+  (use-package emacs
+    :config
   (setq nuance/nv2-path (expand-file-name "~/org/nv"))
 
   (defun nuance/nv2--create-note (name)
@@ -1799,6 +1801,7 @@ My personal note taking app, now with some basic llm powers.
 
   (global-set-key (kbd "C-c k") #'nuance/nv2-navigate)
   (global-set-key (kbd "C-c l") #'nuance/nv2-refer)
+  )
 #+end_src
 
 ** Tramp
